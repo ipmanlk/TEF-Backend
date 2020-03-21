@@ -2,13 +2,14 @@ require("dotenv").config();
 
 import { createConnection } from "typeorm";
 import AuthController from "./controller/AuthController";
-
-const express = require("express");
-const session = require("express-session");
-const bodyParser = require("body-parser");
+import EmployeeController from "./controller/EmployeeController";
+import * as express from "express";
+import * as session from "express-session";
+import * as bodyParser from "body-parser";
 
 const app = express();
 const port = 3000;
+const routeInfo = require("./routeInfo.json");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,26 +19,63 @@ app.use(session({
    resave: false
 }));
 
+// permission handler
+app.use((req, res, next) => {
+   // get current route
+   const route = req.url.split("?")[0];
+
+   // find module for the given route
+   const moduleName = routeInfo.routeModuleName[route];
+
+   // if module is not found
+   if (!moduleName) {
+      next();
+      return;
+   }
+   
+   // find operation name
+   const operation = routeInfo.methodOperation[req.method];
+
+   // check permission
+   AuthController.isAuthorized(req.session, moduleName, operation).then(() => {
+      next();
+   }).catch(e => {
+      res.json(e);
+   })
+});
+
 // create typeorm conneciton
 createConnection().then(() => {
    console.log("SUCESS: Database connected.");
 }).catch(error => {
    console.log("ERROR: Database  connection failed.");
-   console.log(error); 
+   console.log(error);
 })
 
 // public directory for static content
 app.use("/", express.static(`${__dirname}/../public`));
 
-
 // routes for api
-app.get("/api/login", (req, res) => {
-   AuthController.isAuthorized(req.session, "EMPLOYEE", "READ").then((r) => {      
-      res.json(r);
-   }).catch(e => {
-      res.json(e);
+app.route("/api/login")
+   .post((req, res) => {
+      AuthController.logIn(req.session, req.body.data)
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
    });
-});
+
+app.route("/api/employee")
+   .get((req, res) => {
+      EmployeeController.getOne(req.query.data)
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
+
+app.route("/api/employees")
+   .get((req, res) => {
+      EmployeeController.getAll()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
 
 
 // start listening

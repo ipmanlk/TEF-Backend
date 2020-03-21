@@ -9,7 +9,7 @@ import { getRepository, getConnection } from "typeorm";
 const crypto = require("crypto");
 
 class AuthController {
-    static logIn(session, username, password) {
+    static logIn(session, { username, password }) {
         return new Promise(async (resolve, reject) => {
             try {
                 const hashedPass = crypto.createHash("sha512").update(`${password}${process.env.SALT}`).digest("hex");

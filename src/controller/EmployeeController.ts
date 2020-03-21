@@ -2,7 +2,7 @@ import { getManager, getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
 
 class EmployeeController {
-    public static getOne(number) {
+    public static getOne({ number }) {
         return new Promise(async (resolve, reject) => {
             try {
                 // search for an employee with given employee number

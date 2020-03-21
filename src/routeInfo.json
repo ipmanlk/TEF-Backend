@@ -1,0 +1,12 @@
+{
+  "routeModuleName": {
+    "/api/employee": "EMPLOYEE",
+    "/api/employees": "EMPLOYEE"
+  },
+  "methodOperation": {
+    "GET": "READ",
+    "DELETE:": "DELETE",
+    "PUT": "UPDATE",
+    "POST": "CREATE"
+  }
+}
