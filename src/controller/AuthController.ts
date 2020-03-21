@@ -122,10 +122,10 @@ class AuthController {
 
                 // create permission object
                 const permissions = {
-                    "CREATE": parseInt(permissionDigits[0]),
-                    "READ": parseInt(permissionDigits[1]),
-                    "UPDATE": parseInt(permissionDigits[2]),
-                    "DELETE": parseInt(permissionDigits[3])
+                    CREATE: parseInt(permissionDigits[0]),
+                    READ: parseInt(permissionDigits[1]),
+                    UPDATE: parseInt(permissionDigits[2]),
+                    DELETE: parseInt(permissionDigits[3])
                 }
 
                 if (permissions[operationName] == 1) {
