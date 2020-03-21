@@ -21,6 +21,12 @@ app.use(session({
 
 // permission handler
 app.use((req, res, next) => {
+   // for development
+   if (process.env.PRODUCTION == "false") {
+      next();
+      return;
+   }
+
    // get current route
    const route = req.url.split("?")[0];
 
@@ -32,7 +38,7 @@ app.use((req, res, next) => {
       next();
       return;
    }
-   
+
    // find operation name
    const operation = routeInfo.methodOperation[req.method];
 
