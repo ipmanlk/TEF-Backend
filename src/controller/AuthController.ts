@@ -9,7 +9,7 @@ import { getRepository, getConnection } from "typeorm";
 const crypto = require("crypto");
 
 class AuthController {
-    static logIn = (session, username, password) => {
+    static logIn(session, username, password) {
         return new Promise(async (resolve, reject) => {
             try {
                 const hashedPass = crypto.createHash("sha512").update(`${password}${process.env.SALT}`).digest("hex");
@@ -24,6 +24,7 @@ class AuthController {
                 if (user == undefined) {
                     reject({
                         status: false,
+                        type: "input",
                         msg: "Unable to find a user with that username!"
                     });
                     return;
@@ -33,6 +34,7 @@ class AuthController {
                 if (user.password !== hashedPass) {
                     reject({
                         status: false,
+                        type: "input",
                         msg: "Password you provided is wrong!."
                     });
                     return;
@@ -46,12 +48,14 @@ class AuthController {
                 // resolve promise
                 resolve({
                     status: true,
-                    msg: "You have been logged in!."
+                    msg: "You have been logged in!.",
+                    data: user.role
                 });
 
             } catch (e) {
                 reject({
                     status: false,
+                    type: "server",
                     msg: "Server Error!. Please check console logs."
                 });
                 console.log(e);
@@ -59,7 +63,7 @@ class AuthController {
         })
     }
 
-    static isLoggedIn = (session) => {
+    static isLoggedIn(session) {
         if (session.logged == true && session.username !== undefined) {
             return {
                 status: true,
@@ -68,12 +72,13 @@ class AuthController {
         } else {
             return {
                 status: false,
+                type: "auth",
                 msg: "You are not logged in"
             }
         }
     }
 
-    static logOut = async (session) => {
+    static logOut(session) {
         if (session.logged == true && session.username !== undefined) {
             session.destroy();
             return {
@@ -83,19 +88,20 @@ class AuthController {
         } else {
             return {
                 status: false,
+                type: "auth",
                 msg: "You must login first!."
             }
         }
     }
 
-    static isAuthorized = (session, moduleName, operationName) => {
+    static isAuthorized(session, moduleName, operationName) {
         return new Promise(async (resolve, reject) => {
             try {
                 // first check user is logged in
                 const isLoggedIn = AuthController.isLoggedIn(session);
-                
+
                 if (!isLoggedIn.status) {
-                    reject (isLoggedIn);
+                    reject(isLoggedIn);
                     return;
                 }
 
@@ -127,10 +133,11 @@ class AuthController {
                         status: true,
                         msg: "You are authorized."
                     });
-                    
+
                 } else {
                     reject({
                         status: false,
+                        type: "perm",
                         msg: "You don't have permissions to perform this action!."
                     });
                 }
@@ -138,6 +145,7 @@ class AuthController {
                 console.log(e);
                 reject({
                     status: false,
+                    type: "server",
                     msg: "Server Error!. Please check console logs."
                 });
             }
