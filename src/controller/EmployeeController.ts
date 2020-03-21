@@ -2,11 +2,11 @@ import { getManager, getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
 
 class EmployeeController {
-	static async getOne({ number }) {
+	static async getOne({ id }) {
 
-		// search for an employee with given employee number
+		// search for an employee with given employee id
 		const employee = await getRepository(Employee).find({
-			number: number
+			id: id
 		}).catch(e => {
 			console.log(e);
 			throw {
