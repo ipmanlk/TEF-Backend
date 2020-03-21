@@ -29,13 +29,14 @@ class EmployeeController {
 				msg: "Unable to find an employee with that employee number."
 			};
 		}
-
-
 	}
 
 	static async getAll() {
 		// get all employees
-		const employees = await getManager().find(Employee).catch(e => {
+		const employees = await getRepository(Employee).find({
+			select:["id", "number", "fullName", "callingName", "dobirth", "nic", "address", "mobile", "land", "doassignment", "genderId", "designationId", "civilStatusId", "employeeStatusId" ],
+			relations: ["gender", "designation", "civilStatus", "employeeStatus"]
+		}).catch(e => {
 			throw {
 				status: false,
 				type: "server",
