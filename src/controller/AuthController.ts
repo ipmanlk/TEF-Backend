@@ -9,58 +9,58 @@ import { getRepository, getConnection } from "typeorm";
 const crypto = require("crypto");
 
 class AuthController {
-    static logIn(session, { username, password }) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const hashedPass = crypto.createHash("sha512").update(`${password}${process.env.SALT}`).digest("hex");
-                const user = await getRepository(User).findOne({
-                    where: {
-                        username: username
-                    },
-                    relations: ["role"]
-                });
+    static async logIn(session, { username, password }) {
 
-                // if user is not found
-                if (user == undefined) {
-                    reject({
-                        status: false,
-                        type: "input",
-                        msg: "Unable to find a user with that username!"
-                    });
-                    return;
-                }
+        // create hashed password using salt in .env
+        const hashedPass = crypto.createHash("sha512").update(`${password}${process.env.SALT}`).digest("hex");
 
-                // check password
-                if (user.password !== hashedPass) {
-                    reject({
-                        status: false,
-                        type: "input",
-                        msg: "Password you provided is wrong!."
-                    });
-                    return;
-                }
-
-                // create session
-                session.username = username;
-                session.logged = true;
-                session.role = user.role
-
-                // resolve promise
-                resolve({
-                    status: true,
-                    msg: "You have been logged in!.",
-                    data: user.role
-                });
-
-            } catch (e) {
-                reject({
-                    status: false,
-                    type: "server",
-                    msg: "Server Error!. Please check console logs."
-                });
-                console.log(e);
+        // find user with the given username
+        let user;
+        try {
+            user = await getRepository(User).findOne({
+                where: {
+                    username: username
+                },
+                relations: ["role"]
+            });
+        } catch (e) {
+            console.log(e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check console logs."
             }
-        })
+        }
+
+        // if user is not found
+        if (user == undefined) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Unable to find a user with that username!"
+            };
+        }
+
+        // check password
+        if (user.password !== hashedPass) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Password you provided is wrong!."
+            };
+        }
+
+        // create session
+        session.username = username;
+        session.logged = true;
+        session.role = user.role
+
+        // return login success msg and user role name
+        return {
+            status: true,
+            msg: "You have been logged in!.",
+            data: user.role
+        }
     }
 
     static isLoggedIn(session) {
@@ -94,62 +94,64 @@ class AuthController {
         }
     }
 
-    static isAuthorized(session, moduleName, operationName) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                // first check user is logged in
-                const isLoggedIn = AuthController.isLoggedIn(session);
+    static async isAuthorized(session, moduleName, operationName) {
 
-                if (!isLoggedIn.status) {
-                    reject(isLoggedIn);
-                    return;
-                }
+        // first check if user is logged in
+        const isLoggedIn = AuthController.isLoggedIn(session);
 
-                // find module 
-                const module = await getRepository(Module).findOne({
-                    name: moduleName
-                });
+        if (!isLoggedIn.status) {
+            throw isLoggedIn;
+        }
 
-                // get privilage for module and role
-                const privilage = await getRepository(Privilage).findOne({
-                    moduleId: module.id,
-                    roleId: session.role.id
-                });
+        // find module and privilages using "user role" in session
+        let module, privilage;
 
-                // check privilage 
-                // 0 0 0 0 -> C R U D
-                const permissionDigits = privilage.permission.split("");
+        try {
+            // find module 
+            module = await getRepository(Module).findOne({
+                name: moduleName
+            });
 
-                // create permission object
-                const permissions = {
-                    CREATE: parseInt(permissionDigits[0]),
-                    READ: parseInt(permissionDigits[1]),
-                    UPDATE: parseInt(permissionDigits[2]),
-                    DELETE: parseInt(permissionDigits[3])
-                }
+            // get privilage for module and role
+            privilage = await getRepository(Privilage).findOne({
+                moduleId: module.id,
+                roleId: session.role.id
+            });
 
-                if (permissions[operationName] == 1) {
-                    resolve({
-                        status: true,
-                        msg: "You are authorized."
-                    });
-
-                } else {
-                    reject({
-                        status: false,
-                        type: "perm",
-                        msg: "You don't have permissions to perform this action!."
-                    });
-                }
-            } catch (e) {
-                console.log(e);
-                reject({
-                    status: false,
-                    type: "server",
-                    msg: "Server Error!. Please check console logs."
-                });
+        } catch (e) {
+            console.log(e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check console logs."
             }
-        });
+        }
+
+
+        // check privilage 
+        // 0 0 0 0 -> C R U D
+        const permissionDigits = privilage.permission.split("");
+
+        // create permission object
+        const permissions = {
+            CREATE: parseInt(permissionDigits[0]),
+            READ: parseInt(permissionDigits[1]),
+            UPDATE: parseInt(permissionDigits[2]),
+            DELETE: parseInt(permissionDigits[3])
+        }
+
+        if (permissions[operationName] == 1) {
+            return {
+                status: true,
+                msg: "You are authorized."
+            };
+        } else {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permissions to perform this action!."
+            };
+        }
     }
 }
 
