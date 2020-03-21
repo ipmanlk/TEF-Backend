@@ -16,21 +16,20 @@ class AuthController {
 
         // find user with the given username
         let user;
-        try {
-            user = await getRepository(User).findOne({
-                where: {
-                    username: username
-                },
-                relations: ["role"]
-            });
-        } catch (e) {
+
+        user = await getRepository(User).findOne({
+            where: {
+                username: username
+            },
+            relations: ["role"]
+        }).catch(e => {
             console.log(e);
             throw {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check console logs."
             }
-        }
+        });
 
         // if user is not found
         if (user == undefined) {
@@ -126,7 +125,6 @@ class AuthController {
                 msg: "Server Error!. Please check console logs."
             }
         }
-
 
         // check privilage 
         // 0 0 0 0 -> C R U D
