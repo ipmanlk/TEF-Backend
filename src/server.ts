@@ -20,7 +20,7 @@ import { createConnection } from "typeorm";
 import * as express from "express";
 import * as session from "express-session";
 import * as bodyParser from "body-parser";
-import * as formData from "express-form-data";
+import * as formidable from "formidable";
 
 /* 
 =====================================================================================
@@ -55,29 +55,14 @@ Express.js
 // Express.js: Initialize
 const app = express();
 
+// Express.js: Formidable for parsing form data
+const form = formidable({ multiples: true });
+
 // Express.js: Parse json request bodies
 app.use(bodyParser.json());
 
 // Express.js: Parse urlencoded request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Express.js: Options for multipart form data
-const options = {
-   uploadDir: os.tmpdir(),
-   autoClean: true
- };
-  
-// Express.js: parse data with connect-multiparty. 
- app.use(formData.parse(options));
-
-// Express.js: delete from the request all empty files (size == 0)
- app.use(formData.format());
-
-// Express.js: change the file objects to fs.ReadStream 
- app.use(formData.stream());
-
-// Express.js: union the body and the files
-app.use(formData.union());
 
 app.use(session({
    secret: process.env.SESSION_SECRET,
@@ -131,10 +116,16 @@ app.route("/api/employee")
          .then(r => res.send(r))
          .catch(e => res.send(e));
    })
-   .post((req, res) => {      
-      EmployeeController.save(req.body)
+   .post((req, res, next) => {     
+      form.parse(req, (err, fields, files) => {
+         if (err) {
+           next(err);
+           return;
+         }
+         EmployeeController.save({...fields, ...files})
          .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .catch(e => res.send(e));   
+       });
    });
 
 app.route("/api/employees")

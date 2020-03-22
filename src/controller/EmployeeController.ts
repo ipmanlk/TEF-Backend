@@ -65,7 +65,7 @@ class EmployeeController {
 
 		employee.photo = (photoBuffer as Buffer);
 
-		const employees = await getRepository(Employee).save(employee).catch(e => {
+		await getRepository(Employee).save(employee).catch(e => {
 			console.log(e);
 			throw {
 				status: false,
