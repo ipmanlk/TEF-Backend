@@ -12,15 +12,11 @@ Libraries
 =====================================================================================
 */
 
-// Libraries: Default
-import * as os from "os";
-
 // Libraries: 3rd Party
 import { createConnection } from "typeorm";
 import * as express from "express";
 import * as session from "express-session";
 import * as bodyParser from "body-parser";
-import * as formidable from "formidable";
 
 /* 
 =====================================================================================
@@ -30,7 +26,15 @@ Controllers
 
 import AuthController from "./controller/AuthController";
 import EmployeeController from "./controller/EmployeeController";
-import RegExController from "./controller/RegExController";
+
+/* 
+=====================================================================================
+Utilities
+=====================================================================================
+*/
+
+import RegexPatternUtil from "./util/RegexPatternUtil";
+import FormDataUtil from "./util/FormDataUtil";
 
 /* 
 =====================================================================================
@@ -55,15 +59,13 @@ Express.js
 // Express.js: Initialize
 const app = express();
 
-// Express.js: Formidable for parsing form data
-const form = formidable({ multiples: true });
-
 // Express.js: Parse json request bodies
 app.use(bodyParser.json());
 
 // Express.js: Parse urlencoded request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Express.js: Sessions for login
 app.use(session({
    secret: process.env.SESSION_SECRET,
    saveUninitialized: false,
@@ -116,16 +118,13 @@ app.route("/api/employee")
          .then(r => res.send(r))
          .catch(e => res.send(e));
    })
-   .post((req, res, next) => {     
-      form.parse(req, (err, fields, files) => {
-         if (err) {
-           next(err);
-           return;
-         }
-         EmployeeController.save({...fields, ...files})
-         .then(r => res.send(r))
-         .catch(e => res.send(e));   
-       });
+
+   .post((req, res) => {
+      FormDataUtil.parseFromData(req).then((data) => {         
+         EmployeeController.save(data)
+            .then(r => res.send(r))
+            .catch(e => res.send(e));
+      }).catch(e => res.send(e));
    });
 
 app.route("/api/employees")
@@ -139,7 +138,7 @@ app.route("/api/employees")
 // Express.js: Route for regular expressions
 app.route("/api/regex/:MODULE")
    .get((req, res) => {
-      RegExController.getModuleRegexForUI(req.params.MODULE)
+      RegexPatternUtil.getModuleRegexForUI(req.params.MODULE)
          .then(r => res.send(r))
          .catch(e => res.send(e));
    });

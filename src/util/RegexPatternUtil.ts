@@ -1,5 +1,5 @@
 // Regular expressions for each module
-class RegExController {
+class RegexPatternUtil {
     private static REGEX = {
         EMPLOYEE: [
             {
@@ -90,7 +90,7 @@ class RegExController {
         }
 
         // check if module is valid
-        if (!RegExController.REGEX[module]) {
+        if (!this.REGEX[module]) {
             throw {
                 status: false,
                 type: "input",
@@ -99,7 +99,7 @@ class RegExController {
         }
 
         try {
-            let regex = RegExController.REGEX[module].map(rx => {
+            let regex = this.REGEX[module].map(rx => {
                 let regexString = rx.regex.toString();
                 regexString = regexString.substring(1, regexString.length - 1);
                 return {
@@ -123,4 +123,4 @@ class RegExController {
     }
 }
 
-export default RegExController
+export default RegexPatternUtil

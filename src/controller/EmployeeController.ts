@@ -1,6 +1,6 @@
-import * as  fs from "fs";
-import { getManager, getRepository } from "typeorm";
+import { getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
+import FileUtil from "../util/FileUtil";
 
 class EmployeeController {
 	static async getOne({ id }) {
@@ -54,7 +54,7 @@ class EmployeeController {
 	static async save(data) {
 		const { photo } = data;
 		let employee = data as Employee;
-		let photoBuffer = await this.readAsBuffer(photo.path).catch(e => {
+		let photoBuffer = await FileUtil.readFileAsBuffer(photo.path).catch(e => {
 			console.log(e);
 			throw {
 				status: false,
@@ -78,38 +78,6 @@ class EmployeeController {
 			status: true,
 			msg: "That employee has been added!"
 		};
-	}
-
-	private static readAsBuffer = (path) => {
-		return new Promise((resolve, reject) => {
-			// Store file data chunks in this array
-			let chunks = [];
-			// We can use this variable to store the final data
-			let fileBuffer;
-
-			// Read file into stream.Readable
-			let fileStream = fs.createReadStream(path);
-
-			// An error occurred with the stream
-			fileStream.once("error", (e) => {
-				// Be sure to handle this properly!
-				reject(e);
-			});
-
-			// File is done being read
-			fileStream.once("end", () => {
-				// create the final data Buffer from data chunks;
-				fileBuffer = Buffer.concat(chunks);
-				resolve(fileBuffer);
-			});
-
-			// Data is flushed from fileStream in chunks,
-			// this callback will be executed for each chunk
-			fileStream.on("data", (chunk) => {
-				chunks.push(chunk); // push data chunk to array
-			});
-
-		});
 	}
 }
 
