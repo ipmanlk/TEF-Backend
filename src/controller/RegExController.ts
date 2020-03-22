@@ -56,22 +56,22 @@ class RegExController {
             },
             {
                 "regex": /^[\d]+$/,
-                "attribute": "gender",
+                "attribute": "genderId",
                 "error": "Please select a valid gender!."
             },
             {
                 "regex": /^[\d]+$/,
-                "attribute": "civilStatus",
+                "attribute": "civilStatusId",
                 "error": "Please select a valid civil status!."
             },
             {
                 "regex": /^[\d]+$/,
-                "attribute": "designation",
+                "attribute": "designationId",
                 "error": "Please select a valid designation!."
             },
             {
                 "regex": /^[\d]+$/,
-                "attribute": "employeeStatus",
+                "attribute": "employeeStatusId",
                 "error": "Please select a valid employee status!."
             }
         ]
