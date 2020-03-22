@@ -3,6 +3,7 @@ require("dotenv").config();
 import { createConnection } from "typeorm";
 import AuthController from "./controller/AuthController";
 import EmployeeController from "./controller/EmployeeController";
+import RegExController from "./controller/RegExController";
 import * as express from "express";
 import * as session from "express-session";
 import * as bodyParser from "body-parser";
@@ -38,7 +39,7 @@ app.use((req, res, next) => {
       next();
       return;
    }
-   
+
    // check permission
    AuthController.isAuthorized(req.session, moduleName, req.method).then(() => {
       next();
@@ -80,6 +81,14 @@ app.route("/api/employees")
          .catch(e => res.send(e));
    });
 
+
+// route for all regexes
+app.route("/api/regex/:MODULE")
+   .get((req, res) => {
+      RegExController.getModuleRegexForUI(req.params.MODULE)
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
 
 // start listening
 app.listen(port, () => console.log(`App is running on ${port}!`));
