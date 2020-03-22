@@ -127,14 +127,14 @@ class AuthController {
         }
 
         // check privilage 
-        // 0 0 0 0 -> C R U D
+        // 0 0 0 0 -> POST GET PUT DELETE (CRUD)
         const permissionDigits = privilage.permission.split("");
 
         // create permission object
         const permissions = {
-            CREATE: parseInt(permissionDigits[0]),
-            READ: parseInt(permissionDigits[1]),
-            UPDATE: parseInt(permissionDigits[2]),
+            POST: parseInt(permissionDigits[0]),
+            GET: parseInt(permissionDigits[1]),
+            PUT: parseInt(permissionDigits[2]),
             DELETE: parseInt(permissionDigits[3])
         }
 

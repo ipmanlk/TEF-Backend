@@ -38,12 +38,9 @@ app.use((req, res, next) => {
       next();
       return;
    }
-
-   // find operation name
-   const operation = routeInfo.methodOperation[req.method];
-
+   
    // check permission
-   AuthController.isAuthorized(req.session, moduleName, operation).then(() => {
+   AuthController.isAuthorized(req.session, moduleName, req.method).then(() => {
       next();
    }).catch(e => {
       res.json(e);
