@@ -56,9 +56,23 @@ class EmployeeController {
 		// create employee object
 		const employee = data as Employee;
 
-		// read photo as buffer
 		const { photo } = data;
-		employee.photo = await FileUtil.readFile(photo.path).catch(e => {
+
+		// check photo file size
+		const photoSize = await FileUtil.getFileSize(photo.path, "KB").catch(e => {
+			throw e;
+		});
+
+		if (photoSize > 500) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Your photo should be smaller than 500KB."
+			}
+		}
+
+		// read photo as buffer
+		employee.photo = await FileUtil.readFileAsBuffer(photo.path).catch(e => {
 			throw e;
 		});
 
