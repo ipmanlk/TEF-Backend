@@ -6,7 +6,7 @@ class EmployeeController {
 	static async getOne({ id }) {
 
 		// search for an employee with given employee id
-		const employee = await getRepository(Employee).find({
+		const employee = await getRepository(Employee).findOne({
 			id: id
 		}).catch(e => {
 			console.log(e);
