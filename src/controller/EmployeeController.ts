@@ -52,19 +52,16 @@ class EmployeeController {
 	}
 
 	static async save(data) {
+		// create employee object
+		const employee = data as Employee;
+
+		// read photo as buffer
 		const { photo } = data;
-		let employee = data as Employee;
-		let photoBuffer = await FileUtil.readFileAsBuffer(photo.path).catch(e => {
-			console.log(e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
+		employee.photo = await FileUtil.readFile(photo.path).catch(e => {
+			throw e;
 		});
 
-		employee.photo = (photoBuffer as Buffer);
-
+		// save to db
 		await getRepository(Employee).save(employee).catch(e => {
 			console.log(e);
 			throw {
