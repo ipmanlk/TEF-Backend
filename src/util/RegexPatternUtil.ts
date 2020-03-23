@@ -79,7 +79,6 @@ class RegexPatternUtil {
 
 
     static async getModuleRegexForUI(module) {
-
         // check if module is provided
         if (!module) {
             throw {
@@ -101,12 +100,14 @@ class RegexPatternUtil {
         try {
             let regex = this.REGEX[module].map(rx => {
                 let regexString = rx.regex.toString();
-                regexString = regexString.substring(1, regexString.length - 1);
-                return {
-                    regex: regexString,
+                let fixedRegexString = regexString.substring(1, regexString.length - 1);
+                let vi = {
+                    regex: fixedRegexString,
                     attribute: rx.attribute,
                     error: rx.error
-                }
+                };
+                if (rx.optional) vi["optional"] = true;
+                return vi;
             });
             return {
                 status: true,
