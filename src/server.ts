@@ -1,6 +1,6 @@
 /* 
 =====================================================================================
-DOTENV: Load settings from .env to process.env
+DOTENV: Load settings from .env to process.env (see sample.env)
 =====================================================================================
 */
 
@@ -16,7 +16,6 @@ Libraries
 import { createConnection } from "typeorm";
 import * as express from "express";
 import * as session from "express-session";
-import * as bodyParser from "body-parser";
 
 /* 
 =====================================================================================
@@ -60,10 +59,7 @@ Express.js
 const app = express();
 
 // Express.js: Parse json request bodies
-app.use(bodyParser.json());
-
-// Express.js: Parse urlencoded request bodies
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Express.js: Sessions for login
 app.use(session({
