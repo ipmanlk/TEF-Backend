@@ -35,9 +35,6 @@ export class Employee {
   @Column("mediumblob", { name: "photo", nullable: true })
   photo: Buffer | null;
 
-  @Column("date", { name: "dobirth", nullable: true })
-  dobirth: string | null;
-
   @Column("char", { name: "nic", nullable: true, length: 12 })
   nic: string | null;
 

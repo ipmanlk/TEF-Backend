@@ -35,7 +35,7 @@ class EmployeeController {
 	static async getAll() {
 		// get all employees
 		const employees = await getRepository(Employee).find({
-			select: ["id", "number", "fullName", "callingName", "dobirth", "nic", "address", "mobile", "land", "doassignment", "genderId", "designationId", "civilStatusId", "employeeStatusId"],
+			select: ["id", "number", "fullName", "callingName", "nic", "address", "mobile", "land", "doassignment", "genderId", "designationId", "civilStatusId", "employeeStatusId"],
 			relations: ["gender", "designation", "civilStatus", "employeeStatus"]
 		}).catch(e => {
 			console.log(e);
