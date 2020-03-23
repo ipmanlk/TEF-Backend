@@ -25,6 +25,10 @@ Controllers
 
 import AuthController from "./controller/AuthController";
 import EmployeeController from "./controller/EmployeeController";
+import CivilStatusController from "./controller/CivilStatusController";
+import DesignationController from "./controller/DesignationController";
+import EmployeeStatusController from "./controller/EmployeeStatusController";
+import GenderController from "./controller/GenderController";
 
 /* 
 =====================================================================================
@@ -116,7 +120,7 @@ app.route("/api/employee")
    })
 
    .post((req, res) => {
-      FormDataUtil.parseFromData(req).then((data) => {         
+      FormDataUtil.parseFromData(req).then((data) => {
          EmployeeController.save(data)
             .then(r => res.send(r))
             .catch(e => res.send(e));
@@ -130,6 +134,35 @@ app.route("/api/employees")
          .catch(e => res.send(e));
    });
 
+
+app.route("/api/employee/civil_status")
+   .get((req, res) => {
+      CivilStatusController.getAll()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
+
+app.route("/api/employee/designation")
+   .get((req, res) => {
+      DesignationController.getAll()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
+
+
+app.route("/api/employee/gender")
+   .get((req, res) => {
+      GenderController.getAll()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
+
+app.route("/api/employee/employee_status")
+   .get((req, res) => {
+      EmployeeStatusController.getAll()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
 
 // Express.js: Route for regular expressions
 app.route("/api/regex/:MODULE")
