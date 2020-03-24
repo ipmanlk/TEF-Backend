@@ -72,7 +72,7 @@ app.use(session({
    saveUninitialized: false,
    resave: false
 }));
-
+ 
 // Express.js: check permissions for incoming requests
 const routeInfo = require("./routeInfo.json");
 app.use((req, res, next) => {
@@ -121,8 +121,14 @@ app.route("/api/employee")
          .catch(e => res.send(e));
    })
 
-   .post((req, res) => {
+   .post((req, res) => {      
       EmployeeController.save(req.body.data)         
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   })
+
+   .put((req, res) => {
+      EmployeeController.update(req.body.data)         
          .then(r => res.send(r))
          .catch(e => res.send(e));
    });
