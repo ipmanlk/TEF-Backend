@@ -58,17 +58,17 @@ class EmployeeController {
 		// extract photo
 		const { photo } = data;
 
-		// calculate photo size in kb
-		const photoSize = photo.length / 999;
+		// // calculate photo size in kb
+		// const photoSize = photo.length / 999;
 
-		if (photoSize > 500) {
-			throw {
-				status: false,
-				type: "input",
-				msg: "Your photo should be smaller than 500KB."
-			}
-		}
-		
+		// if (photoSize > 500) {
+		// 	throw {
+		// 		status: false,
+		// 		type: "input",
+		// 		msg: "Your photo should be smaller than 500KB."
+		// 	}
+		// }
+
 		// read photo as buffer
 		const decodedBase64 = this.decodeBase64Image(photo);
 		employee.photo = decodedBase64.data;
@@ -86,6 +86,46 @@ class EmployeeController {
 		return {
 			status: true,
 			msg: "That employee has been added!"
+		};
+	}
+
+	static async update(data) {
+		// create employee object
+		const editedEmployee = data as Employee;
+
+		// check if employee is present with the given id
+		const selectedEmployee = await getRepository(Employee).findOne(editedEmployee.id);
+		
+		if (!selectedEmployee) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "That employee doesn't exist in our database!."
+			}
+		}
+
+		// check if photo has changed
+		if (data.photo == false) {
+			editedEmployee.photo = selectedEmployee.photo;
+		} else {
+			// read photo as buffer
+			const decodedBase64 = this.decodeBase64Image(editedEmployee.photo);
+			editedEmployee.photo = decodedBase64.data;
+		}
+
+		// update the employee
+		await getRepository(Employee).save(editedEmployee).catch(e => {
+			console.log(e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		return {
+			status: true,
+			msg: "That employee has been updated!"
 		};
 	}
 
