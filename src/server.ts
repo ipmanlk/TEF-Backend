@@ -37,7 +37,6 @@ Utilities
 */
 
 import RegexPatternUtil from "./util/RegexPatternUtil";
-import FormDataUtil from "./util/FormDataUtil";
 
 /* 
 =====================================================================================
@@ -63,7 +62,9 @@ Express.js
 const app = express();
 
 // Express.js: Parse json request bodies
-app.use(express.json());
+app.use(express.json({
+   limit: "8000kb"
+}));
 
 // Express.js: Sessions for login
 app.use(session({
@@ -102,7 +103,8 @@ app.use((req, res, next) => {
 });
 
 // Express.js: Folder with static HTML files to server the user
-app.use("/", express.static(`${__dirname}/../public`));
+app.use("/", express.static(`${__dirname}/../../public`));
+
 
 // Express.js: Routes for API calls
 app.route("/api/login")
@@ -120,11 +122,9 @@ app.route("/api/employee")
    })
 
    .post((req, res) => {
-      FormDataUtil.parseFromData(req).then((data) => {
-         EmployeeController.save(data)
-            .then(r => res.send(r))
-            .catch(e => res.send(e));
-      }).catch(e => res.send(e));
+      EmployeeController.save(req.body.data)         
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
    });
 
 app.route("/api/employees")

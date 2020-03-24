@@ -1,6 +1,5 @@
 import { getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
-import FileUtil from "../util/FileUtil";
 
 class EmployeeController {
 	static async getOne({ id }) {
@@ -56,12 +55,11 @@ class EmployeeController {
 		// create employee object
 		const employee = data as Employee;
 
+		// extract photo
 		const { photo } = data;
 
-		// check photo file size
-		const photoSize = await FileUtil.getFileSize(photo.path, "KB").catch(e => {
-			throw e;
-		});
+		// calculate photo size in kb
+		const photoSize = photo.length / 999;
 
 		if (photoSize > 500) {
 			throw {
@@ -72,9 +70,7 @@ class EmployeeController {
 		}
 
 		// read photo as buffer
-		employee.photo = await FileUtil.readFileAsBuffer(photo.path).catch(e => {
-			throw e;
-		});
+		employee.photo = Buffer.from(photo);
 
 		// save to db
 		await getRepository(Employee).save(employee).catch(e => {
