@@ -79,9 +79,9 @@ if (process.env.PRODUCTION == "false") {
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       next();
-    });
+   });
 }
- 
+
 // Express.js: check permissions for incoming requests
 const routeInfo = require("./routeInfo.json");
 app.use((req, res, next) => {
@@ -116,12 +116,18 @@ app.use("/", express.static(`${__dirname}/../../public`));
 
 
 // Express.js: Routes for API calls
+
+//#region : authentication endpoints
 app.route("/api/login")
    .post((req, res) => {
       AuthController.logIn(req.session, req.body.data)
          .then(r => res.send(r))
          .catch(e => res.send(e));
    });
+
+//#endregion
+
+//#region : employee endpoints
 
 app.route("/api/employee")
    .get((req, res) => {
@@ -130,14 +136,14 @@ app.route("/api/employee")
          .catch(e => res.send(e));
    })
 
-   .post((req, res) => {      
-      EmployeeController.save(req.body.data)         
+   .post((req, res) => {
+      EmployeeController.save(req.body.data)
          .then(r => res.send(r))
          .catch(e => res.send(e));
    })
 
    .put((req, res) => {
-      EmployeeController.update(req.body.data)         
+      EmployeeController.update(req.body.data)
          .then(r => res.send(r))
          .catch(e => res.send(e));
    });
@@ -179,6 +185,16 @@ app.route("/api/employee/employee_status")
          .catch(e => res.send(e));
    });
 
+app.route("/api/employee/next_number")
+   .get((req, res) => {
+      EmployeeController.getNextNumber()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
+
+//#endregion
+
+//#region : misc endpoints
 // Express.js: Route for regular expressions
 app.route("/api/regex/:MODULE")
    .get((req, res) => {
@@ -186,6 +202,8 @@ app.route("/api/regex/:MODULE")
          .then(r => res.send(r))
          .catch(e => res.send(e));
    });
+
+//#endregion
 
 // Express.js: Start the server
 app.listen(process.env.PORT, () => console.log(`Server is running on ${process.env.PORT}!`));

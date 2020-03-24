@@ -95,7 +95,7 @@ class EmployeeController {
 
 		// check if employee is present with the given id
 		const selectedEmployee = await getRepository(Employee).findOne(editedEmployee.id);
-		
+
 		if (!selectedEmployee) {
 			throw {
 				status: false,
@@ -127,6 +127,33 @@ class EmployeeController {
 			status: true,
 			msg: "That employee has been updated!"
 		};
+	}
+
+	static async getNextNumber() {
+		// get latest employee number
+		const employeeData = await getRepository(Employee).findOne(
+			{ select: ["number"], order: { number: "DESC" } }
+		).catch(e => {
+			console.log(e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		// parse it to int
+		const currentNumber = parseInt(employeeData.number);
+		
+		// add one and format to 4 digits
+		const nextNumber = (currentNumber + 1).toString().padStart(4, "0");
+
+		return {
+			status: true,
+			data: {
+				nextNumber
+			}
+		}
 	}
 
 	static decodeBase64Image(dataString) {
