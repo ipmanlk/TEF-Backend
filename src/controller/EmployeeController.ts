@@ -68,9 +68,10 @@ class EmployeeController {
 				msg: "Your photo should be smaller than 500KB."
 			}
 		}
-
+		
 		// read photo as buffer
-		employee.photo = Buffer.from(photo);
+		const decodedBase64 = this.decodeBase64Image(photo);
+		employee.photo = decodedBase64.data;
 
 		// save to db
 		await getRepository(Employee).save(employee).catch(e => {
@@ -86,6 +87,24 @@ class EmployeeController {
 			status: true,
 			msg: "That employee has been added!"
 		};
+	}
+
+	static decodeBase64Image(dataString) {
+		const matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+		const decodedBase64 = {} as any;
+
+		if (matches.length !== 3) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Please select a valid image!."
+			}
+		}
+
+		decodedBase64.type = matches[1];
+		decodedBase64.data = Buffer.from(matches[2], "base64");
+
+		return decodedBase64;
 	}
 }
 
