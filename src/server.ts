@@ -72,6 +72,15 @@ app.use(session({
    saveUninitialized: false,
    resave: false
 }));
+
+// enable CORS on development enviroment
+if (process.env.PRODUCTION == "false") {
+   app.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+    });
+}
  
 // Express.js: check permissions for incoming requests
 const routeInfo = require("./routeInfo.json");
