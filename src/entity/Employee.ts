@@ -14,6 +14,7 @@ import { Gender } from "./Gender";
 import { OperationLog } from "./OperationLog";
 import { User } from "./User";
 
+@Index("number_UNIQUE", ["number"], { unique: true })
 @Index("fk_employee_gender_idx", ["genderId"], {})
 @Index("fk_employee_designation1_idx", ["designationId"], {})
 @Index("fk_employee_civilstatus1_idx", ["civilStatusId"], {})
@@ -23,7 +24,7 @@ export class Employee {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("char", { name: "number", nullable: true, length: 4 })
+  @Column("char", { name: "number", nullable: true, unique: true, length: 4 })
   number: string | null;
 
   @Column("varchar", { name: "full_name", nullable: true, length: 150 })
