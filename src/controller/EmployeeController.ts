@@ -72,10 +72,16 @@ class EmployeeController {
 		// read photo as buffer
 		const decodedBase64 = this.decodeBase64Image(photo);
 		employee.photo = decodedBase64.data;
-
+		delete employee.photo;
 		// save to db
 		await getRepository(Employee).save(employee).catch(e => {
-			console.log(e);
+			if (e.code == "ER_DUP_ENTRY") {
+				throw {
+					status: false,
+					type: "input",
+					msg: "Entry with that employee number already exists!."
+				}
+			}
 			throw {
 				status: false,
 				type: "server",
@@ -129,6 +135,34 @@ class EmployeeController {
 		};
 	}
 
+	static async delete({ id }) {
+		// find employee with the given id
+		const employee = await getRepository(Employee).findOne({ id: id }).catch(e => {
+			console.log(e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		if (!employee) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "That employee doesn't exist in our database!."
+			}
+		}
+
+		// delete the employee
+		await getRepository(Employee).delete(employee);
+
+		return {
+			status: true,
+			msg: "That employee has been deleted!"
+		};
+	}
+
 	static async getNextNumber() {
 		// get latest employee number
 		const employeeData = await getRepository(Employee).findOne(
@@ -144,7 +178,7 @@ class EmployeeController {
 
 		// parse it to int
 		const currentNumber = parseInt(employeeData.number);
-		
+
 		// add one and format to 4 digits
 		const nextNumber = (currentNumber + 1).toString().padStart(4, "0");
 
