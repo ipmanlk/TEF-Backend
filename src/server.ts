@@ -130,20 +130,26 @@ app.route("/api/login")
 //#region : employee endpoints
 
 app.route("/api/employee")
+   .post((req, res) => {      
+      EmployeeController.save(req.body.data)
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   })
+
    .get((req, res) => {
       EmployeeController.getOne(req.query.data)
          .then(r => res.send(r))
          .catch(e => res.send(e));
    })
 
-   .post((req, res) => {
-      EmployeeController.save(req.body.data)
+   .put((req, res) => {
+      EmployeeController.update(req.body.data)
          .then(r => res.send(r))
          .catch(e => res.send(e));
    })
 
-   .put((req, res) => {
-      EmployeeController.update(req.body.data)
+   .delete((req, res) => {
+      EmployeeController.delete(req.body.data)
          .then(r => res.send(r))
          .catch(e => res.send(e));
    });
