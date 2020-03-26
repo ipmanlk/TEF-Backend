@@ -117,3 +117,6 @@ dist
 
 !sample.env
 nodemon.json
+
+# ignore vscode http requests folder
+http
