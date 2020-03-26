@@ -4,7 +4,7 @@ import { CivilStatus } from "../entity/CivilStatus";
 class CivilStatusController {
     static async getAll() {
         const civilStatuses = await getManager().find(CivilStatus).catch(e => {
-            console.log(e);
+            console.log(e.code, e);
             throw {
 				status: false,
 				type: "server",

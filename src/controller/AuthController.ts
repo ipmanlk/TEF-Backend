@@ -23,7 +23,7 @@ class AuthController {
             },
             relations: ["role"]
         }).catch(e => {
-            console.log(e);
+            console.log(e.code, e);
             throw {
                 status: false,
                 type: "server",
@@ -118,7 +118,7 @@ class AuthController {
             });
 
         } catch (e) {
-            console.log(e);
+            console.log(e.code, e);
             throw {
                 status: false,
                 type: "server",
