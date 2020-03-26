@@ -8,7 +8,7 @@ class EmployeeController {
 		const employee = await getRepository(Employee).findOne({
 			id: id
 		}).catch(e => {
-			console.log(e);
+			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
@@ -37,7 +37,7 @@ class EmployeeController {
 			select: ["id", "number", "fullName", "callingName", "nic", "address", "mobile", "land", "doassignment", "genderId", "designationId", "civilStatusId", "employeeStatusId"],
 			relations: ["gender", "designation", "civilStatus", "employeeStatus"]
 		}).catch(e => {
-			console.log(e);
+			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
@@ -72,9 +72,11 @@ class EmployeeController {
 		// read photo as buffer
 		const decodedBase64 = this.decodeBase64Image(photo);
 		employee.photo = decodedBase64.data;
-		delete employee.photo;
+
 		// save to db
 		await getRepository(Employee).save(employee).catch(e => {
+			console.log(e.code, e);
+
 			if (e.code == "ER_DUP_ENTRY") {
 				throw {
 					status: false,
@@ -100,7 +102,14 @@ class EmployeeController {
 		const editedEmployee = data as Employee;
 
 		// check if employee is present with the given id
-		const selectedEmployee = await getRepository(Employee).findOne(editedEmployee.id);
+		const selectedEmployee = await getRepository(Employee).findOne(editedEmployee.id).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
 
 		if (!selectedEmployee) {
 			throw {
@@ -121,7 +130,7 @@ class EmployeeController {
 
 		// update the employee
 		await getRepository(Employee).save(editedEmployee).catch(e => {
-			console.log(e);
+			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
@@ -138,7 +147,7 @@ class EmployeeController {
 	static async delete({ id }) {
 		// find employee with the given id
 		const employee = await getRepository(Employee).findOne({ id: id }).catch(e => {
-			console.log(e);
+			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
@@ -155,7 +164,14 @@ class EmployeeController {
 		}
 
 		// delete the employee
-		await getRepository(Employee).delete(employee);
+		await getRepository(Employee).delete(employee).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
 
 		return {
 			status: true,
@@ -168,7 +184,7 @@ class EmployeeController {
 		const employeeData = await getRepository(Employee).findOne(
 			{ select: ["number"], order: { number: "DESC" } }
 		).catch(e => {
-			console.log(e);
+			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
