@@ -1,5 +1,9 @@
+require("dotenv").config();
+
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { Employee } from "../entity/Employee";
+import { createHash } from "crypto";
 
 class UserController {
 	static async getOne({ id }) {
@@ -79,9 +83,45 @@ class UserController {
 		};
 	}
 
-	static async save(data) {
+	static async save(data, session) {
 		// create user object
 		const user = data as User;
+
+		// check employee id exists with given employee number
+		const employee = await getRepository(Employee).findOne({
+			number: data.number
+		}).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			};
+		});
+
+		// if employee is not found
+		if (employee == undefined) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Unable to find an employee with that number!"
+			};
+		}
+
+		user.employeeId = employee.id;
+
+		// hash the password
+		const hashedPass = createHash("sha512").update(`${user.password}${process.env.SALT}`).digest("hex");
+
+		// update user obj
+		user.password = hashedPass;
+
+		// TODO: get created emppoyee id from session
+		if (process.env.PRODUCTION == "false") {
+			user.employeeCreatedId = 1;
+		} else {
+			user.employeeCreatedId = session.user.employeeCreatedId;
+		}
 
 		// save to db
 		await getRepository(User).save(user).catch(e => {

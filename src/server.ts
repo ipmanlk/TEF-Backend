@@ -209,6 +209,12 @@ app.route("/api/user")
       UserController.getOne(req.query.data)
          .then(r => res.send(r))
          .catch(e => res.send(e));
+   })
+
+   .post((req, res) => {
+      UserController.save(req.body.data, req.session)
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
    });
 
 app.route("/api/users")
