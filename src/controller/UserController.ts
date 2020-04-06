@@ -6,8 +6,8 @@ class UserController {
 
 		// search for an entry with given id
 		const user = await getRepository(User).findOne({
-			select: ["id", "employeeId", "username", "userStatusId", "employeeCreatedId", "docreation", "description", "roleId"],
-			relations: ["userStatus", "role", "employeeCreated", "employee"],
+			select: ["id", "employeeId", "username", "userStatusId", "docreation", "description", "roleId"],
+			relations: ["employee"],
 			where: { id: id }
 		}).catch(e => {
 			console.log(e.code, e);
@@ -21,27 +21,14 @@ class UserController {
 		// check if entry exists
 		if (user !== undefined) {
 			// remove useless attributes
-			const userFiltered = {
-				id: user.id,
-				username: user.username,
-				employee: {
-					number: user.employee.number
-				},
-				employeeCreated: {
-					number: user.employeeCreated.number
-				},
-				role: {
-					name: user.role.name
-				},
-				docreation: user.docreation,
-				userStatus: {
-					name: user.userStatus.name
-				}
-			}
+			user.employee = {
+				id: user.employee.id,
+				number: user.employee.number
+			} as any;
 
 			return {
 				status: true,
-				data: userFiltered
+				data: user
 			};
 		} else {
 			throw {
