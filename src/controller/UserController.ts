@@ -123,6 +123,10 @@ class UserController {
 			user.employeeCreatedId = session.user.employeeCreatedId;
 		}
 
+
+		// set date of creation
+		user.docreation = new Date().toISOString().slice(0, 19).replace('T', ' ').split(" ")[0];
+
 		// save to db
 		await getRepository(User).save(user).catch(e => {
 			console.log(e.code, e);
