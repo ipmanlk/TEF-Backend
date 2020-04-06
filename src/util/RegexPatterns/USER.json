@@ -5,7 +5,7 @@
     "error": "Please provide a valid employee number!."
   },
   {
-    "regex": "/^[\\w\\s]{5, 15}$/",
+    "regex": "/^[\\w\\d]{5,15}$/",
     "attribute": "username",
     "error": "Please provide a valid username!."
   },
