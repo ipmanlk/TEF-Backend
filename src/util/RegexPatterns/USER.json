@@ -23,5 +23,11 @@
     "regex": "/^[\\d]+$/",
     "attribute": "userStatusId",
     "error": "Please select a valid user status!."
+  },
+  {
+    "regex": "/^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$/",
+    "attribute": "description",
+    "error": "Please provide a valid description!.",
+    "optional": true
   }
 ]
