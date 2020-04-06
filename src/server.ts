@@ -29,6 +29,9 @@ import CivilStatusController from "./controller/CivilStatusController";
 import DesignationController from "./controller/DesignationController";
 import EmployeeStatusController from "./controller/EmployeeStatusController";
 import GenderController from "./controller/GenderController";
+import UserController from "./controller/UserController";
+import UserStatusController from "./controller/UserStatusController";
+import RoleController from "./controller/RoleController";
 
 /* 
 =====================================================================================
@@ -130,7 +133,7 @@ app.route("/api/login")
 //#region : employee endpoints
 
 app.route("/api/employee")
-   .post((req, res) => {      
+   .post((req, res) => {
       EmployeeController.save(req.body.data)
          .then(r => res.send(r))
          .catch(e => res.send(e));
@@ -198,6 +201,36 @@ app.route("/api/employee/next_number")
          .catch(e => res.send(e));
    });
 
+//#endregion
+
+//#region : user endpoints
+app.route("/api/user")
+   .get((req, res) => {
+      UserController.getOne(req.query.data)
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
+
+app.route("/api/users")
+   .get((req, res) => {
+      UserController.getAll()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
+
+app.route("/api/user/role")
+   .get((req, res) => {
+      RoleController.getAll()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
+
+app.route("/api/user/user_status")
+   .get((req, res) => {
+      UserStatusController.getAll()
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   });
 //#endregion
 
 //#region : misc endpoints
