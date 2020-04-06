@@ -18,5 +18,10 @@
     "regex": "/^[\\d]+$/",
     "attribute": "roleId",
     "error": "Please select a valid role!."
+  },
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "userStatusId",
+    "error": "Please select a valid user status!."
   }
 ]
