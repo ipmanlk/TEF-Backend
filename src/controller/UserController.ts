@@ -6,7 +6,9 @@ class UserController {
 
 		// search for an entry with given id
 		const user = await getRepository(User).findOne({
-			id: id
+			select: ["id", "employeeId", "username", "userStatusId", "employeeCreatedId", "docreation", "description", "roleId"],
+			relations: ["userStatus", "role", "employeeCreated", "employee"],
+			where: { id: id }
 		}).catch(e => {
 			console.log(e.code, e);
 			throw {
@@ -18,9 +20,28 @@ class UserController {
 
 		// check if entry exists
 		if (user !== undefined) {
+			// remove useless attributes
+			const userFiltered = {
+				id: user.id,
+				username: user.username,
+				employee: {
+					number: user.employee.number
+				},
+				employeeCreated: {
+					number: user.employeeCreated.number
+				},
+				role: {
+					name: user.role.name
+				},
+				docreation: user.docreation,
+				userStatus: {
+					name: user.userStatus.name
+				}
+			}
+
 			return {
 				status: true,
-				data: user
+				data: userFiltered
 			};
 		} else {
 			throw {
@@ -33,7 +54,7 @@ class UserController {
 
 	static async getAll() {
 		const users = await getRepository(User).find({
-			select: ["id", "employeeId", "username","userStatusId", "employeeCreatedId", "docreation", "description", "roleId"],
+			select: ["id", "employeeId", "username", "userStatusId", "employeeCreatedId", "docreation", "description", "roleId"],
 			relations: ["userStatus", "role", "employeeCreated", "employee"]
 		}).catch(e => {
 			console.log(e.code, e);
@@ -44,26 +65,26 @@ class UserController {
 			};
 		});
 
-        // remove useless attributes
-        const usersFiltered = users.map(user => {
-            return {
-                id: user.id,
-                username: user.username,
-                employee: {
-                    number: user.employee.number
-                },
-                employeeCreated: {
-                    number: user.employeeCreated.number
-                },
-                role: {
-                    name: user.role.name
-                },
-                docreation: user.docreation,
-                userStatus: {
-                    name: user.userStatus.name
-                }
-            }
-        });
+		// remove useless attributes
+		const usersFiltered = users.map(user => {
+			return {
+				id: user.id,
+				username: user.username,
+				employee: {
+					number: user.employee.number
+				},
+				employeeCreated: {
+					number: user.employeeCreated.number
+				},
+				role: {
+					name: user.role.name
+				},
+				docreation: user.docreation,
+				userStatus: {
+					name: user.userStatus.name
+				}
+			}
+		});
 
 		return {
 			status: true,
@@ -71,51 +92,33 @@ class UserController {
 		};
 	}
 
-	// static async save(data) {
-	// 	// create user object
-	// 	const user = data as user;
+	static async save(data) {
+		// create user object
+		const user = data as User;
 
-	// 	// extract photo
-	// 	const { photo } = data;
+		// save to db
+		await getRepository(User).save(user).catch(e => {
+			console.log(e.code, e);
 
-	// 	// // calculate photo size in kb
-	// 	// const photoSize = photo.length / 999;
+			if (e.code == "ER_DUP_ENTRY") {
+				throw {
+					status: false,
+					type: "input",
+					msg: "Entry with that user id already exists!."
+				}
+			}
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
 
-	// 	// if (photoSize > 500) {
-	// 	// 	throw {
-	// 	// 		status: false,
-	// 	// 		type: "input",
-	// 	// 		msg: "Your photo should be smaller than 500KB."
-	// 	// 	}
-	// 	// }
-
-	// 	// read photo as buffer
-	// 	const decodedBase64 = this.decodeBase64Image(photo);
-	// 	user.photo = decodedBase64.data;
-
-	// 	// save to db
-	// 	await getRepository(user).save(user).catch(e => {
-	// 		console.log(e.code, e);
-
-	// 		if (e.code == "ER_DUP_ENTRY") {
-	// 			throw {
-	// 				status: false,
-	// 				type: "input",
-	// 				msg: "Entry with that user number already exists!."
-	// 			}
-	// 		}
-	// 		throw {
-	// 			status: false,
-	// 			type: "server",
-	// 			msg: "Server Error!. Please check logs."
-	// 		}
-	// 	});
-
-	// 	return {
-	// 		status: true,
-	// 		msg: "That user has been added!"
-	// 	};
-	// }
+		return {
+			status: true,
+			msg: "That user has been added!"
+		};
+	}
 
 	// static async update(data) {
 	// 	// create user object
