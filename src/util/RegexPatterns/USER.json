@@ -1,0 +1,22 @@
+[
+  {
+    "regex": "/^[\\d]{4}$/",
+    "attribute": "number",
+    "error": "Please provide a valid employee number!."
+  },
+  {
+    "regex": "/^[\\w\\s]{5, 15}$/",
+    "attribute": "username",
+    "error": "Please provide a valid username!."
+  },
+  {
+    "regex": "/^[\\w\\s\\d]{5,100}$/",
+    "attribute": "password",
+    "error": "Please provide a valid password!."
+  },
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "roleId",
+    "error": "Please select a valid role!."
+  }
+]
