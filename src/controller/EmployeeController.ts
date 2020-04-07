@@ -2,7 +2,15 @@ import { getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
 
 class EmployeeController {
-	static async getOne({ id }) {
+	static async get(data) {
+		if (data) {
+			return this.getOne(data);
+		} else {
+			return this.getAll();
+		}
+	}
+
+	private static async getOne({ id }) {
 
 		// search for an employee with given employee id
 		const employee = await getRepository(Employee).findOne({
@@ -31,7 +39,7 @@ class EmployeeController {
 		}
 	}
 
-	static async getAll() {
+	private static async getAll() {
 		// get all employees
 		const employees = await getRepository(Employee).find({
 			select: ["id", "number", "fullName", "callingName", "nic", "address", "mobile", "land", "doassignment", "genderId", "designationId", "civilStatusId", "employeeStatusId"],

@@ -85,7 +85,11 @@ if (process.env.PRODUCTION == "false") {
    });
 }
 
-// Express.js: check permissions for incoming requests
+/* 
+=====================================================================================
+Express.js : Authentication Middleware
+=====================================================================================
+*/
 const routeInfo = require("./routeInfo.json");
 app.use((req, res, next) => {
    // skip check for development enviroments
@@ -139,7 +143,7 @@ app.route("/api/employee")
    })
 
    .get((req, res) => {
-      EmployeeController.getOne(req.query.data)
+      EmployeeController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
@@ -156,13 +160,6 @@ app.route("/api/employee")
          .catch(e => res.json(e));
    });
 
-app.route("/api/employees")
-   .get((req, res) => {
-      EmployeeController.getAll()
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   });
-
 
 app.route("/api/employee/next_number")
    .get((req, res) => {
@@ -174,7 +171,7 @@ app.route("/api/employee/next_number")
 // Routes: User Routes
 app.route("/api/user")
    .get((req, res) => {
-      UserController.getOne(req.query.data)
+      UserController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
@@ -197,12 +194,6 @@ app.route("/api/user")
          .catch(e => res.json(e));
    });
 
-app.route("/api/users")
-   .get((req, res) => {
-      UserController.getAll()
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   });
 
 // Routes: Civil Status
 app.route("/api/civil_statuses")
@@ -253,9 +244,9 @@ app.route("/api/user_statuses")
    });
 
 // Routes: Misc Routes
-app.route("/api/regex/:MODULE")
+app.route("/api/regex")
    .get((req, res) => {
-      RegexPatternUtil.getModuleRegexForUI(req.params.MODULE)
+      RegexPatternUtil.getModuleRegexForUI(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });

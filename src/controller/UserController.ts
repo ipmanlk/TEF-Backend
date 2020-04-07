@@ -6,7 +6,15 @@ import { Employee } from "../entity/Employee";
 import { createHash } from "crypto";
 
 class UserController {
-	static async getOne({ id }) {
+	static async get(data) {
+		if (data) {
+			return this.getOne(data);
+		} else {
+			return this.getAll();
+		}
+	}
+
+	private static async getOne({ id }) {
 
 		// search for an entry with given id
 		const user = await getRepository(User).findOne({
@@ -43,7 +51,7 @@ class UserController {
 		}
 	}
 
-	static async getAll() {
+	private static async getAll() {
 		const users = await getRepository(User).find({
 			select: ["id", "employeeId", "username", "userStatusId", "employeeCreatedId", "docreation", "description", "roleId"],
 			relations: ["userStatus", "role", "employeeCreated", "employee"]
