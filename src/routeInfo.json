@@ -5,6 +5,6 @@
 
     "GENERAL": [
         "/api/genders",
-        "/api/civil_status"
+        "/api/civil_statuses"
     ]
 }

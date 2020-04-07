@@ -126,7 +126,7 @@ app.route("/api/login")
 
 
 // Routes:  Employee Routes
-app.route("/api/employee")
+app.route("/api/employees")
    .post((req, res) => {
       EmployeeController.save(req.body.data)
          .then(r => res.json(r))
@@ -152,7 +152,7 @@ app.route("/api/employee")
    });
 
 
-app.route("/api/employee/next_number")
+app.route("/api/employees/next_number")
    .get((req, res) => {
       EmployeeController.getNextNumber()
          .then(r => res.json(r))
@@ -160,7 +160,7 @@ app.route("/api/employee/next_number")
    });
 
 // Routes: User Routes
-app.route("/api/user")
+app.route("/api/users")
    .get((req, res) => {
       UserController.get(req.query.data)
          .then(r => res.json(r))
@@ -235,7 +235,7 @@ app.route("/api/user_statuses")
    });
 
 // Routes: Misc Routes
-app.route("/api/regex")
+app.route("/api/regexes")
    .get((req, res) => {
       RegexPatternUtil.getModuleRegexForUI(req.query.data)
          .then(r => res.json(r))
