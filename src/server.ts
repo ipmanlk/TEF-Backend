@@ -215,6 +215,18 @@ app.route("/api/user")
       UserController.save(req.body.data, req.session)
          .then(r => res.send(r))
          .catch(e => res.send(e));
+   })
+
+   .put((req, res) => {
+      UserController.update(req.body.data)
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
+   })
+
+   .delete((req, res) => {
+      UserController.delete(req.body.data)
+         .then(r => res.send(r))
+         .catch(e => res.send(e));
    });
 
 app.route("/api/users")

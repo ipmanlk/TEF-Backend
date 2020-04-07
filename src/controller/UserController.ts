@@ -151,87 +151,107 @@ class UserController {
 		};
 	}
 
-	// static async update(data) {
-	// 	// create user object
-	// 	const editeduser = data as user;
+	static async update(data) {
+		// create user object
+		const editeduser = data as User;
 
-	// 	// check if user is present with the given id
-	// 	const selecteduser = await getRepository(user).findOne(editeduser.id).catch(e => {
-	// 		console.log(e.code, e);
-	// 		throw {
-	// 			status: false,
-	// 			type: "server",
-	// 			msg: "Server Error!. Please check logs."
-	// 		}
-	// 	});
+		// check if user is present with the given id
+		const selecteduser = await getRepository(User).findOne(editeduser.id).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
 
-	// 	if (!selecteduser) {
-	// 		throw {
-	// 			status: false,
-	// 			type: "input",
-	// 			msg: "That user doesn't exist in our database!."
-	// 		}
-	// 	}
+		if (!selecteduser) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "That user doesn't exist in our database!."
+			}
+		}
 
-	// 	// check if photo has changed
-	// 	if (data.photo == false) {
-	// 		editeduser.photo = selecteduser.photo;
-	// 	} else {
-	// 		// read photo as buffer
-	// 		const decodedBase64 = this.decodeBase64Image(editeduser.photo);
-	// 		editeduser.photo = decodedBase64.data;
-	// 	}
+		// check employee id exists with given employee number
+		const employee = await getRepository(Employee).findOne({
+			number: data.employee.number
+		}).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			};
+		});
 
-	// 	// update the user
-	// 	await getRepository(user).save(editeduser).catch(e => {
-	// 		console.log(e.code, e);
-	// 		throw {
-	// 			status: false,
-	// 			type: "server",
-	// 			msg: "Server Error!. Please check logs."
-	// 		}
-	// 	});
+		// if employee is not found
+		if (employee == undefined) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Unable to find an employee with that number!"
+			};
+		}
 
-	// 	return {
-	// 		status: true,
-	// 		msg: "That user has been updated!"
-	// 	};
-	// }
+		editeduser.employeeId = employee.id;
 
-	// static async delete({ id }) {
-	// 	// find user with the given id
-	// 	const user = await getRepository(user).findOne({ id: id }).catch(e => {
-	// 		console.log(e.code, e);
-	// 		throw {
-	// 			status: false,
-	// 			type: "server",
-	// 			msg: "Server Error!. Please check logs."
-	// 		}
-	// 	});
+		// hash the password
+		const hashedPass = createHash("sha512").update(`${editeduser.password}${process.env.SALT}`).digest("hex");
 
-	// 	if (!user) {
-	// 		throw {
-	// 			status: false,
-	// 			type: "input",
-	// 			msg: "That user doesn't exist in our database!."
-	// 		}
-	// 	}
+		// update user obj
+		editeduser.password = hashedPass;
+		
+		// update the user
+		await getRepository(User).save(editeduser).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
 
-	// 	// delete the user
-	// 	await getRepository(user).delete(user).catch(e => {
-	// 		console.log(e.code, e);
-	// 		throw {
-	// 			status: false,
-	// 			type: "server",
-	// 			msg: "Server Error!. Please check logs."
-	// 		}
-	// 	});
+		return {
+			status: true,
+			msg: "That user has been updated!"
+		};
+	}
 
-	// 	return {
-	// 		status: true,
-	// 		msg: "That user has been deleted!"
-	// 	};
-	// }
+	static async delete({ id }) {
+		// find user with the given id
+		const user = await getRepository(User).findOne({ id: id }).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		if (!user) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "That user doesn't exist in our database!."
+			}
+		}
+
+		// delete the user
+		await getRepository(User).delete(user).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		return {
+			status: true,
+			msg: "That user has been deleted!"
+		};
+	}
 }
 
 export default UserController;
