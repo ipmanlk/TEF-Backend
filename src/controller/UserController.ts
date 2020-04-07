@@ -89,7 +89,7 @@ class UserController {
 
 		// check employee id exists with given employee number
 		const employee = await getRepository(Employee).findOne({
-			number: data.number
+			number: data.employee.number
 		}).catch(e => {
 			console.log(e.code, e);
 			throw {
@@ -106,10 +106,11 @@ class UserController {
 				type: "input",
 				msg: "Unable to find an employee with that number!"
 			};
-		}
+		}		
 
+		delete user.employee;
 		user.employeeId = employee.id;
-
+		
 		// hash the password
 		const hashedPass = createHash("sha512").update(`${user.password}${process.env.SALT}`).digest("hex");
 
