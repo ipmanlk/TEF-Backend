@@ -90,7 +90,7 @@ if (process.env.PRODUCTION == "false") {
 Express.js : Authentication Middleware
 =====================================================================================
 */
-const routeInfo = require("./routeInfo.json");
+
 app.use((req, res, next) => {
    // skip check for development enviroments
    if (process.env.PRODUCTION == "false") {
@@ -98,17 +98,8 @@ app.use((req, res, next) => {
       return;
    }
 
-   // find module for the given route
-   const moduleName = routeInfo.routeModuleName[req.path];
-
-   // skip if module not found
-   if (!moduleName) {
-      next();
-      return;
-   }
-
    // check permission and handle access
-   AuthController.isAuthorized(req.session, moduleName, req.method).then(() => {
+   AuthController.isAuthorized(req.session, req.path, req.method).then(() => {
       next();
    }).catch(e => {
       res.json(e);

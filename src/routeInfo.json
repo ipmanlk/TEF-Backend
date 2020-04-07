@@ -1,6 +1,10 @@
 {
-  "routeModuleName": {
-    "/api/employee": "EMPLOYEE",
-    "/api/employees": "EMPLOYEE"
-  }
+    "OPEN": [
+        "/api/login"
+    ],
+
+    "GENERAL": [
+        "/api/genders",
+        "/api/civil_status"
+    ]
 }

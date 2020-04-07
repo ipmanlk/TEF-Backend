@@ -93,7 +93,12 @@ class AuthController {
         }
     }
 
-    static async isAuthorized(session, moduleName, operationName) {
+    static async isAuthorized(session, route, operationName) {
+
+        const routeInfo = require("../routeInfo.json");
+        
+        // check if route is open
+        if (routeInfo.OPEN.includes(route)) return true;
 
         // first check if user is logged in
         const isLoggedIn = AuthController.isLoggedIn(session);
@@ -102,6 +107,12 @@ class AuthController {
             throw isLoggedIn;
         }
 
+        // check if route is general
+        if (routeInfo.GENERAL.includes(route)) return true;
+
+        // get module name from route
+        const moduleName = route.split("/")[2].toUpperCase();
+        
         // find module and privilages using "user role" in session
         let module, privilage;
 
