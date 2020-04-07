@@ -94,11 +94,8 @@ app.use((req, res, next) => {
       return;
    }
 
-   // extract the route from reqest url
-   const route = req.url.split("?")[0];
-
    // find module for the given route
-   const moduleName = routeInfo.routeModuleName[route];
+   const moduleName = routeInfo.routeModuleName[req.path];
 
    // skip if module not found
    if (!moduleName) {
@@ -118,149 +115,152 @@ app.use((req, res, next) => {
 app.use("/", express.static(`${__dirname}/../../public`));
 
 
-// Express.js: Routes for API calls
+/* 
+=====================================================================================
+Routes
+=====================================================================================
+*/
 
-//#region : authentication endpoints
+// Routes: Authentication Routes
 app.route("/api/login")
    .post((req, res) => {
       AuthController.logIn(req.session, req.body.data)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
-//#endregion
 
-//#region : employee endpoints
-
+// Routes:  Employee Routes
 app.route("/api/employee")
    .post((req, res) => {
       EmployeeController.save(req.body.data)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    })
 
    .get((req, res) => {
       EmployeeController.getOne(req.query.data)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    })
 
    .put((req, res) => {
       EmployeeController.update(req.body.data)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
       EmployeeController.delete(req.body.data)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
 app.route("/api/employees")
    .get((req, res) => {
       EmployeeController.getAll()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
-
-app.route("/api/employee/civil_status")
-   .get((req, res) => {
-      CivilStatusController.getAll()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
-   });
-
-app.route("/api/employee/designation")
-   .get((req, res) => {
-      DesignationController.getAll()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
-   });
-
-
-app.route("/api/employee/gender")
-   .get((req, res) => {
-      GenderController.getAll()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
-   });
-
-app.route("/api/employee/employee_status")
-   .get((req, res) => {
-      EmployeeStatusController.getAll()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
-   });
 
 app.route("/api/employee/next_number")
    .get((req, res) => {
       EmployeeController.getNextNumber()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
-//#endregion
-
-//#region : user endpoints
+// Routes: User Routes
 app.route("/api/user")
    .get((req, res) => {
       UserController.getOne(req.query.data)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    })
 
    .post((req, res) => {
       UserController.save(req.body.data, req.session)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    })
 
    .put((req, res) => {
       UserController.update(req.body.data)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
       UserController.delete(req.body.data)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
 app.route("/api/users")
    .get((req, res) => {
       UserController.getAll()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
-app.route("/api/user/role")
+// Routes: Civil Status
+app.route("/api/civil_statuses")
+   .get((req, res) => {
+      CivilStatusController.getAll()
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes: Designation
+app.route("/api/designations")
+   .get((req, res) => {
+      DesignationController.getAll()
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes: Gender
+app.route("/api/genders")
+   .get((req, res) => {
+      GenderController.getAll()
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes: Employee Status
+app.route("/api/employee_statuses")
+   .get((req, res) => {
+      EmployeeStatusController.getAll()
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes: Role
+app.route("/api/roles")
    .get((req, res) => {
       RoleController.getAll()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
-app.route("/api/user/user_status")
+// Routes: User Statuses
+app.route("/api/user_statuses")
    .get((req, res) => {
       UserStatusController.getAll()
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
-//#endregion
 
-//#region : misc endpoints
-// Express.js: Route for regular expressions
+// Routes: Misc Routes
 app.route("/api/regex/:MODULE")
    .get((req, res) => {
       RegexPatternUtil.getModuleRegexForUI(req.params.MODULE)
-         .then(r => res.send(r))
-         .catch(e => res.send(e));
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
-//#endregion
+
 
 // Express.js: Start the server
 app.listen(process.env.PORT, () => console.log(`Server is running on ${process.env.PORT}!`));
