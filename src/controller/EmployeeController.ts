@@ -1,12 +1,13 @@
 import { getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
+import { EmployeeDao } from "../dao/EmployeeDao";
 
 class EmployeeController {
 	static async get(data) {
-		if (data) {
+		if (data.id) {
 			return this.getOne(data);
 		} else {
-			return this.getAll();
+			return this.search(data);
 		}
 	}
 
@@ -39,18 +40,14 @@ class EmployeeController {
 		}
 	}
 
-	private static async getAll() {
-		// get all employees
-		const employees = await getRepository(Employee).find({
-			select: ["id", "number", "fullName", "callingName", "nic", "address", "mobile", "land", "doassignment", "genderId", "designationId", "civilStatusId", "employeeStatusId"],
-			relations: ["gender", "designation", "civilStatus", "employeeStatus"]
-		}).catch(e => {
+	static async search(data) {		
+		const employees = await EmployeeDao.search(data).catch(e => {
 			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
 				msg: "Server Error!. Please check logs."
-			};
+			}
 		});
 
 		return {
