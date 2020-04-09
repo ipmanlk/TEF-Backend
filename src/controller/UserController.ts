@@ -2,20 +2,20 @@ require("dotenv").config();
 
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { UserDao } from "../dao/UserDao";
 import { Employee } from "../entity/Employee";
 import { createHash } from "crypto";
 
 class UserController {
 	static async get(data) {
-		if (data) {
+		if (data.id) {
 			return this.getOne(data);
 		} else {
-			return this.getAll();
+			return this.search(data);
 		}
 	}
 
 	private static async getOne({ id }) {
-
 		// search for an entry with given id
 		const user = await getRepository(User).findOne({
 			select: ["id", "employeeId", "username", "userStatusId", "docreation", "description", "roleId"],
@@ -51,43 +51,19 @@ class UserController {
 		}
 	}
 
-	private static async getAll() {
-		const users = await getRepository(User).find({
-			select: ["id", "employeeId", "username", "userStatusId", "employeeCreatedId", "docreation", "description", "roleId"],
-			relations: ["userStatus", "role", "employeeCreated", "employee"]
-		}).catch(e => {
+	static async search(data) {		
+		const users = await UserDao.search(data).catch(e => {
 			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
 				msg: "Server Error!. Please check logs."
-			};
-		});
-
-		// remove useless attributes
-		const usersFiltered = users.map(user => {
-			return {
-				id: user.id,
-				username: user.username,
-				employee: {
-					number: user.employee.number
-				},
-				employeeCreated: {
-					number: user.employeeCreated.number
-				},
-				role: {
-					name: user.role.name
-				},
-				docreation: user.docreation,
-				userStatus: {
-					name: user.userStatus.name
-				}
 			}
 		});
 
 		return {
 			status: true,
-			data: usersFiltered
+			data: users
 		};
 	}
 
