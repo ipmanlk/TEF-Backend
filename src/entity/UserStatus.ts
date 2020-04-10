@@ -9,9 +9,6 @@ export class UserStatus {
   @Column("varchar", { name: "name", nullable: true, length: 45 })
   name: string | null;
 
-  @OneToMany(
-    () => User,
-    user => user.userStatus
-  )
+  @OneToMany(() => User, (user) => user.userStatus)
   users: User[];
 }

@@ -3,7 +3,7 @@ import {
   Entity,
   Index,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { OperationLog } from "./OperationLog";
 import { Privilage } from "./Privilage";
@@ -17,15 +17,9 @@ export class Module {
   @Column("varchar", { name: "name", nullable: true, unique: true, length: 45 })
   name: string | null;
 
-  @OneToMany(
-    () => OperationLog,
-    operationLog => operationLog.module
-  )
+  @OneToMany(() => OperationLog, (operationLog) => operationLog.module)
   operationLogs: OperationLog[];
 
-  @OneToMany(
-    () => Privilage,
-    privilage => privilage.module
-  )
+  @OneToMany(() => Privilage, (privilage) => privilage.module)
   privilages: Privilage[];
 }

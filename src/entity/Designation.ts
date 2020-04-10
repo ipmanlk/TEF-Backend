@@ -9,9 +9,6 @@ export class Designation {
   @Column("varchar", { name: "name", nullable: true, length: 45 })
   name: string | null;
 
-  @OneToMany(
-    () => Employee,
-    employee => employee.designation
-  )
+  @OneToMany(() => Employee, (employee) => employee.designation)
   employees: Employee[];
 }

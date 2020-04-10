@@ -5,7 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { SessionLog } from "./SessionLog";
 import { Employee } from "./Employee";
@@ -45,41 +45,34 @@ export class User {
   @Column("int", { name: "role_id" })
   roleId: number;
 
-  @OneToMany(
-    () => SessionLog,
-    sessionLog => sessionLog.user
-  )
+  @OneToMany(() => SessionLog, (sessionLog) => sessionLog.user)
   sessionLogs: SessionLog[];
 
-  @ManyToOne(
-    () => Employee,
-    employee => employee.users,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Employee, (employee) => employee.users, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "employee_created_id", referencedColumnName: "id" }])
   employeeCreated: Employee;
 
-  @ManyToOne(
-    () => Employee,
-    employee => employee.users2,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Employee, (employee) => employee.users2, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
-  @ManyToOne(
-    () => Role,
-    role => role.users,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Role, (role) => role.users, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "role_id", referencedColumnName: "id" }])
   role: Role;
 
-  @ManyToOne(
-    () => UserStatus,
-    userStatus => userStatus.users,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => UserStatus, (userStatus) => userStatus.users, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "user_status_id", referencedColumnName: "id" }])
   userStatus: UserStatus;
 }

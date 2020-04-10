@@ -10,15 +10,9 @@ export class Role {
   @Column("varchar", { name: "name", nullable: true, length: 45 })
   name: string | null;
 
-  @OneToMany(
-    () => Privilage,
-    privilage => privilage.role
-  )
+  @OneToMany(() => Privilage, (privilage) => privilage.role)
   privilages: Privilage[];
 
-  @OneToMany(
-    () => User,
-    user => user.role
-  )
+  @OneToMany(() => User, (user) => user.role)
   users: User[];
 }

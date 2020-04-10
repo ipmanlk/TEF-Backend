@@ -9,9 +9,6 @@ export class SessionAction {
   @Column("varchar", { name: "name", nullable: true, length: 45 })
   name: string | null;
 
-  @OneToMany(
-    () => SessionLog,
-    sessionLog => sessionLog.sessionAction
-  )
+  @OneToMany(() => SessionLog, (sessionLog) => sessionLog.sessionAction)
   sessionLogs: SessionLog[];
 }

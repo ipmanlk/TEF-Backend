@@ -5,7 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { CivilStatus } from "./CivilStatus";
 import { Designation } from "./Designation";
@@ -66,53 +66,41 @@ export class Employee {
   @Column("int", { name: "employee_status_id" })
   employeeStatusId: number;
 
-  @ManyToOne(
-    () => CivilStatus,
-    civilStatus => civilStatus.employees,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => CivilStatus, (civilStatus) => civilStatus.employees, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "civil_status_id", referencedColumnName: "id" }])
   civilStatus: CivilStatus;
 
-  @ManyToOne(
-    () => Designation,
-    designation => designation.employees,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Designation, (designation) => designation.employees, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "designation_id", referencedColumnName: "id" }])
   designation: Designation;
 
   @ManyToOne(
     () => EmployeeStatus,
-    employeeStatus => employeeStatus.employees,
+    (employeeStatus) => employeeStatus.employees,
     { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
   )
   @JoinColumn([{ name: "employee_status_id", referencedColumnName: "id" }])
   employeeStatus: EmployeeStatus;
 
-  @ManyToOne(
-    () => Gender,
-    gender => gender.employees,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Gender, (gender) => gender.employees, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "gender_id", referencedColumnName: "id" }])
   gender: Gender;
 
-  @OneToMany(
-    () => OperationLog,
-    operationLog => operationLog.employee
-  )
+  @OneToMany(() => OperationLog, (operationLog) => operationLog.employee)
   operationLogs: OperationLog[];
 
-  @OneToMany(
-    () => User,
-    user => user.employeeCreated
-  )
+  @OneToMany(() => User, (user) => user.employeeCreated)
   users: User[];
 
-  @OneToMany(
-    () => User,
-    user => user.employee
-  )
+  @OneToMany(() => User, (user) => user.employee)
   users2: User[];
 }

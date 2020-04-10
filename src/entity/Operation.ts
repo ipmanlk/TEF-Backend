@@ -9,9 +9,6 @@ export class Operation {
   @Column("varchar", { name: "name", nullable: true, length: 45 })
   name: string | null;
 
-  @OneToMany(
-    () => OperationLog,
-    operationLog => operationLog.operation
-  )
+  @OneToMany(() => OperationLog, (operationLog) => operationLog.operation)
   operationLogs: OperationLog[];
 }

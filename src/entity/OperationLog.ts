@@ -4,7 +4,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { Operation } from "./Operation";
 import { Employee } from "./Employee";
@@ -27,34 +27,31 @@ export class OperationLog {
   @Column("datetime", {
     name: "datetime",
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP",
   })
   datetime: Date | null;
 
   @Column("int", { name: "operation_id" })
   operationId: number;
 
-  @ManyToOne(
-    () => Operation,
-    operation => operation.operationLogs,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Operation, (operation) => operation.operationLogs, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "operation_id", referencedColumnName: "id" }])
   operation: Operation;
 
-  @ManyToOne(
-    () => Employee,
-    employee => employee.operationLogs,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Employee, (employee) => employee.operationLogs, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
-  @ManyToOne(
-    () => Module,
-    module => module.operationLogs,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Module, (module) => module.operationLogs, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "module_id", referencedColumnName: "id" }])
   module: Module;
 }

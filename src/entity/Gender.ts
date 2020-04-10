@@ -9,9 +9,6 @@ export class Gender {
   @Column("varchar", { name: "name", nullable: true, length: 45 })
   name: string | null;
 
-  @OneToMany(
-    () => Employee,
-    employee => employee.gender
-  )
+  @OneToMany(() => Employee, (employee) => employee.gender)
   employees: Employee[];
 }

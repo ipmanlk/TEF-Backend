@@ -4,7 +4,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { SessionAction } from "./SessionAction";
 import { User } from "./User";
@@ -25,7 +25,7 @@ export class SessionLog {
   @Column("datetime", {
     name: "time",
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP",
   })
   time: Date | null;
 
@@ -34,17 +34,16 @@ export class SessionLog {
 
   @ManyToOne(
     () => SessionAction,
-    sessionAction => sessionAction.sessionLogs,
+    (sessionAction) => sessionAction.sessionLogs,
     { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
   )
   @JoinColumn([{ name: "session_action_id", referencedColumnName: "id" }])
   sessionAction: SessionAction;
 
-  @ManyToOne(
-    () => User,
-    user => user.sessionLogs,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => User, (user) => user.sessionLogs, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: User;
 }

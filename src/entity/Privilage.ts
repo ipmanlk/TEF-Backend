@@ -4,7 +4,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { Module } from "./Module";
 import { Role } from "./Role";
@@ -25,19 +25,17 @@ export class Privilage {
   @Column("int", { name: "module_id" })
   moduleId: number;
 
-  @ManyToOne(
-    () => Module,
-    module => module.privilages,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Module, (module) => module.privilages, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "module_id", referencedColumnName: "id" }])
   module: Module;
 
-  @ManyToOne(
-    () => Role,
-    role => role.privilages,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
-  )
+  @ManyToOne(() => Role, (role) => role.privilages, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
   @JoinColumn([{ name: "role_id", referencedColumnName: "id" }])
   role: Role;
 }
