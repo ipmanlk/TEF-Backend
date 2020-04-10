@@ -32,6 +32,7 @@ import GenderController from "./controller/GenderController";
 import UserController from "./controller/UserController";
 import UserStatusController from "./controller/UserStatusController";
 import RoleController from "./controller/RoleController";
+import GeneralController from "./controller/GeneralController";
 
 /* 
 =====================================================================================
@@ -242,7 +243,12 @@ app.route("/api/regexes")
          .catch(e => res.json(e));
    });
 
-
+app.route("/api/general")
+   .get((req, res) => {
+      GeneralController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
 
 // Express.js: Start the server
 app.listen(process.env.PORT, () => console.log(`Server is running on ${process.env.PORT}!`));
