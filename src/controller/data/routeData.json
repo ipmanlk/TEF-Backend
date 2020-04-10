@@ -1,0 +1,19 @@
+{
+    "OPEN": [
+      "/api/login"
+    ],
+    "GENERAL": [
+      {
+        "table": "gender",
+        "route": "/api/gender"
+      },
+      {
+        "table": "civil_status",
+        "route": "/api/civil_statuses"
+      },
+      {
+        "table": "user_status",
+        "route": "/api/user_statuses"
+      }
+    ]
+  }
