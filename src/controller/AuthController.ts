@@ -95,10 +95,10 @@ class AuthController {
 
     static async isAuthorized(session, route, operationName) {
 
-        const routeInfo = require("../routeInfo.json");
+        const routeData = require("./info/routeData.json");
         
         // check if route is open
-        if (routeInfo.OPEN.includes(route)) return true;
+        if (routeData.OPEN.includes(route)) return true;
 
         // first check if user is logged in
         const isLoggedIn = AuthController.isLoggedIn(session);
@@ -108,7 +108,8 @@ class AuthController {
         }
 
         // check if route is general
-        if (routeInfo.GENERAL.includes(route)) return true;
+        const isGeneral = routeData.GENERAL.find(rd => rd.route == route);
+        if (isGeneral) return true;
 
         // get module name from route
         const moduleName = route.split("/")[2].toUpperCase();
