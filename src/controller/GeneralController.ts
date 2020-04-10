@@ -16,9 +16,8 @@ class GeneralController {
 
         // find the table in general route info
         const routeData = require("./data/routeData.json");
-        const generalRoute = routeData.GENERAL.find(rd => rd.table == table);
 
-        if (!generalRoute) {
+        if (!routeData["GENERAL TABLES"].includes(table)) {
             throw {
 				status: false,
 				type: "input",
@@ -26,7 +25,7 @@ class GeneralController {
 			};
         }
 
-        const entries = await getRepository(generalRoute.table).find();
+        const entries = await getRepository(table).find();
 
         return {
             status: true,

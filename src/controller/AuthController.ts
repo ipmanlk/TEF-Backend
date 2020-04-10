@@ -108,8 +108,7 @@ class AuthController {
         }
 
         // check if route is general
-        const isGeneral = routeData.GENERAL.find(rd => rd.route == route);
-        if (isGeneral) return true;
+        if (route.indexOf("/api/general") > -1) return true;
 
         // get module name from route
         const moduleName = route.split("/")[2].toUpperCase();
