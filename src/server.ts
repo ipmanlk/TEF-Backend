@@ -25,12 +25,9 @@ Controllers
 
 import AuthController from "./controller/AuthController";
 import EmployeeController from "./controller/EmployeeController";
-import CivilStatusController from "./controller/CivilStatusController";
 import DesignationController from "./controller/DesignationController";
 import EmployeeStatusController from "./controller/EmployeeStatusController";
-import GenderController from "./controller/GenderController";
 import UserController from "./controller/UserController";
-import UserStatusController from "./controller/UserStatusController";
 import RoleController from "./controller/RoleController";
 import GeneralController from "./controller/GeneralController";
 
@@ -187,26 +184,10 @@ app.route("/api/users")
    });
 
 
-// Routes: Civil Status
-app.route("/api/civil_statuses")
-   .get((req, res) => {
-      CivilStatusController.getAll()
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   });
-
 // Routes: Designation
 app.route("/api/designations")
    .get((req, res) => {
       DesignationController.getAll()
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   });
-
-// Routes: Gender
-app.route("/api/genders")
-   .get((req, res) => {
-      GenderController.getAll()
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -223,14 +204,6 @@ app.route("/api/employee_statuses")
 app.route("/api/roles")
    .get((req, res) => {
       RoleController.getAll()
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   });
-
-// Routes: User Statuses
-app.route("/api/user_statuses")
-   .get((req, res) => {
-      UserStatusController.getAll()
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
