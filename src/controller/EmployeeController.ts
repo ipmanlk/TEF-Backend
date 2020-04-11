@@ -40,7 +40,7 @@ class EmployeeController {
 		}
 	}
 
-	static async search(data) {		
+	private static async search(data) {		
 		const employees = await EmployeeDao.search(data).catch(e => {
 			console.log(e.code, e);
 			throw {
@@ -211,7 +211,7 @@ class EmployeeController {
 		}
 	}
 
-	static decodeBase64Image(dataString) {
+	private static decodeBase64Image(dataString) {
 		const matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
 		const decodedBase64 = {} as any;
 

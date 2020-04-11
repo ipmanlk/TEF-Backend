@@ -51,7 +51,7 @@ class UserController {
 		}
 	}
 
-	static async search(data) {		
+	private static async search(data) {		
 		const users = await UserDao.search(data).catch(e => {
 			console.log(e.code, e);
 			throw {
