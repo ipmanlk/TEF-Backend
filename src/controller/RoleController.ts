@@ -5,7 +5,7 @@ class RoleController {
         return this.search(data);
     }
 
-    private static async search(data) {
+    private static async search(data = {}) {
         const roles = await RoleDao.search(data).catch(e => {
             console.log(e.code, e);
             throw {

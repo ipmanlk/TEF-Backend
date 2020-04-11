@@ -8,7 +8,7 @@ import { createHash } from "crypto";
 
 class UserController {
 	static async get(data) {
-		if (data.id) {
+		if (data !== undefined && data.id) {			
 			return this.getOne(data);
 		} else {
 			return this.search(data);
@@ -51,7 +51,7 @@ class UserController {
 		}
 	}
 
-	private static async search(data) {		
+	private static async search(data = {}) {		
 		const users = await UserDao.search(data).catch(e => {
 			console.log(e.code, e);
 			throw {

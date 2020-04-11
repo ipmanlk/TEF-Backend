@@ -3,8 +3,8 @@ import { Employee } from "../entity/Employee";
 import { EmployeeDao } from "../dao/EmployeeDao";
 
 class EmployeeController {
-	static async get(data) {
-		if (data.id) {
+	static async get(data) {		
+		if (data !== undefined && data.id) {			
 			return this.getOne(data);
 		} else {
 			return this.search(data);
@@ -40,7 +40,7 @@ class EmployeeController {
 		}
 	}
 
-	private static async search(data) {		
+	private static async search(data = {}) {
 		const employees = await EmployeeDao.search(data).catch(e => {
 			console.log(e.code, e);
 			throw {
