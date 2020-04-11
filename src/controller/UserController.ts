@@ -120,7 +120,7 @@ class UserController {
 				throw {
 					status: false,
 					type: "input",
-					msg: "Entry with that user id already exists!."
+					msg: "Entry already exists!."
 				}
 			}
 			throw {
@@ -190,6 +190,13 @@ class UserController {
 		// update the user
 		await getRepository(User).save(editeduser).catch(e => {
 			console.log(e.code, e);
+			if (e.code == "ER_DUP_ENTRY") {
+				throw {
+					status: false,
+					type: "input",
+					msg: "Entry already exists!."
+				}
+			}
 			throw {
 				status: false,
 				type: "server",
