@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
 
 export class EmployeeDao {
-    static search({ keyword, skip }) {
+    static search({ keyword = "", skip = 0 }) {
         return getRepository(Employee)
             .createQueryBuilder("e")
             .select([

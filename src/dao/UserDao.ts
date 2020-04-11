@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 
 export class UserDao {
-    static async search({ keyword }) {
+    static async search({ keyword = "", skip = 0 }) {
         const users = await getRepository(User)
             .createQueryBuilder("u")
             .leftJoinAndSelect("u.employee", "e")
@@ -22,7 +22,9 @@ export class UserDao {
             .orWhere("u.docreation LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("us.name LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("r.name LIKE :keyword", { keyword: `%${keyword}%` })
-            .getMany();
+            .skip(skip)
+            .take(15)
+            .getMany()
 
         return users;
     }
