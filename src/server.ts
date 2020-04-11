@@ -203,7 +203,7 @@ app.route("/api/employee_statuses")
 // Routes: Role
 app.route("/api/roles")
    .get((req, res) => {
-      RoleController.getAll()
+      RoleController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });

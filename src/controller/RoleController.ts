@@ -1,21 +1,24 @@
-import { getManager } from "typeorm";
-import { Role } from "../entity/Role";
+import { RoleDao } from "../dao/RoleDao";
 
 class RoleController {
-    static async getAll() {
-        const roles = await getManager().find(Role).catch(e => {
+    static async get(data) {
+        return this.search(data);
+    }
+
+    private static async search(data) {
+        const roles = await RoleDao.search(data).catch(e => {
             console.log(e.code, e);
             throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			};
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
         });
 
         return {
-			status: true,
-			data: roles
-		};
+            status: true,
+            data: roles
+        };
     }
 }
 
