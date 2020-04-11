@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { CivilStatus } from "./CivilStatus";
@@ -101,6 +102,6 @@ export class Employee {
   @OneToMany(() => User, (user) => user.employeeCreated)
   users: User[];
 
-  @OneToMany(() => User, (user) => user.employee)
-  users2: User[];
+  @OneToOne(() => User, (user) => user.employee)
+  user: User;
 }

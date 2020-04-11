@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { SessionLog } from "./SessionLog";
@@ -12,6 +13,8 @@ import { Employee } from "./Employee";
 import { Role } from "./Role";
 import { UserStatus } from "./UserStatus";
 
+@Index("employee_id_UNIQUE", ["employeeId"], { unique: true })
+@Index("username_UNIQUE", ["username"], { unique: true })
 @Index("fk_user_userstatus1_idx", ["userStatusId"], {})
 @Index("fk_user_employee1_idx", ["employeeCreatedId"], {})
 @Index("fk_user_employee2_idx", ["employeeId"], {})
@@ -21,10 +24,15 @@ export class User {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("int", { name: "employee_id" })
+  @Column("int", { name: "employee_id", unique: true })
   employeeId: number;
 
-  @Column("varchar", { name: "username", nullable: true, length: 45 })
+  @Column("varchar", {
+    name: "username",
+    nullable: true,
+    unique: true,
+    length: 45,
+  })
   username: string | null;
 
   @Column("varchar", { name: "password", nullable: true, length: 600 })
@@ -55,7 +63,7 @@ export class User {
   @JoinColumn([{ name: "employee_created_id", referencedColumnName: "id" }])
   employeeCreated: Employee;
 
-  @ManyToOne(() => Employee, (employee) => employee.users2, {
+  @OneToOne(() => Employee, (employee) => employee.user, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
