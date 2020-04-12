@@ -2,7 +2,7 @@ require("dotenv").config();
 
 import { User } from "../entity/User";
 import { Module } from "../entity/Module";
-import { Privilage } from "../entity/Privilage";
+import { Privilege } from "../entity/Privilege";
 
 import { getRepository, getConnection } from "typeorm";
 
@@ -123,7 +123,7 @@ class AuthController {
             });
 
             // get privilage for module and role
-            privilage = await getRepository(Privilage).findOne({
+            privilage = await getRepository(Privilege).findOne({
                 moduleId: module.id,
                 roleId: session.role.id
             });

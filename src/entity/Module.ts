@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { OperationLog } from "./OperationLog";
-import { Privilage } from "./Privilage";
+import { Privilege } from "./Privilege";
 
 @Index("name_UNIQUE", ["name"], { unique: true })
 @Entity("module", { schema: "twoelephantsfireworks" })
@@ -20,6 +20,6 @@ export class Module {
   @OneToMany(() => OperationLog, (operationLog) => operationLog.module)
   operationLogs: OperationLog[];
 
-  @OneToMany(() => Privilage, (privilage) => privilage.module)
-  privilages: Privilage[];
+  @OneToMany(() => Privilege, (privilege) => privilege.module)
+  privileges: Privilege[];
 }

@@ -28,7 +28,7 @@ import EmployeeController from "./controller/EmployeeController";
 import DesignationController from "./controller/DesignationController";
 import EmployeeStatusController from "./controller/EmployeeStatusController";
 import UserController from "./controller/UserController";
-import RoleController from "./controller/RoleController";
+import PrivilegeController from "./controller/PrivilegeController";
 import GeneralController from "./controller/GeneralController";
 
 /* 
@@ -201,14 +201,14 @@ app.route("/api/employee_statuses")
    });
 
 // Routes: Role
-app.route("/api/roles")
-   .get((req, res) => {
-      RoleController.get(req.query.data)
+app.route("/api/privileges")
+   .get((req, res) => {      
+      PrivilegeController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e))
    })
    .delete((req, res) => {
-      RoleController.delete(req.body.data)
+      PrivilegeController.delete(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });

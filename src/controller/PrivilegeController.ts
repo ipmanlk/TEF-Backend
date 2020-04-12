@@ -1,12 +1,12 @@
-import { RoleDao } from "../dao/RoleDao";
+import { PrivilegeDao } from "../dao/PrivilegeDao";
 import { getRepository } from "typeorm";
 import { Role } from "../entity/Role";
 
-class RoleController {
+class PrivilegeController {
     static async get(data) {
         if (data !== undefined && data.id) {
             return this.getOne(data);
-        } else {
+        } else {            
             return this.search(data);
         }
     }
@@ -41,7 +41,7 @@ class RoleController {
     }
 
     private static async search(data = {}) {
-        const roles = await RoleDao.search(data).catch(e => {
+        const roles = await PrivilegeDao.search(data).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -90,4 +90,4 @@ class RoleController {
     }
 }
 
-export default RoleController;
+export default PrivilegeController;
