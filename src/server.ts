@@ -205,6 +205,11 @@ app.route("/api/roles")
    .get((req, res) => {
       RoleController.get(req.query.data)
          .then(r => res.json(r))
+         .catch(e => res.json(e))
+   })
+   .delete((req, res) => {
+      RoleController.delete(req.body.data)
+         .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 

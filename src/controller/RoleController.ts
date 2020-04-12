@@ -55,6 +55,39 @@ class RoleController {
             data: roles
         };
     }
+
+    static async delete({ id }) {
+        const role = await getRepository(Role).findOne({ id: id }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        });
+
+        if (!role) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "That role doesn't exist in our database!."
+            }
+        }
+
+        await getRepository(Role).delete(role).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        });
+
+        return {
+            status: true,
+            msg: "That role has been deleted!"
+        };
+    }
 }
 
 export default RoleController;
