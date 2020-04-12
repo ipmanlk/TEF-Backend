@@ -1,6 +1,7 @@
 import { PrivilegeDao } from "../dao/PrivilegeDao";
 import { getRepository } from "typeorm";
 import { Role } from "../entity/Role";
+import { Privilege } from "../entity/Privilege";
 
 class PrivilegeController {
     static async get(data) {
@@ -56,8 +57,35 @@ class PrivilegeController {
         };
     }
 
-    static async update({ data }) {
+    static async update(data) {
+        try {
+            // delete exisiting privileges to avoid conflict
+            for (let p of data.privileges) {
+                const privilege = await getRepository(Privilege).findOne({ roleId: p.roleId, moduleId: p.moduleId });
+                await getRepository(Privilege).delete(privilege);
+            }
 
+            // insert privileges
+            for (let p of data.privileges) {
+                let privilege = new Privilege();
+                privilege.moduleId = p.moduleId;
+                privilege.roleId = p.roleId;
+                privilege.permission = p.permission;
+                await getRepository(Privilege).save(privilege);
+            }
+
+            return {
+                status: true,
+                msg: "Privileges has been updated!"
+            };
+        } catch (e) {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        }
     }
 
     static async delete({ id }) {

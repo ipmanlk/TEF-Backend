@@ -200,15 +200,15 @@ app.route("/api/employee_statuses")
          .catch(e => res.json(e));
    });
 
-// Routes: Role
+// Routes: Privileges
 app.route("/api/privileges")
    .get((req, res) => {      
       PrivilegeController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e))
    })
-   .delete((req, res) => {
-      PrivilegeController.delete(req.body.data)
+   .put((req, res) => {
+      PrivilegeController.update(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
