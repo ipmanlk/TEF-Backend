@@ -33,8 +33,8 @@ export class Privilage {
   module: Module;
 
   @ManyToOne(() => Role, (role) => role.privilages, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "role_id", referencedColumnName: "id" }])
   role: Role;
