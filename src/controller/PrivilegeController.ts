@@ -66,6 +66,15 @@ class PrivilegeController {
                 await getRepository(Privilege).delete(privilege);
             }
 
+            // check if previleges are empty
+            if (data.privileges.length == 0) {
+                return {
+                    status: false,
+                    type: "input",
+                    msg: "You need to provide at least one privilege!."
+                }
+            }
+
             // insert privileges
             for (let p of data.privileges) {
                 let privilege = new Privilege();
