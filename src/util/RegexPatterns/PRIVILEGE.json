@@ -8,11 +8,5 @@
     "regex": "/^[\\d]+$/",
     "attribute": "moduleId",
     "err,or": "Please select a valid module!."
-  },
-  {
-    "regex": "/^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$/",
-    "attribute": "description",
-    "error": "Please provide a valid description!.",
-    "optional": true
   }
 ]
