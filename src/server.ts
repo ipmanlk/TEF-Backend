@@ -209,7 +209,7 @@ app.route("/api/privileges")
    })
    
    .post((req, res) => {
-      PrivilegeController.update(req.body.data)
+      PrivilegeController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
