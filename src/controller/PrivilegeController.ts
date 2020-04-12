@@ -6,7 +6,7 @@ class PrivilegeController {
     static async get(data) {
         if (data !== undefined && data.id) {
             return this.getOne(data);
-        } else {            
+        } else {
             return this.search(data);
         }
     }
@@ -14,7 +14,7 @@ class PrivilegeController {
     private static async getOne({ id }) {
         // search for an entry with given id
         const role = await getRepository(Role).findOne({
-            relations: ["privilages", "privilages.module"],
+            relations: ["privileges", "privileges.module"],
             where: { id: id }
         }).catch(e => {
             console.log(e.code, e);
@@ -54,6 +54,10 @@ class PrivilegeController {
             status: true,
             data: roles
         };
+    }
+
+    static async update({ data }) {
+
     }
 
     static async delete({ id }) {
