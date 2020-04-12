@@ -62,6 +62,7 @@ class PrivilegeController {
             // delete exisiting privileges to avoid conflict
             for (let p of data.privileges) {
                 const privilege = await getRepository(Privilege).findOne({ roleId: p.roleId, moduleId: p.moduleId });
+                if (!privilege) continue;
                 await getRepository(Privilege).delete(privilege);
             }
 
@@ -86,39 +87,6 @@ class PrivilegeController {
                 msg: "Server Error!. Please check logs."
             }
         }
-    }
-
-    static async delete({ id }) {
-        const role = await getRepository(Role).findOne({ id: id }).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
-
-        if (!role) {
-            throw {
-                status: false,
-                type: "input",
-                msg: "That role doesn't exist in our database!."
-            }
-        }
-
-        await getRepository(Role).delete(role).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
-
-        return {
-            status: true,
-            msg: "That role has been deleted!"
-        };
     }
 }
 
