@@ -123,6 +123,12 @@ app.route("/api/login")
          .catch(e => res.json(e));
    });
 
+app.route("/api/auth_user")
+   .post((req, res) => {
+      EmployeeController.get({ id: req.session.id })
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
 
 // Routes:  Employee Routes
 app.route("/api/employees")
@@ -203,18 +209,18 @@ app.route("/api/employee_statuses")
 
 // Routes: Roles
 app.route("/api/roles")
-   .get((req, res) => {      
+   .get((req, res) => {
       RoleController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e))
    })
-   
+
    .post((req, res) => {
       RoleController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
-   
+
    .put((req, res) => {
       RoleController.update(req.body.data)
          .then(r => res.json(r))
@@ -223,18 +229,18 @@ app.route("/api/roles")
 
 // Routes: Privileges
 app.route("/api/privileges")
-   .get((req, res) => {      
+   .get((req, res) => {
       PrivilegeController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e))
    })
-   
+
    .post((req, res) => {
       PrivilegeController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
-   
+
    .put((req, res) => {
       PrivilegeController.update(req.body.data)
          .then(r => res.json(r))

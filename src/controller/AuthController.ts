@@ -53,6 +53,7 @@ class AuthController {
         session.username = username;
         session.logged = true;
         session.role = user.role
+        session.employeeId = user.employeeId
 
         // return login success msg and user role name
         return {
