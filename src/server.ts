@@ -30,6 +30,7 @@ import EmployeeStatusController from "./controller/EmployeeStatusController";
 import UserController from "./controller/UserController";
 import PrivilegeController from "./controller/PrivilegeController";
 import GeneralController from "./controller/GeneralController";
+import RoleController from "./controller/RoleController";
 
 /* 
 =====================================================================================
@@ -196,6 +197,26 @@ app.route("/api/designations")
 app.route("/api/employee_statuses")
    .get((req, res) => {
       EmployeeStatusController.getAll()
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes: Roles
+app.route("/api/roles")
+   .get((req, res) => {      
+      RoleController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e))
+   })
+   
+   .post((req, res) => {
+      RoleController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+   
+   .put((req, res) => {
+      RoleController.update(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
