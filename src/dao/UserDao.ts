@@ -9,13 +9,9 @@ export class UserDao {
             .leftJoinAndSelect("u.role", "r")
             .leftJoinAndSelect("u.userStatus", "us")
             .leftJoinAndSelect("u.employeeCreated", "ec")
-            .select("u.id")
-            .addSelect("u.username")
-            .addSelect("u.docreation")
-            .addSelect("e.number")
-            .addSelect("ec.number")
-            .addSelect("r.name")
-            .addSelect("us.name")
+            .select([
+                "e.id", "e.number", "u.id", "u.username", "u.docreation", "ec.id", "ec.number", "r.id", "r.name", "us.id", "us.name"
+            ])
             .where("u.username LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("e.number LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("ec.number LIKE :keyword", { keyword: `%${keyword}%` })
