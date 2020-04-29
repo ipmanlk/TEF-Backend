@@ -4,7 +4,7 @@ import { User } from "../entity/User";
 import { Module } from "../entity/Module";
 import { Privilege } from "../entity/Privilege";
 
-import { getRepository, getConnection } from "typeorm";
+import { getRepository } from "typeorm";
 
 const crypto = require("crypto");
 
@@ -50,21 +50,21 @@ class AuthController {
         }
 
         // create session
-        session.username = username;
-        session.logged = true;
-        session.role = user.role
-        session.employeeId = user.employeeId
+        session.data = {};
+        session.data.username = username;
+        session.data.logged = true;
+        session.data.role = user.role;
+        session.data.userId = user.id;
 
         // return login success msg and user role name
         return {
             status: true,
             msg: "You have been logged in!.",
-            data: user.role
         }
     }
 
-    static isLoggedIn(session) {
-        if (session.logged == true && session.username !== undefined) {
+    static isLoggedIn(session) {                
+        if (session.data !== undefined && session.data.logged == true) {
             return {
                 status: true,
                 msg: "You are logged in."
@@ -79,7 +79,7 @@ class AuthController {
     }
 
     static logOut(session) {
-        if (session.logged == true && session.username !== undefined) {
+        if (session.data.logged == true) {
             session.destroy();
             return {
                 status: true,
@@ -95,38 +95,54 @@ class AuthController {
     }
 
     static async isAuthorized(session, route, operationName) {
+        // for random requests such as favicon
+        if (route.indexOf("/api") == -1) return true;
 
-        const routeData = require("./info/routeData.json");
+        const routeData = require("./data/routeData.json");
         
         // check if route is open
-        if (routeData.OPEN.includes(route)) return true;
-
+        if (routeData["OPEN ROUTES"].includes(route)) return true;
+        
         // first check if user is logged in
         const isLoggedIn = AuthController.isLoggedIn(session);
 
-        if (!isLoggedIn.status) {
+        if (!isLoggedIn.status) {                        
             throw isLoggedIn;
         }
+        
+        // exceptional cases
+        const exceptionalRoutes = [
+            "/api/profile",
+            "/api/regexes"
+        ]
+
+        if (exceptionalRoutes.includes(route)) return true;
 
         // check if route is general
         if (route.indexOf("/api/general") > -1) return true;
-
+    
         // get module name from route
         const moduleName = route.split("/")[2].toUpperCase();
-        
+
         // find module and privilages using "user role" in session
         let module, privilage;
 
-        try {
+        try {            
             // find module 
             module = await getRepository(Module).findOne({
                 name: moduleName
             });
 
+            if (!module) {
+                module = await getRepository(Module).findOne({
+                    name: moduleName.substring(0, moduleName.length - 1)
+                });
+            }
+            
             // get privilage for module and role
             privilage = await getRepository(Privilege).findOne({
                 moduleId: module.id,
-                roleId: session.role.id
+                roleId: session.data.role.id
             });
 
         } catch (e) {
@@ -148,7 +164,7 @@ class AuthController {
             GET: parseInt(permissionDigits[1]),
             PUT: parseInt(permissionDigits[2]),
             DELETE: parseInt(permissionDigits[3])
-        }
+        }        
 
         if (permissions[operationName] == 1) {
             return {
