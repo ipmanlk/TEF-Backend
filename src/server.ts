@@ -31,6 +31,7 @@ import UserController from "./controller/UserController";
 import PrivilegeController from "./controller/PrivilegeController";
 import GeneralController from "./controller/GeneralController";
 import RoleController from "./controller/RoleController";
+import ProfileController from "./controller/ProfileController";
 
 /* 
 =====================================================================================
@@ -90,24 +91,26 @@ Express.js : Authentication Middleware
 =====================================================================================
 */
 
-app.use((req, res, next) => {
+// Express.js: Folder with static HTML files to server the user
+app.use("/", express.static(`${__dirname}/../../public`));
+
+app.use(async(req, res, next) => {
    // skip check for development enviroments
    if (process.env.PRODUCTION == "false") {
-      next();
-      return;
+      req.session.data = {};
+      req.session.data.username = "admin";
+      req.session.data.logged = true;
+      req.session.data.role = { id: 1 };
+      req.session.data.userId = { id: 1 };      
    }
 
    // check permission and handle access
    AuthController.isAuthorized(req.session, req.path, req.method).then(() => {
       next();
-   }).catch(e => {
-      res.json(e);
-   })
+   }).catch(e => {                  
+      res.status(401).json(e);      
+   });
 });
-
-// Express.js: Folder with static HTML files to server the user
-app.use("/", express.static(`${__dirname}/../../public`));
-
 
 /* 
 =====================================================================================
@@ -123,9 +126,9 @@ app.route("/api/login")
          .catch(e => res.json(e));
    });
 
-app.route("/api/auth_user")
-   .post((req, res) => {
-      EmployeeController.get({ id: req.session.id })
+app.route("/api/profile")
+   .get((req, res) => {      
+      ProfileController.getOne(req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
