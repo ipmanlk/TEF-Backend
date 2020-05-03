@@ -63,7 +63,7 @@ class AuthController {
         }
     }
 
-    static isLoggedIn(session) {                
+    static isLoggedIn(session) {
         if (session.data !== undefined && session.data.logged == true) {
             return {
                 status: true,
@@ -99,17 +99,17 @@ class AuthController {
         if (route.indexOf("/api") == -1) return true;
 
         const routeData = require("./data/routeData.json");
-        
+
         // check if route is open
         if (routeData["OPEN ROUTES"].includes(route)) return true;
-        
+
         // first check if user is logged in
         const isLoggedIn = AuthController.isLoggedIn(session);
 
-        if (!isLoggedIn.status) {                        
+        if (!isLoggedIn.status) {
             throw isLoggedIn;
         }
-        
+
         // exceptional cases
         const exceptionalRoutes = [
             "/api/profile",
@@ -120,30 +120,45 @@ class AuthController {
 
         // check if route is general
         if (route.indexOf("/api/general") > -1) return true;
-    
+
         // get module name from route
         const moduleName = route.split("/")[2].toUpperCase();
 
         // find module and privilages using "user role" in session
         let module, privilage;
 
-        try {            
+        try {
             // find module 
             module = await getRepository(Module).findOne({
-                name: moduleName
+                name: moduleName.substring(0, moduleName.length - 1)
             });
 
             if (!module) {
+                // try module name without es
                 module = await getRepository(Module).findOne({
-                    name: moduleName.substring(0, moduleName.length - 1)
+                    name: moduleName.substring(0, moduleName.length - 2)
                 });
             }
-            
+
+            // check if module doesnt exit
+            if (!module) {
+                throw {
+                    status: false,
+                    type: "input",
+                    msg: `That module (${moduleName}) doesn't exist.`
+                }
+            }
+
             // get privilage for module and role
             privilage = await getRepository(Privilege).findOne({
                 moduleId: module.id,
                 roleId: session.data.role.id
             });
+
+            // check if user is an admin
+            if (!privilage && session.data.role.id == 1) {
+                privilage = { permission: "1111" };
+            }
 
         } catch (e) {
             console.log(e.code, e);
@@ -164,7 +179,7 @@ class AuthController {
             GET: parseInt(permissionDigits[1]),
             PUT: parseInt(permissionDigits[2]),
             DELETE: parseInt(permissionDigits[3])
-        }        
+        }
 
         if (permissions[operationName] == 1) {
             return {
