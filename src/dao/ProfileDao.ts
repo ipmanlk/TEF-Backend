@@ -12,6 +12,8 @@ export class ProfileDao {
             .leftJoinAndSelect("u.employee", "e")
             .leftJoinAndSelect("u.role", "r")
             .leftJoinAndSelect("u.userStatus", "us")
+            .leftJoinAndSelect("r.privileges", "p")
+            .leftJoinAndSelect("p.module", "m")
             .getOne()
     }
 }
