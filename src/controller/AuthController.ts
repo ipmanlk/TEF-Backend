@@ -127,28 +127,28 @@ class AuthController {
         // find module and privilages using "user role" in session
         let module, privilage;
 
-        try {
-            // find module 
+        // find module 
+        module = await getRepository(Module).findOne({
+            name: moduleName.substring(0, moduleName.length - 1)
+        });
+
+        if (!module) {
+            // try module name without es
             module = await getRepository(Module).findOne({
-                name: moduleName.substring(0, moduleName.length - 1)
+                name: moduleName.substring(0, moduleName.length - 2)
             });
+        }
 
-            if (!module) {
-                // try module name without es
-                module = await getRepository(Module).findOne({
-                    name: moduleName.substring(0, moduleName.length - 2)
-                });
+        // check if module doesnt exit
+        if (!module) {
+            throw {
+                status: false,
+                type: "input",
+                msg: `That module (${moduleName}) doesn't exist.`
             }
+        }
 
-            // check if module doesnt exit
-            if (!module) {
-                throw {
-                    status: false,
-                    type: "input",
-                    msg: `That module (${moduleName}) doesn't exist.`
-                }
-            }
-
+        try {
             // get privilage for module and role
             privilage = await getRepository(Privilege).findOne({
                 moduleId: module.id,
@@ -159,15 +159,16 @@ class AuthController {
             if (!privilage && session.data.role.id == 1) {
                 privilage = { permission: "1111" };
             }
-
         } catch (e) {
-            console.log(e.code, e);
+            console.log(e);
+
             throw {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check console logs."
             }
         }
+
 
         // check privilage 
         // 0 0 0 0 -> POST GET PUT DELETE (CRUD)
