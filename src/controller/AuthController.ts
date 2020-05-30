@@ -94,14 +94,9 @@ class AuthController {
         }
     }
 
-    static async isAuthorized(session, route, operationName) {
-        // for random requests such as favicon
-        if (route.indexOf("/api") == -1) return true;
-
-        const routeData = require("./data/routeData.json");
-
-        // check if route is open
-        if (routeData["OPEN ROUTES"].includes(route)) return true;
+    static async isAuthorized(req, loginOnly = true, moduleName = null) {
+        const session = req.session;
+        const operationName = req.method;
 
         // first check if user is logged in
         const isLoggedIn = AuthController.isLoggedIn(session);
@@ -110,34 +105,16 @@ class AuthController {
             throw isLoggedIn;
         }
 
-        // exceptional cases
-        const exceptionalRoutes = [
-            "/api/profile",
-            "/api/regexes"
-        ]
-
-        if (exceptionalRoutes.includes(route)) return true;
-
-        // check if route is general
-        if (route.indexOf("/api/general") > -1) return true;
-
-        // get module name from route
-        const moduleName = route.split("/")[2].toUpperCase();
+        // check if this is a loginOnly route (no role permissions)
+        if (loginOnly) return isLoggedIn;
 
         // find module and privilages using "user role" in session
         let module, privilage;
 
         // find module 
         module = await getRepository(Module).findOne({
-            name: moduleName.substring(0, moduleName.length - 1)
+            name: moduleName
         });
-
-        if (!module) {
-            // try module name without es
-            module = await getRepository(Module).findOne({
-                name: moduleName.substring(0, moduleName.length - 2)
-            });
-        }
 
         // check if module doesnt exit
         if (!module) {
@@ -159,7 +136,9 @@ class AuthController {
             if (!privilage && session.data.role.id == 1) {
                 privilage = { permission: "1111" };
             }
+
         } catch (e) {
+            // if something goes wrong during data retrival
             console.log(e);
 
             throw {
@@ -168,7 +147,6 @@ class AuthController {
                 msg: "Server Error!. Please check console logs."
             }
         }
-
 
         // check privilage 
         // 0 0 0 0 -> POST GET PUT DELETE (CRUD)

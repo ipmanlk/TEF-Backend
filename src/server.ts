@@ -61,6 +61,9 @@ Express.js
 =====================================================================================
 */
 
+// method used for checking permissions
+const isAuthorized = AuthController.isAuthorized;
+
 // Express.js: Initialize
 const app = express();
 
@@ -85,31 +88,19 @@ if (process.env.PRODUCTION == "false") {
    });
 }
 
-/* 
-=====================================================================================
-Express.js : Authentication Middleware
-=====================================================================================
-*/
-
 // Express.js: Folder with static HTML files to server the user
 app.use("/", express.static(`${__dirname}/../../public`));
 
-app.use(async(req, res, next) => {
-   // skip check for development enviroments
+// skip check for development enviroments
+app.use((req, res, next) => {
    if (process.env.PRODUCTION == "false") {
       req.session.data = {};
       req.session.data.username = "admin";
       req.session.data.logged = true;
       req.session.data.role = { id: 1 };
-      req.session.data.userId = { id: 1 };      
+      req.session.data.userId = { id: 1 };
    }
-
-   // check permission and handle access
-   AuthController.isAuthorized(req.session, req.path, req.method).then(() => {
-      next();
-   }).catch(e => {                  
-      res.status(401).json(e);      
-   });
+   next();
 });
 
 /* 
@@ -124,14 +115,30 @@ app.route("/api/login")
       AuthController.logIn(req.session, req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
-   });
+   })
 
+// Middleware: Profile permission checking
+app.use("/api/profile", (req, res, next) => {
+   isAuthorized(req).then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
+
+// Routes: Profile
 app.route("/api/profile")
-   .get((req, res) => {      
+   .get((req, res) => {
       ProfileController.getOne(req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
+
+
+// Middleware: Employee permission checking
+app.use("/api/employees", (req, res, next) => {
+   isAuthorized(req, false, "EMPLOYEE").then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
 
 // Routes:  Employee Routes
 app.route("/api/employees")
@@ -167,6 +174,13 @@ app.route("/api/employees/next_number")
          .catch(e => res.json(e));
    });
 
+// Middleware: User permission checking
+app.use("/api/users", (req, res, next) => {
+   isAuthorized(req, false, "USER").then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
+
 // Routes: User Routes
 app.route("/api/users")
    .get((req, res) => {
@@ -193,6 +207,12 @@ app.route("/api/users")
          .catch(e => res.json(e));
    });
 
+// Middleware: Designation permission checking
+app.use("/api/designations", (req, res, next) => {
+   isAuthorized(req, false, "DESIGNATION").then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
 
 // Routes: Designation
 app.route("/api/designations")
@@ -202,6 +222,13 @@ app.route("/api/designations")
          .catch(e => res.json(e));
    });
 
+// Middleware: Employee Status permission checking
+app.use("/api/employee_statuses", (req, res, next) => {
+   isAuthorized(req, false, "EMPLOYEE_STATUS").then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
+
 // Routes: Employee Status
 app.route("/api/employee_statuses")
    .get((req, res) => {
@@ -209,6 +236,13 @@ app.route("/api/employee_statuses")
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
+
+// Middleware: Roles permission checking
+app.use("/api/employee_statuses", (req, res, next) => {
+   isAuthorized(req, false, "ROLES").then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
 
 // Routes: Roles
 app.route("/api/roles")
@@ -230,6 +264,13 @@ app.route("/api/roles")
          .catch(e => res.json(e));
    });
 
+// Middleware: Privileges permission checking
+app.use("/api/privileges", (req, res, next) => {
+   isAuthorized(req, false, "PRIVILEGE").then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
+
 // Routes: Privileges
 app.route("/api/privileges")
    .get((req, res) => {
@@ -250,13 +291,26 @@ app.route("/api/privileges")
          .catch(e => res.json(e));
    });
 
+
 // Routes: Misc Routes
+app.use("/api/regexes", (req, res, next) => {
+   isAuthorized(req).then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
+
 app.route("/api/regexes")
    .get((req, res) => {
       RegexPatternUtil.getModuleRegexForUI(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
+
+app.use("/api/general", (req, res, next) => {
+   isAuthorized(req).then(() => {
+      next();
+   }).catch(e => res.json(e));
+});
 
 app.route("/api/general")
    .get((req, res) => {
