@@ -8,24 +8,20 @@ class GeneralController {
         // check if table name is given
         if (!table) {
             throw {
-				status: false,
-				type: "input",
-				msg: "Please provide a valid table name."
-			};
+                status: false,
+                type: "input",
+                msg: "Please provide a valid table name."
+            };
         }
 
-        // find the table in general route info
-        const routeData = require("./data/routeData.json");
-
-        if (!routeData["GENERAL TABLES"].includes(table)) {
-            throw {
-				status: false,
-				type: "input",
-				msg: "That table name is not listed under general tables."
-			};
-        }
-
-        const entries = await getRepository(table).find();
+        const entries = await getRepository(table).find()
+            .catch(() => {
+                throw {
+                    status: false,
+                    type: "input",
+                    msg: "That table name is not listed under general tables."
+                };
+            });
 
         return {
             status: true,
