@@ -262,7 +262,13 @@ app.route("/api/roles")
       RoleController.update(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
-   });
+   })
+
+   .delete((req, res) => {
+      RoleController.delete(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
 
 // Middleware: Privileges permission checking
 app.use("/api/privileges", (req, res, next) => {
