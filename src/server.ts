@@ -238,8 +238,8 @@ app.route("/api/employee_statuses")
    });
 
 // Middleware: Roles permission checking
-app.use("/api/employee_statuses", (req, res, next) => {
-   isAuthorized(req, false, "ROLES").then(() => {
+app.use("/api/roles", (req, res, next) => {
+   isAuthorized(req, false, "ROLE").then(() => {
       next();
    }).catch(e => res.json(e));
 });
