@@ -1,0 +1,13 @@
+[
+  {
+    "regex": "/^[\\w\\s]{5,150}$/",
+    "attribute": "name",
+    "error": "Please provide a valid role name!."
+  },
+  {
+    "regex": "/^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$/",
+    "attribute": "description",
+    "error": "Please provide a valid description!.",
+    "optional": true
+  }
+]
