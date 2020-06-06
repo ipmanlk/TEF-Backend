@@ -78,7 +78,7 @@ class AuthController {
         }
     }
 
-    static logOut(session) {
+    static async logOut(session) {
         if (session.data.logged == true) {
             session.destroy();
             return {
@@ -86,7 +86,7 @@ class AuthController {
                 msg: "You have been logged out."
             }
         } else {
-            return {
+            throw {
                 status: false,
                 type: "auth",
                 msg: "You must login first!."

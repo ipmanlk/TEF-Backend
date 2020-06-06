@@ -115,7 +115,14 @@ app.route("/api/login")
       AuthController.logIn(req.session, req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
-   })
+   });
+
+app.route("/api/logout")
+   .get((req, res) => {
+      AuthController.logOut(req.session)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
 
 // Middleware: Profile permission checking
 app.use("/api/profile", (req, res, next) => {
