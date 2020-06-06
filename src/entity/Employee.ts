@@ -40,6 +40,9 @@ export class Employee {
   @Column("char", { name: "nic", nullable: true, length: 12 })
   nic: string | null;
 
+  @Column("date", { name: "dobirth", nullable: true })
+  dobirth: string | null;
+
   @Column("text", { name: "address", nullable: true })
   address: string | null;
 

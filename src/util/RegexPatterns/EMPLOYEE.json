@@ -70,5 +70,10 @@
     "regex": "/^[\\d]+$/",
     "attribute": "employeeStatusId",
     "error": "Please select a valid employee status!."
+  },
+  {
+    "regex": "/^[\\d]{4}\\-[\\d]{2}\\-[\\d]{2}$/",
+    "attribute": "dobirth",
+    "error": "Please provide a valid date of birth!.."
   }
 ]
