@@ -227,6 +227,23 @@ app.route("/api/designations")
       DesignationController.getAll()
          .then(r => res.json(r))
          .catch(e => res.json(e));
+   })
+   .post((req, res) => {
+      DesignationController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      DesignationController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .delete((req, res) => {
+      DesignationController.delete(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
    });
 
 // Middleware: Employee Status permission checking
@@ -240,6 +257,24 @@ app.use("/api/employee_statuses", (req, res, next) => {
 app.route("/api/employee_statuses")
    .get((req, res) => {
       EmployeeStatusController.getAll()
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .post((req, res) => {
+      EmployeeStatusController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      EmployeeStatusController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .delete((req, res) => {
+      EmployeeStatusController.delete(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
