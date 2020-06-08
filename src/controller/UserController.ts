@@ -18,8 +18,8 @@ class UserController {
 	private static async getOne({ id }) {
 		// search for an entry with given id
 		const user = await getRepository(User).findOne({
-			select: ["id", "employeeId", "username", "userStatusId", "docreation", "description", "roleId"],
-			relations: ["employee"],
+			select: ["id", "employeeId", "username", "userStatusId", "docreation", "description"],
+			relations: ["employee", "userRoles"],
 			where: { id: id }
 		}).catch(e => {
 			console.log(e.code, e);

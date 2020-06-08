@@ -97,7 +97,7 @@ app.use((req, res, next) => {
       req.session.data = {};
       req.session.data.username = "admin";
       req.session.data.logged = true;
-      req.session.data.role = { id: 1 };
+      req.session.data.userRoles = [{ id: 1 }, {id: 2}];
       req.session.data.userId = { id: 1 };
    }
    next();

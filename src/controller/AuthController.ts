@@ -21,7 +21,7 @@ class AuthController {
             where: {
                 username: username
             },
-            relations: ["role"]
+            relations: ["userRoles"]
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -53,9 +53,9 @@ class AuthController {
         session.data = {};
         session.data.username = username;
         session.data.logged = true;
-        session.data.role = user.role;
+        session.data.userRoles = user.userRoles;
         session.data.userId = user.id;
-
+        
         // return login success msg and user role name
         return {
             status: true,
@@ -95,6 +95,7 @@ class AuthController {
     }
 
     static async isAuthorized(req, loginOnly = true, moduleName = null) {
+
         const session = req.session;
         const operationName = req.method;
 
@@ -108,8 +109,8 @@ class AuthController {
         // check if this is a loginOnly route (no role permissions)
         if (loginOnly) return isLoggedIn;
 
-        // find module and privilages using "user role" in session
-        let module, privilage;
+        // find privilages for roles user have
+        let module;
 
         // find module 
         module = await getRepository(Module).findOne({
@@ -125,32 +126,54 @@ class AuthController {
             }
         }
 
-        try {
-            // get privilage for module and role
-            privilage = await getRepository(Privilege).findOne({
+        // store privileges for roles user have
+        const rolePrivileges = [];
+
+        for (let role of session.data.userRoles) {
+            let privilage = await getRepository(Privilege).findOne({
                 moduleId: module.id,
-                roleId: session.data.role.id
+                roleId: role.id
             });
 
-            // check if user is an admin
-            if (!privilage && session.data.role.id == 1) {
-                privilage = { permission: "1111" };
-            }
+            rolePrivileges.push(privilage);
+        }
 
-        } catch (e) {
-            // if something goes wrong during data retrival
-            console.log(e);
+        // permisison for current module
+        let permission = null;
 
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check console logs."
+        const convertToFourDigitBinary = (binaryString: string) => {
+            if (binaryString == "1") return "1111";
+            let newString = binaryString;
+            for (let i = binaryString.length; i < 4; i++) {
+                newString = "0".concat(newString);
             }
+            return newString;
+        }
+
+        // check if user is an admin
+        let filteredRoles = session.data.userRoles.filter(role => role.id == 1);
+
+        if (filteredRoles.length == 1) {
+            permission = "1111";
+        } else {
+            // merge those previleges and get permission for current module
+            rolePrivileges.forEach(rp => {
+                if (permission !== null) {
+                    const currentPermission = permission;
+                    // OR current permission with new one
+                    let newPermissionInt = parseInt(currentPermission, 2) | parseInt(rp.permission, 2);
+                    let newPermissionStr = newPermissionInt.toString(2);
+                    permission = convertToFourDigitBinary(newPermissionStr);
+
+                } else {
+                    permission = rp.permission;
+                }
+            });
         }
 
         // check privilage 
         // 0 0 0 0 -> POST GET PUT DELETE (CRUD)
-        const permissionDigits = privilage.permission.split("");
+        const permissionDigits = permission.split("");
 
         // create permission object
         const permissions = {

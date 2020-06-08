@@ -6,12 +6,13 @@ export class UserDao {
         const users = await getRepository(User)
             .createQueryBuilder("u")
             .leftJoinAndSelect("u.employee", "e")
-            .leftJoinAndSelect("u.role", "r")
             .leftJoinAndSelect("u.userStatus", "us")
             .leftJoinAndSelect("u.employeeCreated", "ec")
             .select([
-                "e.id", "e.number", "u.id", "u.username", "u.docreation", "ec.id", "ec.number", "r.id", "r.name", "us.id", "us.name"
+                "e.id", "e.number", "u.id", "u.username", "u.docreation", "ec.id", "ec.number", "us.id", "us.name",
             ])
+            .leftJoinAndSelect("u.userRoles", "ur")
+            .leftJoinAndSelect("ur.role", "r")
             .where("u.username LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("e.number LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("ec.number LIKE :keyword", { keyword: `%${keyword}%` })

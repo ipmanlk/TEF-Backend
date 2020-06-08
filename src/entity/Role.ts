@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Privilege } from "./Privilege";
-import { User } from "./User";
+import { UserRole } from "./UserRole";
 
 @Entity("role", { schema: "twoelephantsfireworks" })
 export class Role {
@@ -16,6 +16,6 @@ export class Role {
   @OneToMany(() => Privilege, (privilege) => privilege.role)
   privileges: Privilege[];
 
-  @OneToMany(() => User, (user) => user.role)
-  users: User[];
+  @OneToMany(() => UserRole, (userRole) => userRole.role)
+  userRoles: UserRole[];
 }

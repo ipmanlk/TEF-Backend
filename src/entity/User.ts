@@ -10,15 +10,14 @@ import {
 } from "typeorm";
 import { SessionLog } from "./SessionLog";
 import { Employee } from "./Employee";
-import { Role } from "./Role";
 import { UserStatus } from "./UserStatus";
+import { UserRole } from "./UserRole";
 
 @Index("employee_id_UNIQUE", ["employeeId"], { unique: true })
 @Index("username_UNIQUE", ["username"], { unique: true })
 @Index("fk_user_userstatus1_idx", ["userStatusId"], {})
 @Index("fk_user_employee1_idx", ["employeeCreatedId"], {})
 @Index("fk_user_employee2_idx", ["employeeId"], {})
-@Index("fk_user_role1_idx", ["roleId"], {})
 @Entity("user", { schema: "twoelephantsfireworks" })
 export class User {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -50,9 +49,6 @@ export class User {
   @Column("int", { name: "employee_created_id" })
   employeeCreatedId: number;
 
-  @Column("int", { name: "role_id" })
-  roleId: number;
-
   @OneToMany(() => SessionLog, (sessionLog) => sessionLog.user)
   sessionLogs: SessionLog[];
 
@@ -70,17 +66,13 @@ export class User {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
-  @ManyToOne(() => Role, (role) => role.users, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
-  })
-  @JoinColumn([{ name: "role_id", referencedColumnName: "id" }])
-  role: Role;
-
   @ManyToOne(() => UserStatus, (userStatus) => userStatus.users, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "user_status_id", referencedColumnName: "id" }])
   userStatus: UserStatus;
+
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  userRoles: UserRole[];
 }
