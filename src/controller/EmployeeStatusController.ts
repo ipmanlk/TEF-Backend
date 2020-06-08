@@ -14,7 +14,7 @@ class EmployeeStatusController {
 
     private static async getOne({ id }) {
         // search for an entry with given id
-        const entry = await getRepository(EmployeeStatusDao).findOne({
+        const entry = await getRepository(EmployeeStatus).findOne({
             where: { id: id }
         }).catch(e => {
             console.log(e.code, e);
@@ -58,7 +58,7 @@ class EmployeeStatusController {
 
     static async save(data) {
         // create designation object
-        const entry = data as EmployeeStatusDao;
+        const entry = data as EmployeeStatus;
 
         await getRepository(EmployeeStatus).save(entry).catch(e => {
             console.log(e.code, e);
