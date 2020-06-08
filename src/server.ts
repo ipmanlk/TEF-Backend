@@ -224,7 +224,7 @@ app.use("/api/designations", (req, res, next) => {
 // Routes: Designation
 app.route("/api/designations")
    .get((req, res) => {
-      DesignationController.getAll()
+      DesignationController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
@@ -256,7 +256,7 @@ app.use("/api/employee_statuses", (req, res, next) => {
 // Routes: Employee Status
 app.route("/api/employee_statuses")
    .get((req, res) => {
-      EmployeeStatusController.getAll()
+      EmployeeStatusController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
