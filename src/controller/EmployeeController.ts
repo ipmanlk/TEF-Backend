@@ -62,17 +62,16 @@ class EmployeeController {
 
 		// extract photo
 		const { photo } = data;
+		
 
-		// // calculate photo size in kb
-		// const photoSize = photo.length / 999;
-
-		// if (photoSize > 500) {
-		// 	throw {
-		// 		status: false,
-		// 		type: "input",
-		// 		msg: "Your photo should be smaller than 500KB."
-		// 	}
-		// }
+		// calculate photo size in kb
+		if (photo.length > 689339) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Your photo should be smaller than 500KB."
+			}
+		}
 
 		// read photo as buffer
 		const decodedBase64 = this.decodeBase64Image(photo);
