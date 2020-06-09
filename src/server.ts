@@ -349,7 +349,7 @@ app.use("/api/regexes", (req, res, next) => {
 
 app.route("/api/regexes")
    .get((req, res) => {
-      RegexPatternUtil.getModuleRegexForUI(req.query.data)
+      RegexPatternUtil.getModuleRegex(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
