@@ -19,6 +19,7 @@ export class UserDao {
             .orWhere("u.docreation LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("us.name LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("r.name LIKE :keyword", { keyword: `%${keyword}%` })
+            .orderBy("e.id")
             .skip(skip)
             .take(15)
             .getMany()

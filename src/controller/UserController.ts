@@ -2,13 +2,14 @@ require("dotenv").config();
 
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { UserRole } from "../entity/UserRole";
 import { UserDao } from "../dao/UserDao";
 import { Employee } from "../entity/Employee";
 import { createHash } from "crypto";
 
 class UserController {
 	static async get(data) {
-		if (data !== undefined && data.id) {			
+		if (data !== undefined && data.id) {
 			return this.getOne(data);
 		} else {
 			return this.search(data);
@@ -51,7 +52,7 @@ class UserController {
 		}
 	}
 
-	private static async search(data = {}) {		
+	private static async search(data = {}) {
 		const users = await UserDao.search(data).catch(e => {
 			console.log(e.code, e);
 			throw {
@@ -90,11 +91,11 @@ class UserController {
 				type: "input",
 				msg: "Unable to find an employee with that number!"
 			};
-		}		
+		}
 
 		delete user.employee;
 		user.employeeId = employee.id;
-		
+
 		// hash the password
 		const hashedPass = createHash("sha512").update(`${user.password}${process.env.SALT}`).digest("hex");
 
@@ -113,7 +114,7 @@ class UserController {
 		user.docreation = new Date().toISOString().slice(0, 19).replace('T', ' ').split(" ")[0];
 
 		// save to db
-		await getRepository(User).save(user).catch(e => {
+		const newUser = await getRepository(User).save(user).catch(e => {
 			console.log(e.code, e);
 
 			if (e.code == "ER_DUP_ENTRY") {
@@ -129,6 +130,28 @@ class UserController {
 				msg: "Server Error!. Please check logs."
 			}
 		});
+
+		// set roles for new user
+		const userRoles = data.roleIds.map(rid => {
+			return { userId: newUser.id, roleId: rid }
+		});
+
+		await getRepository(UserRole).save(userRoles).catch(e => {
+			console.log(e.code, e);
+			if (e.code == "ER_DUP_ENTRY") {
+				throw {
+					status: false,
+					type: "input",
+					msg: "User roles already exists!."
+				}
+			}
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs. (Role adding)"
+			}
+		});
+
 
 		return {
 			status: true,
@@ -186,7 +209,7 @@ class UserController {
 
 		// update user obj
 		editeduser.password = hashedPass;
-		
+
 		// update the user
 		await getRepository(User).save(editeduser).catch(e => {
 			console.log(e.code, e);
@@ -201,6 +224,51 @@ class UserController {
 				status: false,
 				type: "server",
 				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		// update roles
+		const currentRoles = await getRepository(UserRole).find({
+			where: { userId: editeduser.id }
+		}).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		// clear current roles
+		for (let ur of currentRoles) {
+			await getRepository(UserRole).delete(ur).catch(e => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs."
+				}
+			});
+		}
+
+		// update roles
+		const userRoles = data.roleIds.map(rid => {
+			return { userId: editeduser.id, roleId: rid }
+		});
+
+		await getRepository(UserRole).save(userRoles).catch(e => {
+			console.log(e.code, e);
+			if (e.code == "ER_DUP_ENTRY") {
+				throw {
+					status: false,
+					type: "input",
+					msg: "User roles already exists!."
+				}
+			}
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs. (Role adding)"
 			}
 		});
 

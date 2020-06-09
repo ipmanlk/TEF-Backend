@@ -15,8 +15,8 @@
     "error": "Please provide a valid password!."
   },
   {
-    "regex": "/^[\\d]+$/",
-    "attribute": "roleId",
+    "regex": "/^[\\d,]+$/",
+    "attribute": "roleIds",
     "error": "Please select a valid role!."
   },
   {
