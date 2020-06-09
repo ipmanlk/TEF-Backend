@@ -161,10 +161,10 @@ class UserController {
 
 	static async update(data) {
 		// create user object
-		const editeduser = data as User;
+		const editedUser = data as User;
 
 		// check if user is present with the given id
-		const selecteduser = await getRepository(User).findOne(editeduser.id).catch(e => {
+		const selectedUser = await getRepository(User).findOne(editedUser.id).catch(e => {
 			console.log(e.code, e);
 			throw {
 				status: false,
@@ -173,7 +173,7 @@ class UserController {
 			}
 		});
 
-		if (!selecteduser) {
+		if (!selectedUser) {
 			throw {
 				status: false,
 				type: "input",
@@ -202,16 +202,16 @@ class UserController {
 			};
 		}
 
-		editeduser.employeeId = employee.id;
+		editedUser.employeeId = employee.id;
 
 		// hash the password
-		const hashedPass = createHash("sha512").update(`${editeduser.password}${process.env.SALT}`).digest("hex");
+		const hashedPass = createHash("sha512").update(`${editedUser.password}${process.env.SALT}`).digest("hex");
 
 		// update user obj
-		editeduser.password = hashedPass;
+		editedUser.password = hashedPass;
 
 		// update the user
-		await getRepository(User).save(editeduser).catch(e => {
+		await getRepository(User).save(editedUser).catch(e => {
 			console.log(e.code, e);
 			if (e.code == "ER_DUP_ENTRY") {
 				throw {
@@ -229,7 +229,7 @@ class UserController {
 
 		// update roles
 		const currentRoles = await getRepository(UserRole).find({
-			where: { userId: editeduser.id }
+			where: { userId: editedUser.id }
 		}).catch(e => {
 			console.log(e.code, e);
 			throw {
@@ -253,7 +253,7 @@ class UserController {
 
 		// update roles
 		const userRoles = data.roleIds.map(rid => {
-			return { userId: editeduser.id, roleId: rid }
+			return { userId: editedUser.id, roleId: rid }
 		});
 
 		await getRepository(UserRole).save(userRoles).catch(e => {
