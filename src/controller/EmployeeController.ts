@@ -3,8 +3,8 @@ import { Employee } from "../entity/Employee";
 import { EmployeeDao } from "../dao/EmployeeDao";
 
 class EmployeeController {
-	static async get(data) {		
-		if (data !== undefined && data.id) {			
+	static async get(data) {
+		if (data !== undefined && data.id) {
 			return this.getOne(data);
 		} else {
 			return this.search(data);
@@ -62,7 +62,7 @@ class EmployeeController {
 
 		// extract photo
 		const { photo } = data;
-		
+
 
 		// calculate photo size in kb
 		if (photo.length > 689339) {
@@ -127,6 +127,16 @@ class EmployeeController {
 		if (data.photo == false) {
 			editedEmployee.photo = selectedEmployee.photo;
 		} else {
+			
+			// calculate photo size in kb
+			if (editedEmployee.photo.length > 689339) {
+				throw {
+					status: false,
+					type: "input",
+					msg: "Your photo should be smaller than 500KB."
+				}
+			}
+
 			// read photo as buffer
 			const decodedBase64 = this.decodeBase64Image(editedEmployee.photo);
 			editedEmployee.photo = decodedBase64.data;
