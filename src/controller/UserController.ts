@@ -6,6 +6,7 @@ import { UserRole } from "../entity/UserRole";
 import { UserDao } from "../dao/UserDao";
 import { Employee } from "../entity/Employee";
 import { createHash } from "crypto";
+import { ValidationUtil } from "../util/ValidationUtil";
 
 class UserController {
 	static async get(data) {
@@ -71,6 +72,9 @@ class UserController {
 	static async save(data, session) {
 		// create user object
 		const user = data as User;
+
+        // check if valid data is given
+        await ValidationUtil.validate("USER", user);
 
 		// check employee id exists with given employee number
 		const employee = await getRepository(Employee).findOne({
@@ -162,6 +166,9 @@ class UserController {
 	static async update(data) {
 		// create user object
 		const editedUser = data as User;
+
+        // check if valid data is given
+        await ValidationUtil.validate("USER", editedUser);
 
 		// check if user is present with the given id
 		const selectedUser = await getRepository(User).findOne(editedUser.id).catch(e => {
