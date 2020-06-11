@@ -1,6 +1,7 @@
 import { getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
 import { EmployeeDao } from "../dao/EmployeeDao";
+import { ValidationUtil } from "../util/ValidationUtil";
 
 class EmployeeController {
 	static async get(data) {
@@ -57,6 +58,9 @@ class EmployeeController {
 	}
 
 	static async save(data) {
+		// check if valid data is given
+		await ValidationUtil.validate("EMPLOYEE", data);
+
 		// create employee object
 		const employee = data as Employee;
 
@@ -127,7 +131,7 @@ class EmployeeController {
 		if (data.photo == false) {
 			editedEmployee.photo = selectedEmployee.photo;
 		} else {
-			
+
 			// calculate photo size in kb
 			if (editedEmployee.photo.length > 689339) {
 				throw {
@@ -141,6 +145,9 @@ class EmployeeController {
 			const decodedBase64 = this.decodeBase64Image(editedEmployee.photo);
 			editedEmployee.photo = decodedBase64.data;
 		}
+
+		// check if valid data is given
+		await ValidationUtil.validate("EMPLOYEE", editedEmployee);
 
 		// update the employee
 		await getRepository(Employee).save(editedEmployee).catch(e => {
