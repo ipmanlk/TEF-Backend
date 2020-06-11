@@ -3,6 +3,7 @@ require("dotenv").config();
 import { getRepository } from "typeorm";
 import { Role } from "../entity/Role";
 import { RoleDao } from "../dao/RoleDao";
+import { ValidationUtil } from "../util/ValidationUtil";
 
 class RoleController {
     static async get(data) {
@@ -61,6 +62,9 @@ class RoleController {
         // create role object
         const role = data as Role;
 
+        // check if valid data is given
+        await ValidationUtil.validate("ROLE", role);
+
         await getRepository(Role).save(role).catch(e => {
             console.log(e.code, e);
 
@@ -87,6 +91,9 @@ class RoleController {
     static async update(data) {
         // create user object
         const editedRole = data as Role;
+
+        // check if valid data is given
+        await ValidationUtil.validate("ROLE", editedRole);
 
         // check if role is present with the given id
         const selectedRole = await getRepository(Role).findOne(editedRole.id).catch(e => {
