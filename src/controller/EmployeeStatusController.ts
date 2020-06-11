@@ -1,6 +1,7 @@
 import { getManager, getRepository } from "typeorm";
 import { EmployeeStatus } from "../entity/EmployeeStatus";
 import { EmployeeStatusDao } from "../dao/EmployeeStatusDao";
+import { ValidationUtil } from "../util/ValidationUtil";
 
 class EmployeeStatusController {
 
@@ -60,6 +61,9 @@ class EmployeeStatusController {
         // create designation object
         const entry = data as EmployeeStatus;
 
+        // check if valid data is given
+        await ValidationUtil.validate("EMPLOYEE_STATUS", entry);
+
         await getRepository(EmployeeStatus).save(entry).catch(e => {
             console.log(e.code, e);
 
@@ -86,6 +90,9 @@ class EmployeeStatusController {
     static async update(data) {
         // create designation object
         const editedEntry = data as EmployeeStatus;
+
+        // check if valid data is given
+        await ValidationUtil.validate("EMPLOYEE_STATUS", editedEntry);
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(EmployeeStatus).findOne(editedEntry.id).catch(e => {
@@ -160,16 +167,16 @@ class EmployeeStatusController {
         const employeeStatuses = await getManager().find(EmployeeStatus).catch(e => {
             console.log(e.code, e);
             throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			};
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
         });
 
         return {
-			status: true,
-			data: employeeStatuses
-		};
+            status: true,
+            data: employeeStatuses
+        };
     }
 }
 
