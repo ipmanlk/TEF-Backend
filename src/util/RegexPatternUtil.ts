@@ -1,7 +1,7 @@
 import { existsSync } from "fs";
 
 class RegexPatternUtil {
-    static async getModuleRegex({ module }) {
+    static async getModuleRegex(module: String) {
         // check if module is provided
         if (!module) {
             throw {

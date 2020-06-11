@@ -97,7 +97,7 @@ app.use((req, res, next) => {
       req.session.data = {};
       req.session.data.username = "admin";
       req.session.data.logged = true;
-      req.session.data.userRoles = [{ id: 1 }, {id: 2}];
+      req.session.data.userRoles = [{ id: 1 }, { id: 2 }];
       req.session.data.userId = { id: 1 };
    }
    next();
@@ -349,7 +349,7 @@ app.use("/api/regexes", (req, res, next) => {
 
 app.route("/api/regexes")
    .get((req, res) => {
-      RegexPatternUtil.getModuleRegex(req.query.data)
+      RegexPatternUtil.getModuleRegex(req.query.data.module)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
