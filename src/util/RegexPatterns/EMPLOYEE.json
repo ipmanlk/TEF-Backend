@@ -22,7 +22,8 @@
   {
     "regex": "/^.+(jpg|png|gif)$/",
     "attribute": "photo",
-    "error": "Please select a valid profile picture!."
+    "error": "Please select a valid profile picture!.",
+    "base64": true
   },
   {
     "regex": "/^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,200}$/",
