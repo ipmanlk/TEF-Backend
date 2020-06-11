@@ -1,10 +1,10 @@
 import { getManager, getRepository } from "typeorm";
 import { Designation } from "../entity/Designation";
 import { DesignationDao } from "../dao/DesignationDao";
-
+import { ValidationUtil } from "../util/ValidationUtil";
 
 class DesignationController {
-    
+
     static async get(data) {
         if (data !== undefined && data.id) {
             return this.getOne(data);
@@ -61,6 +61,9 @@ class DesignationController {
         // create designation object
         const entry = data as Designation;
 
+        // check if valid data is given
+        await ValidationUtil.validate("DESIGNATION", entry);
+
         await getRepository(Designation).save(entry).catch(e => {
             console.log(e.code, e);
 
@@ -88,6 +91,9 @@ class DesignationController {
         // create designation object
         const editedEntry = data as Designation;
 
+        // check if valid data is given
+        await ValidationUtil.validate("DESIGNATION", editedEntry);
+        
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(Designation).findOne(editedEntry.id).catch(e => {
             console.log(e.code, e);
@@ -161,18 +167,18 @@ class DesignationController {
         const designations = await getManager().find(Designation).catch(e => {
             console.log(e.code, e);
             throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			};
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
         });
 
         return {
-			status: true,
-			data: designations
-		};
+            status: true,
+            data: designations
+        };
     }
-    
+
 }
 
 export default DesignationController;
