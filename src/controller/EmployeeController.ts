@@ -3,7 +3,7 @@ import { Employee } from "../entity/Employee";
 import { EmployeeDao } from "../dao/EmployeeDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
-class EmployeeController {
+export class EmployeeController {
 	static async get(data) {
 		if (data !== undefined && data.id) {
 			return this.getOne(data);
@@ -245,5 +245,3 @@ class EmployeeController {
 		return decodedBase64;
 	}
 }
-
-export default EmployeeController;

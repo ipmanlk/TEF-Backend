@@ -8,7 +8,7 @@ import { Employee } from "../entity/Employee";
 import { createHash } from "crypto";
 import { ValidationUtil } from "../util/ValidationUtil";
 
-class UserController {
+export class UserController {
 	static async get(data) {
 		if (data !== undefined && data.id) {
 			return this.getOne(data);
@@ -320,5 +320,3 @@ class UserController {
 		};
 	}
 }
-
-export default UserController;

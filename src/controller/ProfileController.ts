@@ -1,6 +1,6 @@
 import { ProfileDao } from "../dao/ProfileDao";
 
-class ProfileController {
+export class ProfileController {
     static async getOne(session) {
         const profileData = await ProfileDao.getOne(session.data.userId).catch(e => {
             console.log(e.code, e);
@@ -57,5 +57,3 @@ class ProfileController {
         };
     }
 }
-
-export default ProfileController;

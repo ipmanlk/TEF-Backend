@@ -5,7 +5,7 @@ import { Role } from "../entity/Role";
 import { RoleDao } from "../dao/RoleDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
-class RoleController {
+export class RoleController {
     static async get(data) {
         if (data !== undefined && data.id) {
             return this.getOne(data);
@@ -164,5 +164,3 @@ class RoleController {
         };
     }
 }
-
-export default RoleController;

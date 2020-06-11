@@ -23,15 +23,15 @@ Controllers
 =====================================================================================
 */
 
-import AuthController from "./controller/AuthController";
-import EmployeeController from "./controller/EmployeeController";
-import DesignationController from "./controller/DesignationController";
-import EmployeeStatusController from "./controller/EmployeeStatusController";
-import UserController from "./controller/UserController";
-import PrivilegeController from "./controller/PrivilegeController";
-import GeneralController from "./controller/GeneralController";
-import RoleController from "./controller/RoleController";
-import ProfileController from "./controller/ProfileController";
+import { AuthController } from "./controller/AuthController";
+import { EmployeeController } from "./controller/EmployeeController";
+import { DesignationController } from "./controller/DesignationController";
+import { EmployeeStatusController } from "./controller/EmployeeStatusController";
+import { UserController } from "./controller/UserController";
+import { PrivilegeController } from "./controller/PrivilegeController";
+import { GeneralController } from "./controller/GeneralController";
+import { RoleController } from "./controller/RoleController";
+import { ProfileController } from "./controller/ProfileController";
 
 /* 
 =====================================================================================
@@ -39,7 +39,7 @@ Utilities
 =====================================================================================
 */
 
-import RegexPatternUtil from "./util/RegexPatternUtil";
+import { RegexPatternUtil } from "./util/RegexPatternUtil";
 
 /* 
 =====================================================================================

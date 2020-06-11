@@ -1,4 +1,4 @@
-import RegexPatternUtil from "./RegexPatternUtil";
+import { RegexPatternUtil } from "./RegexPatternUtil";
 
 export class ValidationUtil {
     static async validate(moduleName: String, dataObj: any) {

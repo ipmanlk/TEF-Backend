@@ -3,7 +3,7 @@ import { Designation } from "../entity/Designation";
 import { DesignationDao } from "../dao/DesignationDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
-class DesignationController {
+export class DesignationController {
 
     static async get(data) {
         if (data !== undefined && data.id) {
@@ -180,5 +180,3 @@ class DesignationController {
     }
 
 }
-
-export default DesignationController;

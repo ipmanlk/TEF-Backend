@@ -3,7 +3,7 @@ import { getRepository } from "typeorm";
 import { Role } from "../entity/Role";
 import { Privilege } from "../entity/Privilege";
 
-class PrivilegeController {
+export class PrivilegeController {
     static async get(data) {
         if (data !== undefined && data.id) {
             return this.getOne(data);
@@ -135,5 +135,3 @@ class PrivilegeController {
         }
     }
 }
-
-export default PrivilegeController;

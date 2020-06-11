@@ -1,6 +1,6 @@
 import { readFileSync, statSync } from "fs";
 
-class FileUtil {
+export class FileUtil {
     static async readFileAsBuffer(path) {
         try {
             let fileContent = readFileSync(path);
@@ -31,5 +31,3 @@ class FileUtil {
         }
     }
 }
-
-export default FileUtil;

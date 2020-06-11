@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 
-class GeneralController {
+export class GeneralController {
     static async get(data) {
 
         const table = data.table;
@@ -29,5 +29,3 @@ class GeneralController {
         }
     }
 }
-
-export default GeneralController;

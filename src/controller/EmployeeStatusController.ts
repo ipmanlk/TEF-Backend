@@ -3,7 +3,7 @@ import { EmployeeStatus } from "../entity/EmployeeStatus";
 import { EmployeeStatusDao } from "../dao/EmployeeStatusDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
-class EmployeeStatusController {
+export class EmployeeStatusController {
 
     static async get(data) {
         if (data !== undefined && data.id) {
@@ -179,5 +179,3 @@ class EmployeeStatusController {
         };
     }
 }
-
-export default EmployeeStatusController;

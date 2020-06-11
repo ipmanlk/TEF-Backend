@@ -8,7 +8,7 @@ import { getRepository } from "typeorm";
 
 const crypto = require("crypto");
 
-class AuthController {
+export class AuthController {
     static async logIn(session, { username, password }) {
 
         // create hashed password using salt in .env
@@ -197,5 +197,3 @@ class AuthController {
         }
     }
 }
-
-export default AuthController;

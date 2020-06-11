@@ -1,6 +1,6 @@
 import { existsSync } from "fs";
 
-class RegexPatternUtil {
+export class RegexPatternUtil {
     static async getModuleRegex(module: String) {
         // check if module is provided
         if (!module) {
@@ -47,5 +47,3 @@ class RegexPatternUtil {
         }
     }
 }
-
-export default RegexPatternUtil
