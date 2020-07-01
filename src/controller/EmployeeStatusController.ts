@@ -58,7 +58,7 @@ export class EmployeeStatusController {
     }
 
     static async save(data) {
-        // create designation object
+        // create employee object
         const entry = data as EmployeeStatus;
 
         // check if valid data is given
@@ -88,7 +88,7 @@ export class EmployeeStatusController {
     }
 
     static async update(data) {
-        // create designation object
+        // create employee object
         const editedEntry = data as EmployeeStatus;
 
         // check if valid data is given
