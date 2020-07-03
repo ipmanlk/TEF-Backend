@@ -79,29 +79,28 @@ app.use(session({
    resave: false
 }));
 
-// enable CORS on development enviroment
+// Changes for the development enviroment
 if (process.env.PRODUCTION == "false") {
+   // enable CORS
    app.use((req, res, next) => {
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+   });
+
+   // dummy session data
+   app.use((req, res, next) => {
+      req.session.data = {};
+      req.session.data.username = "admin";
+      req.session.data.logged = true;
+      req.session.data.userRoles = [{ id: 1 }, { id: 2 }];
+      req.session.data.userId = { id: 1 };
       next();
    });
 }
 
 // Express.js: Folder with static HTML files to server the user
 app.use("/", express.static(`${__dirname}/../../public`));
-
-// skip check for development enviroments
-app.use((req, res, next) => {
-   if (process.env.PRODUCTION == "false") {
-      req.session.data = {};
-      req.session.data.username = "admin";
-      req.session.data.logged = true;
-      req.session.data.userRoles = [{ id: 1 }, { id: 2 }];
-      req.session.data.userId = { id: 1 };
-   }
-   next();
-});
 
 /* 
 =====================================================================================
