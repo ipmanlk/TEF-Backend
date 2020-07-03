@@ -3,6 +3,8 @@ import { getRepository } from "typeorm";
 export class GeneralController {
     static async get(data) {
 
+        const generalTables = ["gender", "civil_status", "module", "user_status"];
+
         const table = data.table;
 
         // check if table name is given
@@ -14,12 +16,20 @@ export class GeneralController {
             };
         }
 
+        if (!generalTables.includes(table)) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "That table name is not listed under general tables."
+            };
+        }
+
         const entries = await getRepository(table).find()
             .catch(() => {
                 throw {
                     status: false,
                     type: "input",
-                    msg: "That table name is not listed under general tables."
+                    msg: "There is no table under that name!."
                 };
             });
 
