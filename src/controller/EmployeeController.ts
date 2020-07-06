@@ -184,8 +184,10 @@ export class EmployeeController {
 			}
 		}
 
-		// delete the employee
-		await getRepository(Employee).delete(employee).catch(e => {
+		// delete the employee (make inactive)
+		employee.employeeStatusId = 3;
+
+		await getRepository(Employee).save(employee).catch(e => {
 			console.log(e.code, e);
 			throw {
 				status: false,
