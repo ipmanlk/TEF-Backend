@@ -3,12 +3,22 @@ import { RegexPatternUtil } from "./RegexPatternUtil";
 export class ValidationUtil {
     static async validate(moduleName: String, dataObj: any) {
         // load validation info (regexes)
-        const validationInfoObj = RegexPatternUtil.getModuleRegex(moduleName);
+        const validationInfo = await RegexPatternUtil.getModuleRegex(moduleName);
+        const validationInfoObj = {};
+
+        validationInfo.data.forEach(vi => {
+            validationInfoObj[vi.attribute] = vi;
+        });
+
         const attributes = Object.keys(validationInfoObj);
+
 
         attributes.forEach(attribute => {
             // get the value for given attribute
             const dataValue = dataObj[attribute];
+
+            // if data vlue is not given
+            if (!dataValue) return;
 
             // check if the data contains base64 string
             if (validationInfoObj[attribute].base64) {
