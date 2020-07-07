@@ -15,8 +15,8 @@ export class ValidationUtil {
 
         attributes.forEach(attribute => {
             // get the value for given attribute
-            const dataValue = dataObj[attribute];
-
+            const dataValue = dataObj[attribute].toString();
+            
             // if data vlue is not given
             if (!dataValue) return;
 
