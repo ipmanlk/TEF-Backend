@@ -15,10 +15,12 @@ export class ValidationUtil {
 
         attributes.forEach(attribute => {
             // get the value for given attribute
-            const dataValue = dataObj[attribute].toString();
+            let dataValue = dataObj[attribute];
             
             // if data vlue is not given
             if (!dataValue) return;
+
+            dataValue = dataValue.toString();
 
             // check if the data contains base64 string
             if (validationInfoObj[attribute].base64) {
