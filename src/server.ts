@@ -167,7 +167,7 @@ app.route("/api/employees")
    })
 
    .delete((req, res) => {
-      EmployeeController.delete(req.body.data)
+      EmployeeController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -208,7 +208,7 @@ app.route("/api/users")
    })
 
    .delete((req, res) => {
-      UserController.delete(req.body.data)
+      UserController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -240,7 +240,7 @@ app.route("/api/designations")
    })
 
    .delete((req, res) => {
-      DesignationController.delete(req.body.data)
+      DesignationController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -273,7 +273,7 @@ app.route("/api/employee_statuses")
    })
 
    .delete((req, res) => {
-      EmployeeStatusController.delete(req.body.data)
+      EmployeeStatusController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -306,7 +306,7 @@ app.route("/api/roles")
    })
 
    .delete((req, res) => {
-      RoleController.delete(req.body.data)
+      RoleController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
