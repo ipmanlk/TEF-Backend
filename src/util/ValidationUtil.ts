@@ -12,22 +12,21 @@ export class ValidationUtil {
 
         const attributes = Object.keys(validationInfoObj);
 
-
         attributes.forEach(attribute => {
             // get the value for given attribute
             let dataValue = dataObj[attribute];
-            
+
             // if data vlue is not given
             if (!dataValue) return;
 
-            dataValue = dataValue.toString();
-
             // check if the data contains base64 string
             if (validationInfoObj[attribute].base64) {
-                if (typeof dataValue === "string" && dataValue as any instanceof String) {
+                if (typeof dataValue === "string" && dataValue as any instanceof String || Buffer.isBuffer(dataValue)) {
                     return;
                 }
             }
+
+            dataValue = dataValue.toString();
 
             // check if value is optional and not provided
             if (dataValue.trim() == "" && dataObj[attribute].optional) {

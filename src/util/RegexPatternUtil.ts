@@ -31,6 +31,7 @@ export class RegexPatternUtil {
                     error: rx.error
                 };
                 if (rx.optional) vi["optional"] = true;
+                if (rx.base64) vi["base64"] = true;
                 return vi;
             });
             return {
