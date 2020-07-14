@@ -1,4 +1,10 @@
+require("dotenv").config();
+
 import { ProfileDao } from "../dao/ProfileDao";
+import { getRepository } from "typeorm";
+import { User } from "../entity/User";
+import { ValidationUtil } from "../util/ValidationUtil";
+import { createHash } from "crypto";
 
 export class ProfileController {
     static async getOne(session) {
@@ -13,7 +19,7 @@ export class ProfileController {
 
         // build an object with module name and privileges 
         const modulePermission = {};
-        
+
         const convertToFourDigitBinary = (binaryString: string) => {
             if (binaryString == "1") return "1111";
             let newString = binaryString;
@@ -22,7 +28,7 @@ export class ProfileController {
             }
             return newString;
         }
-        
+
         profileData.userRoles.forEach(userRole => {
             userRole.role.privileges.forEach(rp => {
                 const moduleName = rp.module.name;
@@ -33,11 +39,11 @@ export class ProfileController {
                     // OR current permission with new one
                     let newPermissionInt = parseInt(currentPermission, 2) | parseInt(newPermission, 2);
                     let newPermissionStr = newPermissionInt.toString(2);
-                    
+
                     modulePermission[rp.module.name] = convertToFourDigitBinary(newPermissionStr);
 
                 } else {
-        
+
                     modulePermission[rp.module.name] = rp.permission;
                 }
             });
@@ -47,13 +53,69 @@ export class ProfileController {
         delete profileData.userRoles;
 
         // add privileges
-        const profile = profileData as any; 
+        const profile = profileData as any;
         profile.privileges = modulePermission;
 
-        
+
         return {
             status: true,
             data: profile
         };
+    }
+
+    static async updatePassword(data, session) {
+        // check session 
+        if (process.env.PRODUCTION == "true") {
+            if (session.data.userId !== data.id) {
+                throw {
+                    status: false,
+                    type: "input",
+                    msg: "Provided user id is different from the active session!."
+                }
+            }
+        }
+
+        // validate new passwrd
+        await ValidationUtil.validate("USER", { password: data.password });
+        await ValidationUtil.validate("USER", { password: data.oldPassword });
+
+        const user = await getRepository(User).findOne(data.id);
+
+        // check if user exists with given id
+        if (!user) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "User with that id doesn't exist!."
+            }
+        }
+
+        // check old password
+        const oldPasswordHash = createHash("sha512").update(`${data.oldPassword}${process.env.SALT}`).digest("hex");
+
+        if (user.password != oldPasswordHash) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Provided old password is invalid!"
+            }
+        }
+
+        // update password
+        user.password = createHash("sha512").update(`${data.password}${process.env.SALT}`).digest("hex");
+
+        await getRepository(User).save(user).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        });
+
+        return {
+            status: true,
+            msg: "Password has been updated!"
+        }
     }
 }

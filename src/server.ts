@@ -138,6 +138,12 @@ app.route("/api/profile")
          .catch(e => res.json(e));
    });
 
+app.route("/api/profile/password")
+   .put((req, res) => {
+      ProfileController.updatePassword(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
 
 // Middleware: Employee permission checking
 app.use("/api/employees", (req, res, next) => {
