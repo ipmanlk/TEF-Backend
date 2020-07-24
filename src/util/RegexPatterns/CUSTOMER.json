@@ -1,0 +1,45 @@
+[
+    {
+      "regex": "^[\\w\\s]{5,200}$",
+      "attribute": "name",
+      "error": "Please provide a valid customer name!."
+    },
+    {
+      "regex": "^([\\d]{9}(\\V|\\X))$|^([\\d]{12})$",
+      "attribute": "nic",
+      "error": "Please provide a valid NIC!."
+    },
+    {
+      "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,200}$",
+      "attribute": "address",
+      "error": "Please provide a valid address!."
+    },
+    {
+      "regex": "^[\\d]{10}$",
+      "attribute": "mobile",
+      "error": "Please provide a valid mobile number!."
+    },
+    {
+      "regex": "^[\\d]{10}$",
+      "attribute": "land",
+      "error": "Please provide a valid landphone number!.",
+      "optional": true
+    },
+    {
+      "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+      "attribute": "description",
+      "error": "Please provide a valid description!.",
+      "optional": true
+    },
+    {
+      "regex": "^[\\d]+$",
+      "attribute": "genderId",
+      "error": "Please select a valid gender!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "customerStatusId",
+        "error": "Please select a valid customer status!."
+      },
+  ]
+  
