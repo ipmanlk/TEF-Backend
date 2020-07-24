@@ -1,11 +1,11 @@
 [
   {
-    "regex": "/^[\\d]+$/",
+    "regex": "^[\\d]+$",
     "attribute": "roleId",
     "error": "Please select a valid role!."
   },
   {
-    "regex": "/^[\\d]+$/",
+    "regex": "^[\\d]+$",
     "attribute": "moduleId",
     "error": "Please select a valid module!."
   }

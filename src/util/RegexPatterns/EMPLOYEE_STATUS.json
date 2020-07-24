@@ -1,6 +1,6 @@
 [
     {
-      "regex": "/^[\\w\\s]{5,150}$/",
+      "regex": "^[\\w\\s]{5,150}$",
       "attribute": "name",
       "error": "Please provide a valid designation name!."
     }
