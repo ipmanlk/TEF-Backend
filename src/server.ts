@@ -32,6 +32,7 @@ import { PrivilegeController } from "./controller/PrivilegeController";
 import { GeneralController } from "./controller/GeneralController";
 import { RoleController } from "./controller/RoleController";
 import { ProfileController } from "./controller/ProfileController";
+import { CustomerController } from "./controller/CustomerController";
 
 /* 
 =====================================================================================
@@ -313,6 +314,32 @@ app.route("/api/roles")
 
    .delete((req, res) => {
       RoleController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+// Routes: Customer
+app.route("/api/customers")
+   .get((req, res) => {
+      CustomerController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e))
+   })
+
+   .post((req, res) => {
+      CustomerController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      CustomerController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .delete((req, res) => {
+      CustomerController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
