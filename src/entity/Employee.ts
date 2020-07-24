@@ -8,6 +8,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Customer } from "./Customer";
 import { CivilStatus } from "./CivilStatus";
 import { Designation } from "./Designation";
 import { EmployeeStatus } from "./EmployeeStatus";
@@ -43,7 +44,7 @@ export class Employee {
   @Column("date", { name: "dobirth", nullable: true })
   dobirth: string | null;
 
-  @Column("text", { name: "address", nullable: true })
+  @Column("varchar", { name: "address", nullable: true, length: 200 })
   address: string | null;
 
   @Column("char", { name: "mobile", nullable: true, length: 10 })
@@ -69,6 +70,9 @@ export class Employee {
 
   @Column("int", { name: "employee_status_id" })
   employeeStatusId: number;
+
+  @OneToMany(() => Customer, (customer) => customer.employee)
+  customers: Customer[];
 
   @ManyToOne(() => CivilStatus, (civilStatus) => civilStatus.employees, {
     onDelete: "NO ACTION",
