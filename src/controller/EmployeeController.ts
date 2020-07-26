@@ -1,5 +1,6 @@
 import { getRepository } from "typeorm";
 import { Employee } from "../entity/Employee";
+import { EmployeeStatus } from "../entity/EmployeeStatus";
 import { EmployeeDao } from "../dao/EmployeeDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
@@ -184,8 +185,28 @@ export class EmployeeController {
 			}
 		}
 
+
+		// find deleted status
+		const deletedStatus = await getRepository(EmployeeStatus).findOne({ name: "Deleted" }).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		// if there is no status called deleted
+		if (!deletedStatus) {
+			throw {
+				status: false,
+				type: "server",
+				msg: "Deleted status doesn't exist in the database!."
+			}
+		}
+
 		// delete the employee (make inactive)
-		employee.employeeStatusId = 3;
+		employee.employeeStatus = deletedStatus;
 
 		await getRepository(Employee).save(employee).catch(e => {
 			console.log(e.code, e);
