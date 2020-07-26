@@ -73,8 +73,8 @@ export class UserController {
 		// create user object
 		const user = data as User;
 
-        // check if valid data is given
-        await ValidationUtil.validate("USER", user);
+		// check if valid data is given
+		await ValidationUtil.validate("USER", user);
 
 		// check employee id exists with given employee number
 		const employee = await getRepository(Employee).findOne({
@@ -110,7 +110,7 @@ export class UserController {
 		if (process.env.PRODUCTION == "false") {
 			user.employeeCreatedId = 1;
 		} else {
-			user.employeeCreatedId = session.user.employeeCreatedId;
+			user.employeeCreatedId = session.data.employeeId;
 		}
 
 
@@ -167,8 +167,8 @@ export class UserController {
 		// create user object
 		const editedUser = data as User;
 
-        // check if valid data is given
-        await ValidationUtil.validate("USER", editedUser);
+		// check if valid data is given
+		await ValidationUtil.validate("USER", editedUser);
 
 		// check if user is present with the given id
 		const selectedUser = await getRepository(User).findOne(editedUser.id).catch(e => {
