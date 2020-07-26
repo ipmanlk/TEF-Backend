@@ -3,6 +3,7 @@ require("dotenv").config();
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { UserRole } from "../entity/UserRole";
+import { UserStatus } from "../entity/UserStatus";
 import { UserDao } from "../dao/UserDao";
 import { Employee } from "../entity/Employee";
 import { createHash } from "crypto";
@@ -304,8 +305,29 @@ export class UserController {
 			}
 		}
 
-		// delete the user
-		await getRepository(User).delete(user).catch(e => {
+		// find deleted status
+		const deletedStatus = await getRepository(UserStatus).findOne({ name: "Deleted" }).catch(e => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		// if there is no status called deleted
+		if (!deletedStatus) {
+			throw {
+				status: false,
+				type: "server",
+				msg: "Deleted status doesn't exist in the database!."
+			}
+		}
+
+		// set user status to deleted
+		user.userStatus = deletedStatus;
+
+		await getRepository(User).save(user).catch(e => {
 			console.log(e.code, e);
 			throw {
 				status: false,
