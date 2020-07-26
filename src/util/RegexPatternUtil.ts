@@ -39,11 +39,12 @@ export class RegexPatternUtil {
                 data: regex
             };
 
-        } catch (e) {
+        } catch (e) {            
+            console.log(e);
             throw {
                 status: false,
                 type: "server",
-                msg: "Server Error!. Please check console logs."
+                msg: "Server Error!. Unable to parse the requested regex file. Please check logs."
             }
         }
     }
