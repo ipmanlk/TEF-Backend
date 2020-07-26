@@ -57,9 +57,12 @@ export class CustomerController {
         };
     }
 
-    static async save(data) {
+    static async save(data, session) {
         // check if valid data is given
         await ValidationUtil.validate("CUSTOMER", data);
+
+        // add employee id of the current session as created employee
+        data.employeeId = session.data.employeeId;
 
         // save to db
         await getRepository(Customer).save(data).catch(e => {

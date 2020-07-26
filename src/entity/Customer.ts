@@ -45,11 +45,11 @@ export class Customer {
   @Column("text", { name: "description" })
   description: string;
 
-  @Column("datetime", {
-    name: "reg_datetime",
+  @Column("date", {
+    name: "doregistration",
     default: () => "CURRENT_TIMESTAMP",
   })
-  regDatetime: Date;
+  doregistration: string;
 
   @Column("int", { name: "employee_id" })
   employeeId: number;
