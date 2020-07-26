@@ -91,11 +91,13 @@ if (process.env.PRODUCTION == "false") {
 
    // dummy session data
    app.use((req, res, next) => {
-      req.session.data = {};
-      req.session.data.username = "admin";
-      req.session.data.logged = true;
-      req.session.data.userRoles = [{ id: 1 }, { id: 2 }];
-      req.session.data.userId = { id: 1 };
+      req.session.data = {
+         username: "admin",
+         logged: true,
+         userRoles: [{ id: 1 }, { id: 2 }],
+         userId: 1,
+         employeeId: 1
+      };
       next();
    });
 }
@@ -327,7 +329,7 @@ app.route("/api/customers")
    })
 
    .post((req, res) => {
-      CustomerController.save(req.body.data)
+      CustomerController.save(req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
