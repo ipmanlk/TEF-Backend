@@ -21,9 +21,7 @@ export class ValidationUtil {
             
             // check if the data contains base64 string
             if (validationInfoObj[attribute].base64) {                                
-                if (typeof dataValue === "string" || Buffer.isBuffer(dataValue)) {
-                    console.log("aaaa");
-                    
+                if (typeof dataValue === "string" || Buffer.isBuffer(dataValue)) {                    
                     return;
                 }
             }
