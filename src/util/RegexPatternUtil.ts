@@ -24,9 +24,8 @@ export class RegexPatternUtil {
             let regexJson = require(`${__dirname}/RegexPatterns/${module}.json`);
             let regex = regexJson.map(rx => {
                 let regexString = rx.regex.toString();
-                let fixedRegexString = regexString.substring(1, regexString.length - 1);
                 let vi = {
-                    regex: fixedRegexString,
+                    regex: regexString,
                     attribute: rx.attribute,
                     error: rx.error
                 };
@@ -34,12 +33,13 @@ export class RegexPatternUtil {
                 if (rx.base64) vi["base64"] = true;
                 return vi;
             });
+
             return {
                 status: true,
                 data: regex
             };
 
-        } catch (e) {            
+        } catch (e) {
             console.log(e);
             throw {
                 status: false,
