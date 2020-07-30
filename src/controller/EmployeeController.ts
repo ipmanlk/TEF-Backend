@@ -82,8 +82,35 @@ export class EmployeeController {
 		const decodedBase64 = this.decodeBase64Image(photo);
 		employee.photo = decodedBase64.data;
 
+		// generate employee number
+		const lastEmployee = await getRepository(Employee).findOne({
+			select: ["id", "number"],
+			order: { number: "DESC" }
+		});
+
+		const lastEmployeeYear = parseInt(lastEmployee.number.substring(3, 7));
+		const lastEmployeeNumber = parseInt(lastEmployee.number.substring(7));
+		const currentYear = new Date().getFullYear();
+
+		let newEmployeeNumber;
+
+		// conver to 4 digit
+		function padToFour(number) {
+			if (number <= 9999) { number = ("000" + number).slice(-4); }
+			return number;
+		}
+
+		// check to set employee number back to 0000 when new year arrives
+		if (currentYear == lastEmployeeYear + 1) {
+			newEmployeeNumber = `EMP${currentYear}0000`;
+		} else {
+			newEmployeeNumber = `EMP${currentYear}${padToFour(lastEmployeeNumber + 1)}`;
+		}
+
+		employee.number = newEmployeeNumber;
+
 		// save to db
-		await getRepository(Employee).save(employee).catch(e => {
+		const newEmployee = await getRepository(Employee).save(employee).catch(e => {
 			console.log(e.code, e);
 
 			if (e.code == "ER_DUP_ENTRY") {
@@ -102,6 +129,7 @@ export class EmployeeController {
 
 		return {
 			status: true,
+			data: { number: newEmployee.number },
 			msg: "That employee has been added!"
 		};
 	}
