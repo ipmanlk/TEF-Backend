@@ -18,10 +18,12 @@ export class ValidationUtil {
 
             // if data vlue is not given
             if (!dataValue) return;
-
+            
             // check if the data contains base64 string
-            if (validationInfoObj[attribute].base64) {
-                if (typeof dataValue === "string" && dataValue as any instanceof String || Buffer.isBuffer(dataValue)) {
+            if (validationInfoObj[attribute].base64) {                                
+                if (typeof dataValue === "string" || Buffer.isBuffer(dataValue)) {
+                    console.log("aaaa");
+                    
                     return;
                 }
             }
