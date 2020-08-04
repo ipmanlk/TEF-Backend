@@ -95,8 +95,8 @@ export class UserController {
 				msg: "Unable to find an employee with that number!"
 			};
 		}
-
-		user.employee.id = employee.id;
+		
+		user.employeeId = employee.id;
 
 		// hash the password
 		const hashedPass = createHash("sha512").update(`${user.password}${process.env.SALT}`).digest("hex");
