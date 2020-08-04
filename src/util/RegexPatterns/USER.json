@@ -1,6 +1,6 @@
 [
   {
-    "regex": "^[\\d]{4}$",
+    "regex": "^EMP[\\d]{8}$",
     "attribute": "number",
     "error": "Please provide a valid employee number!."
   },

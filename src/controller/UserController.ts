@@ -36,10 +36,8 @@ export class UserController {
 		// check if entry exists
 		if (user !== undefined) {
 			// remove useless attributes
-			user.employee = {
-				id: user.employee.id,
-				number: user.employee.number
-			} as any;
+			user["number"] = user.employee.number;
+			delete user.employee;
 
 			return {
 				status: true,
@@ -71,15 +69,15 @@ export class UserController {
 	}
 
 	static async save(data, session) {
+		// check if valid data is given
+		await ValidationUtil.validate("USER", data);
+
 		// create user object
 		const user = data as User;
 
-		// check if valid data is given
-		await ValidationUtil.validate("USER", user);
-
 		// check employee id exists with given employee number
 		const employee = await getRepository(Employee).findOne({
-			number: data.employee.number
+			number: data.number
 		}).catch(e => {
 			console.log(e.code, e);
 			throw {
@@ -98,8 +96,7 @@ export class UserController {
 			};
 		}
 
-		delete user.employee;
-		user.employeeId = employee.id;
+		user.employee.id = employee.id;
 
 		// hash the password
 		const hashedPass = createHash("sha512").update(`${user.password}${process.env.SALT}`).digest("hex");
@@ -191,7 +188,7 @@ export class UserController {
 
 		// check employee id exists with given employee number
 		const employee = await getRepository(Employee).findOne({
-			number: data.employee.number
+			number: data.number
 		}).catch(e => {
 			console.log(e.code, e);
 			throw {
