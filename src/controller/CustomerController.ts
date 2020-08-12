@@ -93,7 +93,7 @@ export class CustomerController {
         data.number = newCustomerNumber;
 
         // save to db
-        await getRepository(Customer).save(data).catch(e => {
+        const newCustomer = await getRepository(Customer).save(data).catch(e => {
             console.log(e.code, e);
 
             if (e.code == "ER_DUP_ENTRY") {
@@ -112,6 +112,7 @@ export class CustomerController {
 
         return {
             status: true,
+            data: { number: newCustomer.number },
             msg: "That customer has been added!"
         };
     }
