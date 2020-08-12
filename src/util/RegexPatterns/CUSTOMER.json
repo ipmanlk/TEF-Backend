@@ -48,12 +48,14 @@
   {
     "regex": "^[\\w\\s]{5,200}$",
     "attribute": "cpname",
-    "error": "Please provide a valid compnay name!."
+    "error": "Please provide a valid compnay name!.",
+    "optional": true
   },
   {
     "regex": "^[\\d]{10}$",
     "attribute": "cpmobile",
-    "error": "Please provide a valid company number!."
+    "error": "Please provide a valid company number!.",
+    "optional": true
   },
   {
     "regex": "^[\\d]+$",
