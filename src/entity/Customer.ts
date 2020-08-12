@@ -57,7 +57,12 @@ export class Customer {
   @Column("char", { name: "cpmobile", nullable: true, length: 10 })
   cpmobile: string | null;
 
-  @Column("decimal", { name: "to_be_paid", precision: 8, scale: 2 })
+  @Column("decimal", {
+    name: "to_be_paid",
+    precision: 8,
+    scale: 2,
+    default: () => "'0.00'",
+  })
   toBePaid: string;
 
   @Column("int", { name: "customer_type_id" })
@@ -66,7 +71,7 @@ export class Customer {
   @Column("int", { name: "points", nullable: true })
   points: number | null;
 
-  @Column("int", { primary: true, name: "employee_id" })
+  @Column("int", { name: "employee_id" })
   employeeId: number;
 
   @ManyToOne(
