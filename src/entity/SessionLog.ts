@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { SessionAction } from "./SessionAction";
 import { User } from "./User";
+import { SessionAction } from "./SessionAction";
 
 @Index("fk_sessionlog_user1_idx", ["userId"], {})
 @Index("fk_session_log_session_action1_idx", ["sessionActionId"], {})
@@ -32,6 +32,13 @@ export class SessionLog {
   @Column("int", { name: "session_action_id" })
   sessionActionId: number;
 
+  @ManyToOne(() => User, (user) => user.sessionLogs, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
+  user: User;
+
   @ManyToOne(
     () => SessionAction,
     (sessionAction) => sessionAction.sessionLogs,
@@ -39,11 +46,4 @@ export class SessionLog {
   )
   @JoinColumn([{ name: "session_action_id", referencedColumnName: "id" }])
   sessionAction: SessionAction;
-
-  @ManyToOne(() => User, (user) => user.sessionLogs, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
-  })
-  @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
-  user: User;
 }

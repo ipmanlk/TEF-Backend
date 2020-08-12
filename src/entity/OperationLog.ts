@@ -6,9 +6,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Operation } from "./Operation";
 import { Employee } from "./Employee";
 import { Module } from "./Module";
+import { Operation } from "./Operation";
 
 @Index("fk_operationlog_employee1_idx", ["employeeId"], {})
 @Index("fk_operationlog_module1_idx", ["moduleId"], {})
@@ -34,13 +34,6 @@ export class OperationLog {
   @Column("int", { name: "operation_id" })
   operationId: number;
 
-  @ManyToOne(() => Operation, (operation) => operation.operationLogs, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
-  })
-  @JoinColumn([{ name: "operation_id", referencedColumnName: "id" }])
-  operation: Operation;
-
   @ManyToOne(() => Employee, (employee) => employee.operationLogs, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
@@ -54,4 +47,11 @@ export class OperationLog {
   })
   @JoinColumn([{ name: "module_id", referencedColumnName: "id" }])
   module: Module;
+
+  @ManyToOne(() => Operation, (operation) => operation.operationLogs, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "operation_id", referencedColumnName: "id" }])
+  operation: Operation;
 }

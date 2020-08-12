@@ -26,29 +26,29 @@ export class Employee {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("char", { name: "number", nullable: true, unique: true, length: 4 })
+  @Column("char", { name: "number", nullable: true, unique: true, length: 11 })
   number: string | null;
 
-  @Column("varchar", { name: "full_name", nullable: true, length: 150 })
-  fullName: string | null;
+  @Column("varchar", { name: "full_name", length: 150 })
+  fullName: string;
 
-  @Column("varchar", { name: "calling_name", nullable: true, length: 45 })
-  callingName: string | null;
+  @Column("varchar", { name: "calling_name", length: 45 })
+  callingName: string;
 
-  @Column("mediumblob", { name: "photo", nullable: true })
-  photo: Buffer | null;
+  @Column("mediumblob", { name: "photo" })
+  photo: Buffer;
 
-  @Column("char", { name: "nic", nullable: true, length: 12 })
-  nic: string | null;
+  @Column("char", { name: "nic", length: 12 })
+  nic: string;
 
-  @Column("date", { name: "dobirth", nullable: true })
-  dobirth: string | null;
+  @Column("date", { name: "dobirth" })
+  dobirth: string;
 
-  @Column("varchar", { name: "address", nullable: true, length: 200 })
-  address: string | null;
+  @Column("varchar", { name: "address", length: 200 })
+  address: string;
 
-  @Column("char", { name: "mobile", nullable: true, length: 10 })
-  mobile: string | null;
+  @Column("char", { name: "mobile", length: 10 })
+  mobile: string;
 
   @Column("char", { name: "land", nullable: true, length: 10 })
   land: string | null;
@@ -56,8 +56,8 @@ export class Employee {
   @Column("text", { name: "description", nullable: true })
   description: string | null;
 
-  @Column("date", { name: "doassignment", nullable: true })
-  doassignment: string | null;
+  @Column("date", { name: "doassignment" })
+  doassignment: string;
 
   @Column("int", { name: "gender_id" })
   genderId: number;
