@@ -85,7 +85,7 @@ export class EmployeeController {
 		// generate employee number
 		const lastEmployee = await getRepository(Employee).findOne({
 			select: ["id", "number"],
-			order: { number: "DESC" }
+			order: { id: "DESC" }
 		});
 
 		const lastEmployeeYear = parseInt(lastEmployee.number.substring(3, 7));
