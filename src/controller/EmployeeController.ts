@@ -3,6 +3,7 @@ import { Employee } from "../entity/Employee";
 import { EmployeeStatus } from "../entity/EmployeeStatus";
 import { EmployeeDao } from "../dao/EmployeeDao";
 import { ValidationUtil } from "../util/ValidationUtil";
+import { MiscUtil } from "../util/MiscUtil";
 
 export class EmployeeController {
 	static async get(data) {
@@ -79,7 +80,7 @@ export class EmployeeController {
 		}
 
 		// read photo as buffer
-		const decodedBase64 = this.decodeBase64Image(photo);
+		const decodedBase64 = MiscUtil.decodeBase64Image(photo);
 		employee.photo = decodedBase64.data;
 
 		// generate employee number
@@ -88,27 +89,12 @@ export class EmployeeController {
 			order: { id: "DESC" }
 		});
 
-		const lastEmployeeYear = parseInt(lastEmployee.number.substring(3, 7));
-		const lastEmployeeNumber = parseInt(lastEmployee.number.substring(7));
-		const currentYear = new Date().getFullYear();
-
-		let newEmployeeNumber;
-
-		// conver to 4 digit
-		function padToFour(number) {
-			if (number <= 9999) { number = ("000" + number).slice(-4); }
-			return number;
-		}
-
-		// check to set employee number back to 0000 when new year arrives
-		if (currentYear == lastEmployeeYear + 1) {
-			newEmployeeNumber = `EMP${currentYear}0000`;
+		// set number for new employee
+		if (lastEmployee) {
+			employee.number = MiscUtil.getNextNumber("EMP", lastEmployee.number, 4);
 		} else {
-			newEmployeeNumber = `EMP${currentYear}${padToFour(lastEmployeeNumber + 1)}`;
+			employee.number = MiscUtil.getNextNumber("EMP", undefined, 4);
 		}
-
-		employee.number = newEmployeeNumber;
-
 
 		// save to db
 		try {
@@ -173,7 +159,7 @@ export class EmployeeController {
 			}
 
 			// read photo as buffer
-			const decodedBase64 = this.decodeBase64Image(editedEmployee.photo);
+			const decodedBase64 = MiscUtil.decodeBase64Image(editedEmployee.photo);
 			editedEmployee.photo = decodedBase64.data;
 		}
 
@@ -188,7 +174,7 @@ export class EmployeeController {
 				status: true,
 				msg: "That employee has been updated!"
 			}
-			
+
 		} catch (e) {
 			if (e.code == "ER_DUP_ENTRY") {
 				const msg = await this.getDuplicateErrorMsg(e, editedEmployee)
@@ -262,24 +248,6 @@ export class EmployeeController {
 			status: true,
 			msg: "That employee has been deleted!"
 		};
-	}
-
-	private static decodeBase64Image(dataString) {
-		const matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-		const decodedBase64 = {} as any;
-
-		if (matches.length !== 3) {
-			throw {
-				status: false,
-				type: "input",
-				msg: "Please select a valid image!."
-			}
-		}
-
-		decodedBase64.type = matches[1];
-		decodedBase64.data = Buffer.from(matches[2], "base64");
-
-		return decodedBase64;
 	}
 
 	private static async getDuplicateErrorMsg(error, employee: Employee) {

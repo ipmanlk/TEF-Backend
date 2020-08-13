@@ -3,6 +3,7 @@ import { Customer } from "../entity/Customer";
 import { CustomerDao } from "../dao/CustomerDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 import { CustomerStatus } from "../entity/CustomerStatus";
+import { MiscUtil } from "../util/MiscUtil";
 
 export class CustomerController {
     static async get(data) {
@@ -43,7 +44,7 @@ export class CustomerController {
     }
 
     private static async search(data = {}) {
-        const employees = await CustomerDao.search(data).catch(e => {
+        const customers = await CustomerDao.search(data).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -54,7 +55,7 @@ export class CustomerController {
 
         return {
             status: true,
-            data: employees
+            data: customers
         };
     }
 
@@ -66,32 +67,17 @@ export class CustomerController {
         data.employeeId = session.data.employeeId;
 
         // generate customer number
-        const lastCustomer = await getRepository(Customer).findOne({
+        let lastCustomer = await getRepository(Customer).findOne({
             select: ["id", "number"],
             order: { id: "DESC" }
         });
 
-        const lastCustomerNumber = lastCustomer ? parseInt(lastCustomer.number.substring(7)) : 0;
-        const currentYear = new Date().getFullYear();
-        const lastCustomerYear = lastCustomer ? parseInt(lastCustomer.number.substring(3, 7)) : currentYear;
-
-        let newCustomerNumber;
-
-        // conver to 5 digit
-        function padToFive(number) {
-            if (number <= 99999) { number = ("0000" + number).slice(-5); }
-            return number;
-        }
-
-        // check to set customer number back to 00000 when new year arrives
-        if (currentYear == lastCustomerYear + 1) {
-            newCustomerNumber = `CUS${currentYear}00000`;
-        } else {
-            newCustomerNumber = `CUS${currentYear}${padToFive(lastCustomerNumber + 1)}`;
-        }
-
         // set number for new customer
-        data.number = newCustomerNumber;
+        if (lastCustomer) {
+            data.number = MiscUtil.getNextNumber("CUS", lastCustomer.number, 5);
+        } else {
+            data.number = MiscUtil.getNextNumber("CUS", undefined, 5);
+        }        
 
         try {
             const newCustomer = await getRepository(Customer).save(data);
