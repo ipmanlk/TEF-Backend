@@ -26,11 +26,6 @@
     },
     {
         "regex": "^[\\d]+$",
-        "attribute": "qty",
-        "error": "Please provide a valid quantity!."
-    },
-    {
-        "regex": "^[\\d]+$",
         "attribute": "materialTypeId",
         "error": "Please select a valid material type!."
     },
