@@ -109,29 +109,31 @@ export class EmployeeController {
 
 		employee.number = newEmployeeNumber;
 
-		// save to db
-		const newEmployee = await getRepository(Employee).save(employee).catch(e => {
-			console.log(e.code, e);
 
+		// save to db
+		try {
+			const newEmployee = await getRepository(Employee).save(employee);
+			return {
+				status: true,
+				data: { number: newEmployee.number },
+				msg: "That employee has been added!"
+			}
+		} catch (e) {
 			if (e.code == "ER_DUP_ENTRY") {
+				const msg = await this.getDuplicateErrorMsg(e, employee)
 				throw {
 					status: false,
 					type: "input",
-					msg: "Entry with that employee number already exists!."
+					msg: msg
 				}
 			}
+
 			throw {
 				status: false,
 				type: "server",
 				msg: "Server Error!. Please check logs."
 			}
-		});
-
-		return {
-			status: true,
-			data: { number: newEmployee.number },
-			msg: "That employee has been added!"
-		};
+		}
 	}
 
 	static async update(data) {
@@ -178,20 +180,31 @@ export class EmployeeController {
 		// check if valid data is given
 		await ValidationUtil.validate("EMPLOYEE", editedEmployee);
 
-		// update the employee
-		await getRepository(Employee).save(editedEmployee).catch(e => {
-			console.log(e.code, e);
+
+		try {
+			await getRepository(Employee).save(editedEmployee);
+
+			return {
+				status: true,
+				msg: "That employee has been updated!"
+			}
+			
+		} catch (e) {
+			if (e.code == "ER_DUP_ENTRY") {
+				const msg = await this.getDuplicateErrorMsg(e, editedEmployee)
+				throw {
+					status: false,
+					type: "input",
+					msg: msg
+				}
+			}
+
 			throw {
 				status: false,
 				type: "server",
 				msg: "Server Error!. Please check logs."
 			}
-		});
-
-		return {
-			status: true,
-			msg: "That employee has been updated!"
-		};
+		}
 	}
 
 	static async delete({ id }) {
@@ -251,33 +264,6 @@ export class EmployeeController {
 		};
 	}
 
-	static async getNextNumber() {
-		// get latest employee number
-		const employeeData = await getRepository(Employee).findOne(
-			{ select: ["number"], order: { number: "DESC" } }
-		).catch(e => {
-			console.log(e.code, e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
-		});
-
-		// parse it to int
-		const currentNumber = parseInt(employeeData.number);
-
-		// add one and format to 4 digits
-		const nextNumber = (currentNumber + 1).toString().padStart(4, "0");
-
-		return {
-			status: true,
-			data: {
-				nextNumber
-			}
-		}
-	}
-
 	private static decodeBase64Image(dataString) {
 		const matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
 		const decodedBase64 = {} as any;
@@ -294,5 +280,41 @@ export class EmployeeController {
 		decodedBase64.data = Buffer.from(matches[2], "base64");
 
 		return decodedBase64;
+	}
+
+	private static async getDuplicateErrorMsg(error, employee: Employee) {
+		// check if which unique field is violated
+		let msg, field, duplicateEntry;
+
+		if (error.sqlMessage.includes("nic_UNIQUE")) {
+			field = "nic";
+			msg = "NIC already exists!"
+
+		} else if (error.sqlMessage.includes("mobile_UNIQUE")) {
+			field = "cmobile";
+			msg = "mobile number already exists!"
+
+		} else if (error.sqlMessage.includes("land_UNIQUE")) {
+			field = "email";
+			msg = "land number already exists!"
+
+		} else {
+			return "Customer with same information already exists!";
+		}
+
+		// get duplicated entry
+		duplicateEntry = await getRepository(Employee).findOne({
+			select: ["id", "number"],
+			where: { field: employee[field] }
+		}).catch(e => {
+			console.log(e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs."
+			}
+		});
+
+		return `Employee (Number: ${duplicateEntry.number}) with the same ${msg}`;
 	}
 }
