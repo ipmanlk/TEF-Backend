@@ -392,8 +392,13 @@ app.route("/api/materials")
       MaterialController.update(req.body.data)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
-   });
+   })
 
+   .delete((req, res) => {
+      MaterialController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
 
 // Routes: Misc Routes
 app.use("/api/regexes", (req, res, next) => {
