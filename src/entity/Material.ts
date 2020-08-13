@@ -23,7 +23,7 @@ export class Material {
   @Column("varchar", { name: "name", length: 45 })
   name: string;
 
-  @Column("char", { name: "code", length: 11 })
+  @Column("char", { name: "code", length: 12 })
   code: string;
 
   @Column("decimal", {

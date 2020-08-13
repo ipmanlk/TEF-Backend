@@ -12,9 +12,9 @@ import { Employee } from "./Employee";
 import { Gender } from "./Gender";
 
 @Index("reg_no_UNIQUE", ["number"], { unique: true })
+@Index("customer_mobile_UNIQUE", ["customerMobile"], { unique: true })
 @Index("nic_UNIQUE", ["nic"], { unique: true })
 @Index("email_UNIQUE", ["email"], { unique: true })
-@Index("customer_mobile_UNIQUE", ["customerMobile"], { unique: true })
 @Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
 @Index("fk_customer_gender1_idx", ["genderId"], {})
 @Index("fk_customer_customer_status1_idx", ["customerStatusId"], {})

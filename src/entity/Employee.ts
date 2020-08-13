@@ -16,10 +16,10 @@ import { Gender } from "./Gender";
 import { OperationLog } from "./OperationLog";
 import { User } from "./User";
 
-@Index("nic_UNIQUE", ["nic"], { unique: true })
 @Index("mobile_UNIQUE", ["mobile"], { unique: true })
-@Index("number_UNIQUE", ["number"], { unique: true })
+@Index("nic_UNIQUE", ["nic"], { unique: true })
 @Index("land_UNIQUE", ["land"], { unique: true })
+@Index("number_UNIQUE", ["number"], { unique: true })
 @Index("fk_employee_gender_idx", ["genderId"], {})
 @Index("fk_employee_designation1_idx", ["designationId"], {})
 @Index("fk_employee_civilstatus1_idx", ["civilStatusId"], {})
