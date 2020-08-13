@@ -181,14 +181,6 @@ app.route("/api/employees")
          .catch(e => sendErrors(res, e));
    });
 
-
-app.route("/api/employees/next_number")
-   .get((req, res) => {
-      EmployeeController.getNextNumber()
-         .then(r => res.json(r))
-         .catch(e => sendErrors(res, e));
-   });
-
 // Middleware: User permission checking
 app.use("/api/users", (req, res, next) => {
    isAuthorized(req, false, "USER").then(() => {
