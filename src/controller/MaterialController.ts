@@ -3,6 +3,7 @@ import { Material } from "../entity/Material";
 import { MaterialStatus } from "../entity/MaterialStatus";
 import { MaterialDao } from "../dao/MaterialDao";
 import { ValidationUtil } from "../util/ValidationUtil";
+import { MiscUtil } from "../util/MiscUtil";
 
 export class MaterialController {
 
@@ -61,6 +62,20 @@ export class MaterialController {
     static async save(data) {
         // check if valid data is given
         await ValidationUtil.validate("MATERIAL", data);
+
+
+        // generate material code
+        const lastEntry = await getRepository(Material).findOne({
+            select: ["id", "code"],
+            order: { id: "DESC" }
+        });
+
+        // set code for new material
+        if (lastEntry) {
+            data.code = MiscUtil.getNextNumber("MAT", lastEntry.code, 5);
+        } else {
+            data.code = MiscUtil.getNextNumber("MAT", undefined, 5);
+        }
 
         const entry = await getRepository(Material).save(data).catch(e => {
             console.log(e.code, e);
