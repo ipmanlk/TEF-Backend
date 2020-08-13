@@ -90,31 +90,37 @@ export class CustomerController {
             newCustomerNumber = `CUS${currentYear}${padToFive(lastCustomerNumber + 1)}`;
         }
 
+        // set number for new customer
         data.number = newCustomerNumber;
 
-        // save to db
-        const newCustomer = await getRepository(Customer).save(data).catch(e => {
+        try {
+            const newCustomer = await getRepository(Customer).save(data);
+
+            return {
+                status: true,
+                data: { number: newCustomer.number },
+                msg: "That customer has been added!"
+            };
+
+        } catch (e) {
             console.log(e.code, e);
 
             if (e.code == "ER_DUP_ENTRY") {
+                const msg = await this.getDuplicateErrorMsg(e, data as Customer)
+
                 throw {
                     status: false,
                     type: "input",
-                    msg: "Entry with that employee number already exists!."
+                    msg: msg
                 }
             }
+
             throw {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check logs."
             }
-        });
-
-        return {
-            status: true,
-            data: { number: newCustomer.number },
-            msg: "That customer has been added!"
-        };
+        }
     }
 
     static async update(data) {
@@ -143,19 +149,34 @@ export class CustomerController {
         }
 
         // update the customer
-        await getRepository(Customer).save(editedCustomer).catch(e => {
+        try {
+            await getRepository(Customer).save(editedCustomer);
+            return {
+                status: true,
+                msg: "That customer has been updated!"
+            };
+
+        } catch (e) {
             console.log(e.code, e);
+
+            // check for duplicate entry
+            if (e.code == "ER_DUP_ENTRY") {
+                const msg = await this.getDuplicateErrorMsg(e, editedCustomer);
+
+                throw {
+                    status: false,
+                    type: "input",
+                    msg: msg
+                }
+            }
+
+            // server error handling
             throw {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check logs."
             }
-        });
-
-        return {
-            status: true,
-            msg: "That customer has been updated!"
-        };
+        }
     }
 
     static async delete({ id }) {
@@ -215,4 +236,43 @@ export class CustomerController {
         };
     }
 
+    private static async getDuplicateErrorMsg(error, customer: Customer) {
+        // check if which unique field is violated
+        let msg, field, duplicateEntry;
+
+        if (error.sqlMessage.includes("nic_UNIQUE")) {
+            field = "nic";
+            msg = "NIC already exists!"
+
+        } else if (error.sqlMessage.includes("cmobile_UNIQUE")) {
+            field = "cmobile";
+            msg = "contact number already exists!"
+
+        } else if (error.sqlMessage.includes("email_UNIQUE")) {
+            field = "email";
+            msg = "email already exists!"
+
+        } else if (error.sqlMessage.includes("cpmobile_UNIQUE")) {
+            field = "cpmobile";
+            msg = "company contact number already exists!"
+
+        } else {
+            return "Customer with same information already exists!";
+        }
+
+        // get duplicated entry
+        duplicateEntry = await getRepository(Customer).findOne({
+            select: ["id", "number"],
+            where: { field: customer[field] }
+        }).catch(e => {
+            console.log(e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        });
+
+        return `Customer (ID: ${duplicateEntry.number}) with the same ${msg}`;
+    }
 }
