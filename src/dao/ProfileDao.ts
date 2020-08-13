@@ -6,7 +6,7 @@ export class ProfileDao {
         return getRepository(User)
             .createQueryBuilder("u")
             .select([
-                "u.id", "u.username", "u.docreation", "u.description"
+                "u.id", "u.username", "u.addedDate", "u.description"
             ])
             .whereInIds([userId])
             .leftJoinAndSelect("u.employee", "e")

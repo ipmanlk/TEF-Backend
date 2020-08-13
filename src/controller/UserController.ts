@@ -21,7 +21,7 @@ export class UserController {
 	private static async getOne({ id }) {
 		// search for an entry with given id
 		const user = await getRepository(User).findOne({
-			select: ["id", "employeeId", "username", "userStatusId", "docreation", "description"],
+			select: ["id", "employeeId", "username", "userStatusId", "addedDate", "description"],
 			relations: ["employee", "userRoles"],
 			where: { id: id }
 		}).catch(e => {
@@ -113,7 +113,7 @@ export class UserController {
 
 
 		// set date of creation
-		user.docreation = new Date().toISOString().slice(0, 19).replace('T', ' ').split(" ")[0];
+		user.addedDate = new Date().toISOString().slice(0, 19).replace('T', ' ').split(" ")[0];
 
 		// save to db
 		const newUser = await getRepository(User).save(user).catch(e => {

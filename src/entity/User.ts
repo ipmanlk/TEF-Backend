@@ -37,8 +37,8 @@ export class User {
   @Column("varchar", { name: "password", nullable: true, length: 600 })
   password: string | null;
 
-  @Column("date", { name: "docreation", nullable: true })
-  docreation: string | null;
+  @Column("date", { name: "added_date", nullable: true })
+  addedDate: string | null;
 
   @Column("text", { name: "description", nullable: true })
   description: string | null;

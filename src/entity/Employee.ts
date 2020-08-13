@@ -16,7 +16,10 @@ import { Gender } from "./Gender";
 import { OperationLog } from "./OperationLog";
 import { User } from "./User";
 
+@Index("nic_UNIQUE", ["nic"], { unique: true })
+@Index("mobile_UNIQUE", ["mobile"], { unique: true })
 @Index("number_UNIQUE", ["number"], { unique: true })
+@Index("land_UNIQUE", ["land"], { unique: true })
 @Index("fk_employee_gender_idx", ["genderId"], {})
 @Index("fk_employee_designation1_idx", ["designationId"], {})
 @Index("fk_employee_civilstatus1_idx", ["civilStatusId"], {})
@@ -38,26 +41,26 @@ export class Employee {
   @Column("mediumblob", { name: "photo" })
   photo: Buffer;
 
-  @Column("char", { name: "nic", length: 12 })
+  @Column("char", { name: "nic", unique: true, length: 12 })
   nic: string;
 
-  @Column("date", { name: "dobirth" })
-  dobirth: string;
+  @Column("date", { name: "birth_date" })
+  birthDate: string;
 
   @Column("varchar", { name: "address", length: 200 })
   address: string;
 
-  @Column("char", { name: "mobile", length: 10 })
+  @Column("char", { name: "mobile", unique: true, length: 10 })
   mobile: string;
 
-  @Column("char", { name: "land", nullable: true, length: 10 })
+  @Column("char", { name: "land", nullable: true, unique: true, length: 10 })
   land: string | null;
 
   @Column("text", { name: "description", nullable: true })
   description: string | null;
 
-  @Column("date", { name: "doassignment" })
-  doassignment: string;
+  @Column("date", { name: "added_date" })
+  addedDate: string;
 
   @Column("int", { name: "gender_id" })
   genderId: number;

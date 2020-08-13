@@ -23,11 +23,11 @@ export class SessionLog {
   action: string | null;
 
   @Column("datetime", {
-    name: "time",
+    name: "datetime",
     nullable: true,
     default: () => "CURRENT_TIMESTAMP",
   })
-  time: Date | null;
+  datetime: Date | null;
 
   @Column("int", { name: "session_action_id" })
   sessionActionId: number;

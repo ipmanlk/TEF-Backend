@@ -9,14 +9,14 @@ export class UserDao {
             .leftJoinAndSelect("u.userStatus", "us")
             .leftJoinAndSelect("u.employeeCreated", "ec")
             .select([
-                "e.id", "e.number", "u.id", "u.username", "u.docreation", "ec.id", "ec.number", "us.id", "us.name",
+                "e.id", "e.number", "u.id", "u.username", "u.addedDate", "ec.id", "ec.number", "us.id", "us.name",
             ])
             .leftJoinAndSelect("u.userRoles", "ur")
             .leftJoinAndSelect("ur.role", "r")
             .where("u.username LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("e.number LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("ec.number LIKE :keyword", { keyword: `%${keyword}%` })
-            .orWhere("u.docreation LIKE :keyword", { keyword: `%${keyword}%` })
+            .orWhere("u.addedDate LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("us.name LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("r.name LIKE :keyword", { keyword: `%${keyword}%` })
             .orderBy("e.id")
