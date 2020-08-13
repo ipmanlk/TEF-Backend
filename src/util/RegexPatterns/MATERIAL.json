@@ -1,0 +1,63 @@
+[
+    {
+        "regex": "^[\\w\\s]{5,200}$",
+        "attribute": "name",
+        "error": "Please provide a valid material name!."
+    },
+    {
+        "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+        "attribute": "unitPrice",
+        "error": "Please provide a valid unit price!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "expireDuration",
+        "error": "Please provide a valid expire duration!.."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "rop",
+        "error": "Please provide a valid re-order point!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "roq",
+        "error": "Please provide a valid re-order quantity!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "qty",
+        "error": "Please provide a valid quantity!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "materialTypeId",
+        "error": "Please select a valid material type!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "unitTypeId",
+        "error": "Please select a valid unit type!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "materialStatusId",
+        "error": "Please select a valid customer material status!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "riskCategoryId",
+        "error": "Please select a valid risk category!."
+    },
+    {
+        "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+        "attribute": "description",
+        "error": "Please provide a valid description!.",
+        "optional": true
+    },
+    {
+        "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+        "attribute": "addedDate",
+        "error": "Please provide a valid added date!."
+    }
+]
