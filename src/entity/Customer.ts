@@ -12,6 +12,10 @@ import { Employee } from "./Employee";
 import { Gender } from "./Gender";
 
 @Index("reg_no_UNIQUE", ["number"], { unique: true })
+@Index("nic_UNIQUE", ["nic"], { unique: true })
+@Index("email_UNIQUE", ["email"], { unique: true })
+@Index("customer_mobile_UNIQUE", ["customerMobile"], { unique: true })
+@Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
 @Index("fk_customer_gender1_idx", ["genderId"], {})
 @Index("fk_customer_customer_status1_idx", ["customerStatusId"], {})
 @Index("fk_customer_customer_type1_idx", ["customerTypeId"], {})
@@ -24,13 +28,13 @@ export class Customer {
   @Column("char", { name: "number", unique: true, length: 12 })
   number: string;
 
-  @Column("varchar", { name: "cname", length: 200 })
-  cname: string;
+  @Column("varchar", { name: "customer_name", length: 200 })
+  customerName: string;
 
-  @Column("char", { name: "cmobile", length: 10 })
-  cmobile: string;
+  @Column("char", { name: "customer_mobile", unique: true, length: 10 })
+  customerMobile: string;
 
-  @Column("char", { name: "nic", length: 12 })
+  @Column("char", { name: "nic", unique: true, length: 12 })
   nic: string;
 
   @Column("varchar", { name: "address", length: 200 })
@@ -39,7 +43,7 @@ export class Customer {
   @Column("int", { name: "gender_id" })
   genderId: number;
 
-  @Column("varchar", { name: "email", length: 255 })
+  @Column("varchar", { name: "email", unique: true, length: 255 })
   email: string;
 
   @Column("int", { name: "customer_status_id" })
@@ -48,14 +52,19 @@ export class Customer {
   @Column("text", { name: "description", nullable: true })
   description: string | null;
 
-  @Column("date", { name: "doregistration" })
-  doregistration: string;
+  @Column("date", { name: "added_date" })
+  addedDate: string;
 
-  @Column("varchar", { name: "cpname", nullable: true, length: 255 })
-  cpname: string | null;
+  @Column("varchar", { name: "company_name", nullable: true, length: 255 })
+  companyName: string | null;
 
-  @Column("char", { name: "cpmobile", nullable: true, length: 10 })
-  cpmobile: string | null;
+  @Column("char", {
+    name: "company_mobile",
+    nullable: true,
+    unique: true,
+    length: 10,
+  })
+  companyMobile: string | null;
 
   @Column("decimal", {
     name: "to_be_paid",
@@ -68,7 +77,7 @@ export class Customer {
   @Column("int", { name: "customer_type_id" })
   customerTypeId: number;
 
-  @Column("int", { name: "points", nullable: true })
+  @Column("int", { name: "points", nullable: true, default: () => "'0'" })
   points: number | null;
 
   @Column("int", { name: "employee_id" })

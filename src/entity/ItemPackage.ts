@@ -54,8 +54,8 @@ export class ItemPackage {
   @Column("varchar", { name: "weight", nullable: true, length: 45 })
   weight: string | null;
 
-  @Column("date", { name: "dointroduction", nullable: true })
-  dointroduction: string | null;
+  @Column("date", { name: "added_date", nullable: true })
+  addedDate: string | null;
 
   @Column("int", { name: "item_package_status_id" })
   itemPackageStatusId: number;

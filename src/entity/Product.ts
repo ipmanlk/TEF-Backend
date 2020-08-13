@@ -60,8 +60,8 @@ export class Product {
   @Column("int", { name: "qty", nullable: true })
   qty: number | null;
 
-  @Column("date", { name: "docreation", nullable: true })
-  docreation: string | null;
+  @Column("date", { name: "added_date", nullable: true })
+  addedDate: string | null;
 
   @Column("int", { name: "risk_category_id" })
   riskCategoryId: number;

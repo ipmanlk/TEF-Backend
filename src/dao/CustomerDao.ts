@@ -7,11 +7,12 @@ export class CustomerDao {
             .createQueryBuilder("c")
             .leftJoinAndSelect("c.employee", "ce")
             .select([
-                "c.id", "c.cname", "c.number", "c.cmobile", "c.toBePaid", "c.points" , "c.cpname", "c.cpmobile", "c.address", "c.nic", "c.genderId", "c.email", "c.customerStatusId", "c.description", "c.doregistration", "ce.id", "ce.number"
+                "c.id", "c.customerName", "c.number", "c.customerMobile", "c.toBePaid", "c.points" , "c.companyName", "c.companyMobile", "c.address", "c.nic", "c.genderId", "c.email", "c.customerStatusId", "c.description", "c.addedDate", "ce.id", "ce.number"
             ])
             .leftJoinAndSelect("c.customerStatus", "cs")
             .leftJoinAndSelect("c.customerType", "ct")
-            .where("c.cname LIKE :keyword", { keyword: `%${keyword}%` })
+            .where("c.customerName LIKE :keyword", { keyword: `%${keyword}%` })
+            .orWhere("c.companyName LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("c.address LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("c.nic LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("c.email LIKE :keyword", { keyword: `%${keyword}%` })

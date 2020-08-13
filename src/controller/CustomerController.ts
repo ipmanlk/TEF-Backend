@@ -244,16 +244,16 @@ export class CustomerController {
             field = "nic";
             msg = "NIC already exists!"
 
-        } else if (error.sqlMessage.includes("cmobile_UNIQUE")) {
-            field = "cmobile";
+        } else if (error.sqlMessage.includes("customer_mobile_UNIQUE")) {
+            field = "customerMobile";
             msg = "contact number already exists!"
 
         } else if (error.sqlMessage.includes("email_UNIQUE")) {
             field = "email";
             msg = "email already exists!"
 
-        } else if (error.sqlMessage.includes("cpmobile_UNIQUE")) {
-            field = "cpmobile";
+        } else if (error.sqlMessage.includes("company_mobile_UNIQUE")) {
+            field = "companyMobile";
             msg = "company contact number already exists!"
 
         } else {

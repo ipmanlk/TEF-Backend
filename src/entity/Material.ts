@@ -58,6 +58,12 @@ export class Material {
   @Column("int", { name: "risk_category_id" })
   riskCategoryId: number;
 
+  @Column("date", { name: "added_date" })
+  addedDate: string;
+
+  @Column("text", { name: "description", nullable: true })
+  description: string | null;
+
   @ManyToOne(
     () => MaterialStatus,
     (materialStatus) => materialStatus.materials,
