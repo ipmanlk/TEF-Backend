@@ -33,6 +33,8 @@ import { GeneralController } from "./controller/GeneralController";
 import { RoleController } from "./controller/RoleController";
 import { ProfileController } from "./controller/ProfileController";
 import { CustomerController } from "./controller/CustomerController";
+import { MaterialController } from "./controller/MaterialController";
+
 
 /* 
 =====================================================================================
@@ -361,6 +363,33 @@ app.route("/api/privileges")
 
    .put((req, res) => {
       PrivilegeController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
+// Middleware: Privileges permission checking
+app.use("/api/materials", (req, res, next) => {
+   isAuthorized(req, false, "MATERIAL").then(() => {
+      next();
+   }).catch(e => sendErrors(res, e));
+});
+
+// Routes: Materials
+app.route("/api/materials")
+   .get((req, res) => {
+      MaterialController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e))
+   })
+
+   .post((req, res) => {
+      MaterialController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      MaterialController.update(req.body.data)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
