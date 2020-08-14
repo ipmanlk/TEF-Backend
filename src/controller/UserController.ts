@@ -37,7 +37,7 @@ export class UserController {
 		if (user !== undefined) {
 			// remove useless attributes
 			user["number"] = user.employee.number;
-			user["createdNumber"] = user.employeeCreated.number;
+			user["createdEmployeeNumber"] = user.employeeCreated.number;
 			delete user.employee;
 			delete user.employeeCreated;
 			return {

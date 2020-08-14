@@ -6,7 +6,7 @@
   },
   {
     "regex": "^EMP[\\d]{8}$",
-    "attribute": "createdNumber",
+    "attribute": "createdEmployeeNumber",
     "error": "Please provide a valid created employee number!."
   },
   {
