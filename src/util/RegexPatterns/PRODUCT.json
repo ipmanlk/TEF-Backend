@@ -1,0 +1,69 @@
+[
+    {
+        "regex": "^[\\w\\s]{5,200}$",
+        "attribute": "name",
+        "error": "Please provide a valid product name!."
+    },
+    {
+        "regex": "^.+(jpg|png|gif)$",
+        "attribute": "photo",
+        "error": "Please select a valid picture!.",
+        "base64": true
+    },
+    {
+        "regex": "^[\\d]{1,5}\\.[\\d]{2}$",
+        "attribute": "cost",
+        "error": "Please provide a valid cost!."
+    },
+    {
+        "regex": "^[\\d]{1,7}\\.[\\d]{2,3}$",
+        "attribute": "weightFiring",
+        "error": "Please provide a valid firing weight!."
+    },
+    {
+        "regex": "^[\\d]{1,7}\\.[\\d]{2,3}$",
+        "attribute": "weightActual",
+        "error": "Please provide a valid actual weight!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "unitTypeId",
+        "error": "Please select a valid unit type!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "productTypeId",
+        "error": "Please select a valid product type!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "expireDuration",
+        "error": "Please provide a valid expire duration!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "categoryId",
+        "error": "Please select a valid product category!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "riskCategoryId",
+        "error": "Please select a valid risk category!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "productStatusId",
+        "error": "Please select a valid product status!."
+    },
+    {
+        "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+        "attribute": "description",
+        "error": "Please provide a valid description!.",
+        "optional": true
+    },
+    {
+        "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+        "attribute": "addedDate",
+        "error": "Please provide a valid added date!."
+    }
+]
