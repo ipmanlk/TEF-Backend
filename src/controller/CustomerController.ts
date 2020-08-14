@@ -18,7 +18,8 @@ export class CustomerController {
 
         // search for an employee with given employee id
         const customer = await getRepository(Customer).findOne({
-            id: id
+            where: {id: id},
+            relations: ["employee"]
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -30,6 +31,10 @@ export class CustomerController {
 
         // check if employee exists
         if (customer !== undefined) {
+            // remove useless elements
+            customer["createdEmployeeNumber"] = customer.employee.number;
+            delete customer.employee;
+            
             return {
                 status: true,
                 data: customer
