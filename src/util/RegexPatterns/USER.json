@@ -5,6 +5,11 @@
     "error": "Please provide a valid employee number!."
   },
   {
+    "regex": "^EMP[\\d]{8}$",
+    "attribute": "createdNumber",
+    "error": "Please provide a valid created employee number!."
+  },
+  {
     "regex": "^[\\w\\d]{5,15}$",
     "attribute": "username",
     "error": "Please provide a valid username!."
