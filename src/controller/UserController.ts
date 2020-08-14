@@ -22,7 +22,7 @@ export class UserController {
 		// search for an entry with given id
 		const user = await getRepository(User).findOne({
 			select: ["id", "employeeId", "username", "userStatusId", "addedDate", "description"],
-			relations: ["employee", "userRoles"],
+			relations: ["employee", "userRoles", "employeeCreated"],
 			where: { id: id }
 		}).catch(e => {
 			console.log(e.code, e);
@@ -37,8 +37,9 @@ export class UserController {
 		if (user !== undefined) {
 			// remove useless attributes
 			user["number"] = user.employee.number;
+			user["createdNumber"] = user.employeeCreated.number;
 			delete user.employee;
-
+			delete user.employeeCreated;
 			return {
 				status: true,
 				data: user
@@ -95,7 +96,7 @@ export class UserController {
 				msg: "Unable to find an employee with that number!"
 			};
 		}
-		
+
 		user.employeeId = employee.id;
 
 		// hash the password
