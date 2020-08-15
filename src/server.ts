@@ -34,6 +34,7 @@ import { RoleController } from "./controller/RoleController";
 import { ProfileController } from "./controller/ProfileController";
 import { CustomerController } from "./controller/CustomerController";
 import { MaterialController } from "./controller/MaterialController";
+import { ProductController } from "./controller/ProductController";
 
 
 /* 
@@ -400,6 +401,40 @@ app.route("/api/materials")
          .catch(e => sendErrors(res, e));
    });
 
+// Middleware: Privileges permission checking
+app.use("/api/products", (req, res, next) => {
+   isAuthorized(req, false, "PRODUCT").then(() => {
+      next();
+   }).catch(e => sendErrors(res, e));
+});
+
+// Routes: Materials
+app.route("/api/products")
+   .get((req, res) => {
+      ProductController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e))
+   })
+
+   .post((req, res) => {      
+      ProductController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      ProductController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      ProductController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
+
 // Routes: Misc Routes
 app.use("/api/regexes", (req, res, next) => {
    isAuthorized(req).then(() => {
@@ -430,7 +465,7 @@ app.route("/api/general")
 
 // send errors to the client
 const sendErrors = (res, e) => {
-   console.log(e);
+   console.log("Error:", e);
    res.json(e);
 }
 
