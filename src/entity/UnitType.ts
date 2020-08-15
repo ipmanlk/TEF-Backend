@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Material } from "./Material";
+import { Product } from "./Product";
 
 @Entity("unit_type", { schema: "twoelephantsfireworks" })
 export class UnitType {
@@ -11,4 +12,7 @@ export class UnitType {
 
   @OneToMany(() => Material, (material) => material.unitType)
   materials: Material[];
+
+  @OneToMany(() => Product, (product) => product.unitType)
+  products: Product[];
 }

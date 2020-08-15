@@ -10,12 +10,14 @@ import {
 import { Category } from "./Category";
 import { ProductStatus } from "./ProductStatus";
 import { RiskCategory } from "./RiskCategory";
+import { UnitType } from "./UnitType";
 import { ProductPackage } from "./ProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("fk_product_risk_category1_idx", ["riskCategoryId"], {})
 @Index("fk_product_product_status1_idx", ["productStatusId"], {})
 @Index("fk_product_category1_idx", ["categoryId"], {})
+@Index("fk_product_unit_type1_idx", ["unitTypeId"], {})
 @Entity("product", { schema: "twoelephantsfireworks" })
 export class Product {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -52,6 +54,9 @@ export class Product {
   })
   weightActual: string | null;
 
+  @Column("int", { name: "unit_type_id" })
+  unitTypeId: number;
+
   @Column("int", { name: "expire_duration", nullable: true })
   expireDuration: number | null;
 
@@ -74,8 +79,8 @@ export class Product {
   @Column("int", { name: "category_id" })
   categoryId: number;
 
-  @Column("int", { name: "product_type_id" })
-  productTypeId: number;
+  @Column("text", { name: "description", nullable: true })
+  description: string | null;
 
   @ManyToOne(() => Category, (category) => category.products, {
     onDelete: "NO ACTION",
@@ -97,6 +102,13 @@ export class Product {
   })
   @JoinColumn([{ name: "risk_category_id", referencedColumnName: "id" }])
   riskCategory: RiskCategory;
+
+  @ManyToOne(() => UnitType, (unitType) => unitType.products, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "unit_type_id", referencedColumnName: "id" }])
+  unitType: UnitType;
 
   @OneToMany(() => ProductPackage, (productPackage) => productPackage.product)
   productPackages: ProductPackage[];
