@@ -76,7 +76,7 @@ export class ProductController {
                 msg: "Your photo should be smaller than 500KB."
             }
         }
-        
+
         // read photo as buffer
         const decodedBase64 = MiscUtil.decodeBase64Image(photo);
         product.photo = decodedBase64.data;
@@ -94,7 +94,7 @@ export class ProductController {
             product.code = MiscUtil.getNextNumber("PRO", undefined, 5);
         }
 
-        
+
         // save to db
         try {
             const newProduct = await getRepository(Product).save(product);
@@ -105,7 +105,7 @@ export class ProductController {
             }
         } catch (e) {
             console.log(e);
-            
+
             if (e.code == "ER_DUP_ENTRY") {
                 const msg = await this.getDuplicateErrorMsg(e, product)
                 throw {
@@ -151,7 +151,7 @@ export class ProductController {
 
         } else {
             // calculate photo size in kb
-            if (editedProduct.photo.length > 689339) {
+            if (data.photo.length > 689339) {
                 throw {
                     status: false,
                     type: "input",
@@ -160,7 +160,7 @@ export class ProductController {
             }
 
             // read photo as buffer
-            const decodedBase64 = MiscUtil.decodeBase64Image(editedProduct.photo);
+            const decodedBase64 = MiscUtil.decodeBase64Image(data.photo);
             editedProduct.photo = decodedBase64.data;
         }
 
@@ -272,6 +272,6 @@ export class ProductController {
             }
         });
 
-        return `Product (code: ${duplicateEntry.number}) with the same ${msg}`;
+        return `Product (code: ${duplicateEntry.code}) with the same ${msg}`;
     }
 }
