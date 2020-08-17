@@ -35,6 +35,7 @@ import { ProfileController } from "./controller/ProfileController";
 import { CustomerController } from "./controller/CustomerController";
 import { MaterialController } from "./controller/MaterialController";
 import { ProductController } from "./controller/ProductController";
+import { ProductPackageController } from "./controller/ProductPackageController";
 
 
 /* 
@@ -408,7 +409,7 @@ app.use("/api/products", (req, res, next) => {
    }).catch(e => sendErrors(res, e));
 });
 
-// Routes: Materials
+// Routes: Products
 app.route("/api/products")
    .get((req, res) => {
       ProductController.get(req.query.data)
@@ -416,7 +417,7 @@ app.route("/api/products")
          .catch(e => sendErrors(res, e))
    })
 
-   .post((req, res) => {      
+   .post((req, res) => {
       ProductController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
@@ -434,6 +435,39 @@ app.route("/api/products")
          .catch(e => sendErrors(res, e));
    });
 
+
+// Middleware: Privileges permission checking
+app.use("/api/products", (req, res, next) => {
+   isAuthorized(req, false, "PRODUCT").then(() => {
+      next();
+   }).catch(e => sendErrors(res, e));
+});
+
+// Routes: Product packages
+app.route("/api/product_packages")
+   .get((req, res) => {
+      ProductPackageController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e))
+   })
+
+   .post((req, res) => {
+      ProductPackageController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      ProductPackageController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      ProductPackageController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
 
 // Routes: Misc Routes
 app.use("/api/regexes", (req, res, next) => {
