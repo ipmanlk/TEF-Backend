@@ -103,7 +103,7 @@ export class MaterialController {
 
     static async update(data) {
         // check if valid data is given
-        await ValidationUtil.validate("DESIGNATION", data);
+        await ValidationUtil.validate("MATERIAL", data);
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(Material).findOne(data.id).catch(e => {
