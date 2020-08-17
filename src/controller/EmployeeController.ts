@@ -159,7 +159,7 @@ export class EmployeeController {
 			}
 
 			// read photo as buffer
-			const decodedBase64 = MiscUtil.decodeBase64Image(editedEmployee.photo);
+			const decodedBase64 = MiscUtil.decodeBase64Image(data.photo);
 			editedEmployee.photo = decodedBase64.data;
 		}
 
