@@ -1,0 +1,74 @@
+[
+    {
+        "regex": "^[\\w\\s]{5,200}$",
+        "attribute": "personName",
+        "error": "Please provide a valid person name!."
+    },
+    {
+        "regex": "^[\\d]{10}$",
+        "attribute": "personMobile",
+        "error": "Please provide a valid person mobile number!."
+    },
+    {
+        "regex": "^.+(jpg|png|gif)$",
+        "attribute": "photo",
+        "error": "Please select a valid picture!.",
+        "base64": true
+    },
+    {
+        "regex": "^([\\d]{9}(\\V|\\X))$|^([\\d]{12})$",
+        "attribute": "nic",
+        "error": "Please provide a valid NIC!."
+    },
+    {
+        "regex": "^[\\w\\s]{5,200}$",
+        "attribute": "companyName",
+        "error": "Please provide a valid company name!."
+    },
+    {
+        "regex": "^[\\d]{10}$",
+        "attribute": "companyMobile",
+        "error": "Please provide a valid company contact number!."
+    },
+    {
+        "regex": "^.{5,12}$",
+        "attribute": "regNumber",
+        "error": "Please provide a valid registration number!."
+    },
+    {
+        "regex": "^\\S+@\\S+\\.\\S+$",
+        "attribute": "email",
+        "error": "Please provide an valid email!."
+    },
+    {
+        "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,200}$",
+        "attribute": "address",
+        "error": "Please provide a valid address!."
+    },
+    {
+        "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+        "attribute": "arrears",
+        "error": "Please provide valid value for arrears!."
+    },
+    {
+        "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+        "attribute": "description",
+        "error": "Please provide a valid description!.",
+        "optional": true
+    },
+    {
+        "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+        "attribute": "addedDate",
+        "error": "Please provide a valid added date!."
+    },
+    {
+        "regex": "^EMP[\\d]{8}$",
+        "attribute": "createdEmployeeNumber",
+        "error": "Please provide a valid created employee number!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "supplierStatusId",
+        "error": "Please select a valid supplier status!."
+    }
+]
