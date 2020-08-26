@@ -9,6 +9,7 @@ import {
 import { Product } from "./Product";
 import { ProductPackageStatus } from "./ProductPackageStatus";
 import { ProductPackageType } from "./ProductPackageType";
+import { UnitType } from "./UnitType";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("fk_item_package_product1_idx", ["productId"], {})
@@ -22,6 +23,7 @@ import { ProductPackageType } from "./ProductPackageType";
   ["productPackageTypeId"],
   {}
 )
+@Index("fk_product_package_unit_type1_idx", ["unitTypeId"], {})
 @Entity("product_package", { schema: "twoelephantsfireworks" })
 export class ProductPackage {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -56,7 +58,7 @@ export class ProductPackage {
   @Column("int", { name: "rop", nullable: true })
   rop: number | null;
 
-  @Column("varchar", { name: "weight", nullable: true, length: 45 })
+  @Column("decimal", { name: "weight", nullable: true, precision: 7, scale: 3 })
   weight: string | null;
 
   @Column("date", { name: "added_date", nullable: true })
@@ -67,6 +69,9 @@ export class ProductPackage {
 
   @Column("int", { name: "product_package_type_id" })
   productPackageTypeId: number;
+
+  @Column("int", { name: "unit_type_id" })
+  unitTypeId: number;
 
   @ManyToOne(() => Product, (product) => product.productPackages, {
     onDelete: "NO ACTION",
@@ -92,4 +97,11 @@ export class ProductPackage {
   )
   @JoinColumn([{ name: "product_package_type_id", referencedColumnName: "id" }])
   productPackageType: ProductPackageType;
+
+  @ManyToOne(() => UnitType, (unitType) => unitType.productPackages, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "unit_type_id", referencedColumnName: "id" }])
+  unitType: UnitType;
 }
