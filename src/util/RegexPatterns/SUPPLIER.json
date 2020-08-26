@@ -45,11 +45,7 @@
         "attribute": "address",
         "error": "Please provide a valid address!."
     },
-    {
-        "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
-        "attribute": "arrears",
-        "error": "Please provide valid value for arrears!."
-    },
+
     {
         "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
         "attribute": "description",

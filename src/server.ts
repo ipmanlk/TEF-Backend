@@ -36,6 +36,7 @@ import { CustomerController } from "./controller/CustomerController";
 import { MaterialController } from "./controller/MaterialController";
 import { ProductController } from "./controller/ProductController";
 import { ProductPackageController } from "./controller/ProductPackageController";
+import { SupplierController } from "./controller/SupplierController";
 
 
 /* 
@@ -465,6 +466,39 @@ app.route("/api/product_packages")
 
    .delete((req, res) => {
       ProductPackageController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
+// Middleware: Privileges permission checking
+app.use("/api/suppliers", (req, res, next) => {
+   isAuthorized(req, false, "SUPPLIER").then(() => {
+      next();
+   }).catch(e => sendErrors(res, e));
+});
+
+// Routes: Suppliers
+app.route("/api/suppliers")
+   .get((req, res) => {
+      SupplierController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e))
+   })
+
+   .post((req, res) => {
+      SupplierController.save(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      SupplierController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      SupplierController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });

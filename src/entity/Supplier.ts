@@ -10,8 +10,12 @@ import { Employee } from "./Employee";
 import { SupplierStatus } from "./SupplierStatus";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
+@Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
 @Index("fk_supplier_employee1_idx", ["employeeId"], {})
 @Index("fk_supplier_supplier_status1_idx", ["supplierStatusId"], {})
+@Index("nic_UNIQUE", ["nic"], { unique: true })
+@Index("person_mobile_UNIQUE", ["personMobile"], { unique: true })
+@Index("reg_number_UNIQUE", ["regNumber"], { unique: true })
 @Entity("supplier", { schema: "twoelephantsfireworks" })
 export class Supplier {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -23,22 +27,27 @@ export class Supplier {
   @Column("varchar", { name: "person_name", length: 200 })
   personName: string;
 
-  @Column("char", { name: "person_mobile", length: 10 })
+  @Column("char", { name: "person_mobile", unique: true, length: 10 })
   personMobile: string;
 
   @Column("mediumblob", { name: "photo" })
   photo: Buffer;
 
-  @Column("char", { name: "nic", length: 12 })
+  @Column("char", { name: "nic", unique: true, length: 12 })
   nic: string;
 
   @Column("varchar", { name: "company_name", nullable: true, length: 255 })
   companyName: string | null;
 
-  @Column("char", { name: "company_mobile", nullable: true, length: 10 })
+  @Column("char", {
+    name: "company_mobile",
+    nullable: true,
+    unique: true,
+    length: 10,
+  })
   companyMobile: string | null;
 
-  @Column("varchar", { name: "reg_number", length: 12 })
+  @Column("varchar", { name: "reg_number", unique: true, length: 12 })
   regNumber: string;
 
   @Column("varchar", { name: "email", length: 150 })
