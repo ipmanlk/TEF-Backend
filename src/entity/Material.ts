@@ -3,6 +3,8 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -10,11 +12,12 @@ import { MaterialStatus } from "./MaterialStatus";
 import { MaterialType } from "./MaterialType";
 import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
+import { Supplier } from "./Supplier";
 
-@Index("fk_material_material_status1_idx", ["materialStatusId"], {})
 @Index("fk_material_material_type1_idx", ["materialTypeId"], {})
-@Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
 @Index("fk_material_unit_type1_idx", ["unitTypeId"], {})
+@Index("fk_material_material_status1_idx", ["materialStatusId"], {})
+@Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
 @Entity("material", { schema: "twoelephantsfireworks" })
 export class Material {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -92,4 +95,13 @@ export class Material {
   })
   @JoinColumn([{ name: "unit_type_id", referencedColumnName: "id" }])
   unitType: UnitType;
+
+  @ManyToMany(() => Supplier, (supplier) => supplier.materials)
+  @JoinTable({
+    name: "supplier_material",
+    joinColumns: [{ name: "material_id", referencedColumnName: "id" }],
+    inverseJoinColumns: [{ name: "supplier_id", referencedColumnName: "id" }],
+    schema: "twoelephantsfireworks",
+  })
+  suppliers: Supplier[];
 }

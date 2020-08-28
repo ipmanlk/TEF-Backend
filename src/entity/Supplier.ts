@@ -3,19 +3,21 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Employee } from "./Employee";
 import { SupplierStatus } from "./SupplierStatus";
+import { Material } from "./Material";
 
+@Index("person_mobile_UNIQUE", ["personMobile"], { unique: true })
+@Index("nic_UNIQUE", ["nic"], { unique: true })
+@Index("reg_number_UNIQUE", ["regNumber"], { unique: true })
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
-@Index("fk_supplier_employee1_idx", ["employeeId"], {})
 @Index("fk_supplier_supplier_status1_idx", ["supplierStatusId"], {})
-@Index("nic_UNIQUE", ["nic"], { unique: true })
-@Index("person_mobile_UNIQUE", ["personMobile"], { unique: true })
-@Index("reg_number_UNIQUE", ["regNumber"], { unique: true })
+@Index("fk_supplier_employee1_idx", ["employeeId"], {})
 @Entity("supplier", { schema: "twoelephantsfireworks" })
 export class Supplier {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -90,4 +92,7 @@ export class Supplier {
   )
   @JoinColumn([{ name: "supplier_status_id", referencedColumnName: "id" }])
   supplierStatus: SupplierStatus;
+
+  @ManyToMany(() => Material, (material) => material.suppliers)
+  materials: Material[];
 }
