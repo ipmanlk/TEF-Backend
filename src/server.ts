@@ -37,7 +37,7 @@ import { MaterialController } from "./controller/MaterialController";
 import { ProductController } from "./controller/ProductController";
 import { ProductPackageController } from "./controller/ProductPackageController";
 import { SupplierController } from "./controller/SupplierController";
-
+import { SupplierMaterialController } from "./controller/SupplierMaterialController";
 
 /* 
 =====================================================================================
@@ -502,6 +502,20 @@ app.route("/api/suppliers")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
+
+// Routes: Supplier Materials
+app.route("/api/supplier_materials")
+   .get((req, res) => {
+      SupplierMaterialController.getMaterials(parseInt(req.query.data.supplierId))
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e))
+   })
+
+   .put((req, res) => {
+      SupplierMaterialController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
 
 // Routes: Misc Routes
 app.use("/api/regexes", (req, res, next) => {

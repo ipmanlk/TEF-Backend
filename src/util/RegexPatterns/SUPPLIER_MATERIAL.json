@@ -1,0 +1,12 @@
+[
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "supplierId",
+        "error": "Please select a valid supplier!"
+    },
+    {
+        "regex": "^[1-8](,[1-8])*$",
+        "attribute": "materialIds",
+        "error": "Please select supplier materials!."
+    }
+]
