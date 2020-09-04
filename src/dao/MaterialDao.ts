@@ -13,7 +13,6 @@ export class MaterialDao {
                 .where("m.name LIKE :keyword", { keyword: `%${keyword}%` })
                 .orWhere("m.code LIKE :keyword", { keyword: `%${keyword}%` })
                 .orWhere("m.unitPrice LIKE :keyword", { keyword: `%${keyword}%` })
-                .orWhere("m.expireDuration LIKE :keyword", { keyword: `%${keyword}%` })
                 .orWhere("m.addedDate LIKE :keyword", { keyword: `%${keyword}%` })
                 .orWhere("ms.name LIKE :keyword", { keyword: `%${keyword}%` })
                 .orWhere("mt.name LIKE :keyword", { keyword: `%${keyword}%` })
