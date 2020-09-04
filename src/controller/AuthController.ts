@@ -56,7 +56,7 @@ export class AuthController {
             userRoles: user.userRoles,
             userId: user.id,
             employeeId: user.employeeId
-         };
+        };
 
         // return login success msg and user role name
         return {
@@ -137,7 +137,8 @@ export class AuthController {
                 roleId: role.id
             });
 
-            rolePrivileges.push(privilage);
+            // check if record exists before pushing
+            if (privilage !== undefined) rolePrivileges.push(privilage);
         }
 
         // permisison for current module
@@ -155,9 +156,21 @@ export class AuthController {
         // check if user is an admin
         let filteredRoles = session.data.userRoles.filter(role => role.id == 1);
 
+        // if user is not an admin and has no access to the module
+        if (filteredRoles.length == 0 && rolePrivileges.length == 0) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permissions to perform this action!."
+            };
+        }
+
+        // if user is an admin or has some access to the module
         if (filteredRoles.length == 1) {
             permission = "1111";
         } else {
+            console.log(rolePrivileges);
+
             // merge those previleges and get permission for current module
             rolePrivileges.forEach(rp => {
                 if (permission !== null) {
