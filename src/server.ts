@@ -131,15 +131,15 @@ app.route("/api/logout")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: Profile permission checking
-app.use("/api/profile", (req, res, next) => {
-   isAuthorized(req).then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
 
 // Routes: Profile
 app.route("/api/profile")
+   .all((req, res, next) => {
+      isAuthorized(req).then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       ProfileController.getOne(req.session)
          .then(r => res.json(r))
@@ -153,15 +153,15 @@ app.route("/api/profile/password")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: Employee permission checking
-app.use("/api/employees", (req, res, next) => {
-   isAuthorized(req, false, "EMPLOYEE").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
 
 // Routes:  Employee Routes
 app.route("/api/employees")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "EMPLOYEE").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .post((req, res) => {
       EmployeeController.save(req.body.data)
          .then(r => res.json(r))
@@ -186,15 +186,14 @@ app.route("/api/employees")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: User permission checking
-app.use("/api/users", (req, res, next) => {
-   isAuthorized(req, false, "USER").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
-
 // Routes: User Routes
 app.route("/api/users")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "USER").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       UserController.get(req.query.data)
          .then(r => res.json(r))
@@ -219,20 +218,21 @@ app.route("/api/users")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: Designation permission checking
-app.use("/api/designations", (req, res, next) => {
-   isAuthorized(req, false, "DESIGNATION").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
 
 // Routes: Designation
 app.route("/api/designations")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "DESIGNATION").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       DesignationController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    })
+
    .post((req, res) => {
       DesignationController.save(req.body.data)
          .then(r => res.json(r))
@@ -251,15 +251,14 @@ app.route("/api/designations")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: Employee Status permission checking
-app.use("/api/employee_statuses", (req, res, next) => {
-   isAuthorized(req, false, "EMPLOYEE_STATUS").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
-
 // Routes: Employee Status
 app.route("/api/employee_statuses")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "EMPLOYEE_STATUS").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       EmployeeStatusController.get(req.query.data)
          .then(r => res.json(r))
@@ -284,15 +283,15 @@ app.route("/api/employee_statuses")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: Roles permission checking
-app.use("/api/roles", (req, res, next) => {
-   isAuthorized(req, false, "ROLE").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
 
 // Routes: Roles
 app.route("/api/roles")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "ROLE").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       RoleController.get(req.query.data)
          .then(r => res.json(r))
@@ -319,6 +318,12 @@ app.route("/api/roles")
 
 // Routes: Customer
 app.route("/api/customers")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "CUSTOMER").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       CustomerController.get(req.query.data)
          .then(r => res.json(r))
@@ -343,15 +348,14 @@ app.route("/api/customers")
          .catch(e => sendErrors(res, e));
    })
 
-// Middleware: Privileges permission checking
-app.use("/api/privileges", (req, res, next) => {
-   isAuthorized(req, false, "PRIVILEGE").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
-
 // Routes: Privileges
 app.route("/api/privileges")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "PRIVILEGE").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       PrivilegeController.get(req.query.data)
          .then(r => res.json(r))
@@ -370,15 +374,15 @@ app.route("/api/privileges")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: Privileges permission checking
-app.use("/api/materials", (req, res, next) => {
-   isAuthorized(req, false, "MATERIAL").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
 
 // Routes: Materials
 app.route("/api/materials")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "MATERIAL").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       MaterialController.get(req.query.data)
          .then(r => res.json(r))
@@ -403,15 +407,15 @@ app.route("/api/materials")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: Privileges permission checking
-app.use("/api/products", (req, res, next) => {
-   isAuthorized(req, false, "PRODUCT").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
 
 // Routes: Products
 app.route("/api/products")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "PRODUCT").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       ProductController.get(req.query.data)
          .then(r => res.json(r))
@@ -437,15 +441,14 @@ app.route("/api/products")
    });
 
 
-// Middleware: Privileges permission checking
-app.use("/api/products", (req, res, next) => {
-   isAuthorized(req, false, "PRODUCT").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
-
 // Routes: Product packages
 app.route("/api/product_packages")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "PRODUCT_PACKAGE").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       ProductPackageController.get(req.query.data)
          .then(r => res.json(r))
@@ -470,15 +473,14 @@ app.route("/api/product_packages")
          .catch(e => sendErrors(res, e));
    });
 
-// Middleware: Privileges permission checking
-app.use("/api/suppliers", (req, res, next) => {
-   isAuthorized(req, false, "SUPPLIER").then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
-
 // Routes: Suppliers
 app.route("/api/suppliers")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "SUPPLIER").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       SupplierController.get(req.query.data)
          .then(r => res.json(r))
@@ -505,6 +507,12 @@ app.route("/api/suppliers")
 
 // Routes: Supplier Materials
 app.route("/api/supplier_materials")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "SUPPLIER_MATERIAL").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       SupplierMaterialController.getMaterials(parseInt(req.query.data.supplierId))
          .then(r => res.json(r))
@@ -518,26 +526,27 @@ app.route("/api/supplier_materials")
    })
 
 // Routes: Misc Routes
-app.use("/api/regexes", (req, res, next) => {
-   isAuthorized(req).then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
 
 app.route("/api/regexes")
+   .all((req, res, next) => {
+      isAuthorized(req).then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       RegexPatternUtil.getModuleRegex(req.query.data.module)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
 
-app.use("/api/general", (req, res, next) => {
-   isAuthorized(req).then(() => {
-      next();
-   }).catch(e => sendErrors(res, e));
-});
-
 app.route("/api/general")
+   .all((req, res, next) => {
+      isAuthorized(req).then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
    .get((req, res) => {
       GeneralController.get(req.query.data)
          .then(r => res.json(r))
