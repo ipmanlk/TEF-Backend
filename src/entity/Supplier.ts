@@ -5,8 +5,10 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { QuotationRequest } from "./QuotationRequest";
 import { Employee } from "./Employee";
 import { SupplierStatus } from "./SupplierStatus";
 import { Material } from "./Material";
@@ -31,9 +33,6 @@ export class Supplier {
 
   @Column("char", { name: "person_mobile", unique: true, length: 10 })
   personMobile: string;
-
-  @Column("mediumblob", { name: "photo" })
-  photo: Buffer;
 
   @Column("char", { name: "nic", unique: true, length: 12 })
   nic: string;
@@ -77,6 +76,12 @@ export class Supplier {
 
   @Column("int", { name: "employee_id" })
   employeeId: number;
+
+  @OneToMany(
+    () => QuotationRequest,
+    (quotationRequest) => quotationRequest.supplier
+  )
+  quotationRequests: QuotationRequest[];
 
   @ManyToOne(() => Employee, (employee) => employee.suppliers, {
     onDelete: "NO ACTION",

@@ -6,12 +6,16 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { MaterialStatus } from "./MaterialStatus";
 import { MaterialType } from "./MaterialType";
 import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
+import { MaterialAnalysis } from "./MaterialAnalysis";
+import { QuotationMaterial } from "./QuotationMaterial";
+import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 import { Supplier } from "./Supplier";
 
 @Index("fk_material_material_type1_idx", ["materialTypeId"], {})
@@ -36,9 +40,6 @@ export class Material {
     scale: 2,
   })
   unitPrice: string | null;
-
-  @Column("int", { name: "expire_duration" })
-  expireDuration: number;
 
   @Column("int", { name: "rop", nullable: true })
   rop: number | null;
@@ -95,6 +96,24 @@ export class Material {
   })
   @JoinColumn([{ name: "unit_type_id", referencedColumnName: "id" }])
   unitType: UnitType;
+
+  @OneToMany(
+    () => MaterialAnalysis,
+    (materialAnalysis) => materialAnalysis.material
+  )
+  materialAnalyses: MaterialAnalysis[];
+
+  @OneToMany(
+    () => QuotationMaterial,
+    (quotationMaterial) => quotationMaterial.material
+  )
+  quotationMaterials: QuotationMaterial[];
+
+  @OneToMany(
+    () => QuotationRequestMaterial,
+    (quotationRequestMaterial) => quotationRequestMaterial.material
+  )
+  quotationRequestMaterials: QuotationRequestMaterial[];
 
   @ManyToMany(() => Supplier, (supplier) => supplier.materials)
   @JoinTable({

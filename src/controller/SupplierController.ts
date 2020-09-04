@@ -70,23 +70,6 @@ export class SupplierController {
         // add employee id of the current session as created employee
         data.employeeId = session.data.employeeId;
 
-
-        // extract photo
-        const { photo } = data;
-
-        // calculate photo size in kb
-        if (photo.length > 689339) {
-            throw {
-                status: false,
-                type: "input",
-                msg: "Your photo should be smaller than 500KB."
-            }
-        }
-
-        // read photo as buffer
-        const decodedBase64 = MiscUtil.decodeBase64Image(photo);
-        data.photo = decodedBase64.data;
-
         // generate supplier code
         let lastSupplier = await getRepository(Supplier).findOne({
             select: ["id", "code"],
@@ -133,25 +116,6 @@ export class SupplierController {
     static async update(data) {
         // create supplier object
         const editedSupplier = data as Supplier;
-
-        // check if photo has changed
-        if (data.photo == false) {
-            editedSupplier.photo = editedSupplier.photo;
-
-        } else {
-            // calculate photo size in kb
-            if (data.photo.length > 689339) {
-                throw {
-                    status: false,
-                    type: "input",
-                    msg: "Your photo should be smaller than 500KB."
-                }
-            }
-
-            // read photo as buffer
-            const decodedBase64 = MiscUtil.decodeBase64Image(data.photo);
-            editedSupplier.photo = decodedBase64.data;
-        }
 
         // check if valid data is given
         await ValidationUtil.validate("SUPPLIER", editedSupplier);

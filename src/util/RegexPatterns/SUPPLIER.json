@@ -10,12 +10,6 @@
         "error": "Please provide a valid person mobile number!."
     },
     {
-        "regex": "^.+(jpg|png|gif)$",
-        "attribute": "photo",
-        "error": "Please select a valid picture!.",
-        "base64": true
-    },
-    {
         "regex": "^([\\d]{9}(\\V|\\X))$|^([\\d]{12})$",
         "attribute": "nic",
         "error": "Please provide a valid NIC!."

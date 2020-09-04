@@ -14,6 +14,8 @@ import { Designation } from "./Designation";
 import { EmployeeStatus } from "./EmployeeStatus";
 import { Gender } from "./Gender";
 import { OperationLog } from "./OperationLog";
+import { Quotation } from "./Quotation";
+import { QuotationRequest } from "./QuotationRequest";
 import { Supplier } from "./Supplier";
 import { User } from "./User";
 
@@ -109,6 +111,15 @@ export class Employee {
 
   @OneToMany(() => OperationLog, (operationLog) => operationLog.employee)
   operationLogs: OperationLog[];
+
+  @OneToMany(() => Quotation, (quotation) => quotation.employee)
+  quotations: Quotation[];
+
+  @OneToMany(
+    () => QuotationRequest,
+    (quotationRequest) => quotationRequest.employee
+  )
+  quotationRequests: QuotationRequest[];
 
   @OneToMany(() => Supplier, (supplier) => supplier.employee)
   suppliers: Supplier[];

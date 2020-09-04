@@ -7,6 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { MaterialAnalysis } from "./MaterialAnalysis";
 import { Category } from "./Category";
 import { ProductStatus } from "./ProductStatus";
 import { RiskCategory } from "./RiskCategory";
@@ -81,6 +82,12 @@ export class Product {
 
   @Column("text", { name: "description", nullable: true })
   description: string | null;
+
+  @OneToMany(
+    () => MaterialAnalysis,
+    (materialAnalysis) => materialAnalysis.product
+  )
+  materialAnalyses: MaterialAnalysis[];
 
   @ManyToOne(() => Category, (category) => category.products, {
     onDelete: "NO ACTION",
