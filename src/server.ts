@@ -390,7 +390,7 @@ app.route("/api/materials")
    })
 
    .post((req, res) => {
-      MaterialController.save(req.body.data)
+      MaterialController.save(req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    })

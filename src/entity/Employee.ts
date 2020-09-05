@@ -13,6 +13,7 @@ import { CivilStatus } from "./CivilStatus";
 import { Designation } from "./Designation";
 import { EmployeeStatus } from "./EmployeeStatus";
 import { Gender } from "./Gender";
+import { Material } from "./Material";
 import { OperationLog } from "./OperationLog";
 import { Quotation } from "./Quotation";
 import { QuotationRequest } from "./QuotationRequest";
@@ -108,6 +109,9 @@ export class Employee {
   })
   @JoinColumn([{ name: "gender_id", referencedColumnName: "id" }])
   gender: Gender;
+
+  @OneToMany(() => Material, (material) => material.employee)
+  materials: Material[];
 
   @OneToMany(() => OperationLog, (operationLog) => operationLog.employee)
   operationLogs: OperationLog[];

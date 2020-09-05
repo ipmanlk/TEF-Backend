@@ -59,10 +59,12 @@ export class MaterialController {
         };
     }
 
-    static async save(data) {
+    static async save(data, session) {
         // check if valid data is given
         await ValidationUtil.validate("MATERIAL", data);
 
+        // add employee id of the current session as created employee
+        data.employeeId = session.data.employeeId;
 
         // generate material code
         const lastEntry = await getRepository(Material).findOne({

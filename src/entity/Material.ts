@@ -9,6 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Employee } from "./Employee";
 import { MaterialStatus } from "./MaterialStatus";
 import { MaterialType } from "./MaterialType";
 import { RiskCategory } from "./RiskCategory";
@@ -22,6 +23,7 @@ import { Supplier } from "./Supplier";
 @Index("fk_material_unit_type1_idx", ["unitTypeId"], {})
 @Index("fk_material_material_status1_idx", ["materialStatusId"], {})
 @Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
+@Index("fk_material_employee1_idx", ["employeeId"], {})
 @Entity("material", { schema: "twoelephantsfireworks" })
 export class Material {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -67,6 +69,16 @@ export class Material {
 
   @Column("text", { name: "description", nullable: true })
   description: string | null;
+
+  @Column("int", { name: "employee_id" })
+  employeeId: number;
+
+  @ManyToOne(() => Employee, (employee) => employee.materials, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
+  employee: Employee;
 
   @ManyToOne(
     () => MaterialStatus,
