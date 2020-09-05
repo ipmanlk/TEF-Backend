@@ -11,11 +11,6 @@
     },
     {
         "regex": "^[\\d]+$",
-        "attribute": "expireDuration",
-        "error": "Please provide a valid expire duration!.."
-    },
-    {
-        "regex": "^[\\d]+$",
         "attribute": "rop",
         "error": "Please provide a valid re-order point!."
     },
