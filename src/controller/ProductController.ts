@@ -17,7 +17,8 @@ export class ProductController {
     private static async getOne({ id }) {
         // search for an entry with given id
         const product = await getRepository(Product).findOne({
-            id: id
+            where: { id: id },
+            relations: ["employee"]
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -29,6 +30,10 @@ export class ProductController {
 
         // check if entry exists
         if (product !== undefined) {
+            // remove useless elements
+            product["createdEmployee"] = `${product.employee.number} (${product.employee.fullName})`;
+            delete product.employee;
+
             return {
                 status: true,
                 data: product
@@ -58,9 +63,12 @@ export class ProductController {
         };
     }
 
-    static async save(data) {
+    static async save(data, session) {
         // check if valid data is given
         await ValidationUtil.validate("PRODUCT", data);
+
+        // add employee id of the current session as created employee
+        data.employeeId = session.data.employeeId;
 
         // create product object
         const product = data as Product;

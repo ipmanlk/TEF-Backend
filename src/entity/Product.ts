@@ -8,7 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { MaterialAnalysis } from "./MaterialAnalysis";
-import { Category } from "./Category";
+import { ProductCategory } from "./ProductCategory";
+import { Employee } from "./Employee";
 import { ProductStatus } from "./ProductStatus";
 import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
@@ -19,6 +20,7 @@ import { ProductPackage } from "./ProductPackage";
 @Index("fk_product_product_status1_idx", ["productStatusId"], {})
 @Index("fk_product_category1_idx", ["categoryId"], {})
 @Index("fk_product_unit_type1_idx", ["unitTypeId"], {})
+@Index("fk_product_employee1_idx", ["employeeId"], {})
 @Entity("product", { schema: "twoelephantsfireworks" })
 export class Product {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -83,18 +85,29 @@ export class Product {
   @Column("text", { name: "description", nullable: true })
   description: string | null;
 
+  @Column("int", { name: "employee_id" })
+  employeeId: number;
+
   @OneToMany(
     () => MaterialAnalysis,
     (materialAnalysis) => materialAnalysis.product
   )
   materialAnalyses: MaterialAnalysis[];
 
-  @ManyToOne(() => Category, (category) => category.products, {
+  @ManyToOne(
+    () => ProductCategory,
+    (productCategory) => productCategory.products,
+    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "category_id", referencedColumnName: "id" }])
+  category: ProductCategory;
+
+  @ManyToOne(() => Employee, (employee) => employee.products, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
-  @JoinColumn([{ name: "category_id", referencedColumnName: "id" }])
-  category: Category;
+  @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
+  employee: Employee;
 
   @ManyToOne(() => ProductStatus, (productStatus) => productStatus.products, {
     onDelete: "NO ACTION",

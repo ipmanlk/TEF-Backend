@@ -423,7 +423,7 @@ app.route("/api/products")
    })
 
    .post((req, res) => {
-      ProductController.save(req.body.data)
+      ProductController.save(req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    })
