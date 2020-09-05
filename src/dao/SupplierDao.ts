@@ -27,7 +27,7 @@ export class SupplierDao {
             return getRepository(Supplier)
                 .createQueryBuilder("s")
                 .select([
-                    "s.id", "s.code", "s.companyName"
+                    "s.id", "s.code", "s.companyName", "s.personName"
                 ])
                 .getMany()
         }
