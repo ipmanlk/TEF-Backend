@@ -3,7 +3,7 @@ import { getRepository } from "typeorm";
 export class GeneralController {
     static async get(data) {
 
-        const generalTables = ["gender", "civil_status", "module", "user_status", "customer_status", "customer_type", "material_status", "material_type", "unit_type", "risk_category", "product_status", "product_category", "product_type", "product_package_status", "product_package_type", "supplier_status"];
+        const generalTables = ["gender", "civil_status", "module", "user_status", "customer_status", "customer_type", "material_status", "material_type", "unit_type", "risk_category", "product_status", "product_category", "product_type", "product_package_status", "product_package_type", "supplier_status", "supplier_type"];
 
         const table = data.table;
 

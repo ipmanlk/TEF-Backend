@@ -236,7 +236,7 @@ export class SupplierController {
 
         } else if (error.sqlMessage.includes("person_mobile_UNIQUE")) {
             field = "personMobile";
-            msg = "person contact number already exists!"
+            msg = "contact number already exists!"
 
         } else if (error.sqlMessage.includes("email_UNIQUE")) {
             field = "email";
