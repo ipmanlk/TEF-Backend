@@ -5,11 +5,6 @@
     "error": "Please provide a valid customer name!."
   },
   {
-    "regex": "^EMP[\\d]{8}$",
-    "attribute": "createdEmployeeNumber",
-    "error": "Please provide a valid created employee number!."
-  },
-  {
     "regex": "^[\\d]{10}$",
     "attribute": "customerMobile",
     "error": "Please provide a valid mobile number!."
