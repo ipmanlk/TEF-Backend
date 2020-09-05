@@ -18,7 +18,8 @@ export class MaterialController {
     private static async getOne({ id }) {
         // search for an entry with given id
         const entry = await getRepository(Material).findOne({
-            where: { id: id }
+            where: { id: id },
+            relations: ["employee"]
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -30,6 +31,10 @@ export class MaterialController {
 
         // check if entry exists
         if (entry !== undefined) {
+            // remove useless elements
+            entry["createdEmployee"] = `${entry.employee.number} (${entry.employee.fullName})`;
+            delete entry.employee;
+
             return {
                 status: true,
                 data: entry
