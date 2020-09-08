@@ -38,6 +38,7 @@ import { ProductController } from "./controller/ProductController";
 import { ProductPackageController } from "./controller/ProductPackageController";
 import { SupplierController } from "./controller/SupplierController";
 import { SupplierMaterialController } from "./controller/SupplierMaterialController";
+import { MaterialAnalysisController } from "./controller/MaterialAnalysisController";
 
 /* 
 =====================================================================================
@@ -525,8 +526,29 @@ app.route("/api/supplier_materials")
          .catch(e => sendErrors(res, e));
    })
 
-// Routes: Misc Routes
 
+
+// Routes: Material Analysis
+app.route("/api/material_analysis")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "MATERIAL_ANALYSIS").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      MaterialAnalysisController.getOne(parseInt(req.query.data.productId))
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e))
+   })
+
+   .put((req, res) => {
+      MaterialAnalysisController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+// Routes: Misc Routes
 app.route("/api/regexes")
    .all((req, res, next) => {
       isAuthorized(req).then(() => {
