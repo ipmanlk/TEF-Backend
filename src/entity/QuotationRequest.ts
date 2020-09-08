@@ -13,10 +13,14 @@ import { QuotationRequestStatus } from "./QuotationRequestStatus";
 import { Supplier } from "./Supplier";
 import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 
-@Index("qrnumber_UNIQUE", ["qrnumber"], { unique: true })
 @Index("fk_quotation_request_employee1_idx", ["employeeId"], {})
-@Index("fk_quotation_request_qr_status1_idx", ["qrStatusId"], {})
+@Index(
+  "fk_quotation_request_quotation_request_status1_idx",
+  ["quotationRequestStatusId"],
+  {}
+)
 @Index("fk_quotation_request_supplier1_idx", ["supplierId"], {})
+@Index("qrnumber_UNIQUE", ["qrnumber"], { unique: true })
 @Entity("quotation_request", { schema: "twoelephantsfireworks" })
 export class QuotationRequest {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -37,11 +41,11 @@ export class QuotationRequest {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
-  @Column("int", { name: "qr_status_id" })
-  qrStatusId: number;
-
   @Column("int", { name: "supplier_id" })
   supplierId: number;
+
+  @Column("int", { name: "quotation_request_status_id" })
+  quotationRequestStatusId: number;
 
   @OneToMany(() => Quotation, (quotation) => quotation.quotationRequest)
   quotations: Quotation[];
@@ -58,8 +62,10 @@ export class QuotationRequest {
     (quotationRequestStatus) => quotationRequestStatus.quotationRequests,
     { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
   )
-  @JoinColumn([{ name: "qr_status_id", referencedColumnName: "id" }])
-  qrStatus: QuotationRequestStatus;
+  @JoinColumn([
+    { name: "quotation_request_status_id", referencedColumnName: "id" },
+  ])
+  quotationRequestStatus: QuotationRequestStatus;
 
   @ManyToOne(() => Supplier, (supplier) => supplier.quotationRequests, {
     onDelete: "NO ACTION",

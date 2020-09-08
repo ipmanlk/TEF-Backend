@@ -11,7 +11,7 @@ export class QuotationRequestStatus {
 
   @OneToMany(
     () => QuotationRequest,
-    (quotationRequest) => quotationRequest.qrStatus
+    (quotationRequest) => quotationRequest.quotationRequestStatus
   )
   quotationRequests: QuotationRequest[];
 }
