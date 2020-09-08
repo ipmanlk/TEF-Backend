@@ -19,11 +19,11 @@ import { QuotationMaterial } from "./QuotationMaterial";
 import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 import { Supplier } from "./Supplier";
 
-@Index("fk_material_employee1_idx", ["employeeId"], {})
-@Index("fk_material_material_status1_idx", ["materialStatusId"], {})
 @Index("fk_material_material_type1_idx", ["materialTypeId"], {})
-@Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
 @Index("fk_material_unit_type1_idx", ["unitTypeId"], {})
+@Index("fk_material_material_status1_idx", ["materialStatusId"], {})
+@Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
+@Index("fk_material_employee1_idx", ["employeeId"], {})
 @Entity("material", { schema: "twoelephantsfireworks" })
 export class Material {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

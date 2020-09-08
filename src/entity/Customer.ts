@@ -11,15 +11,15 @@ import { CustomerType } from "./CustomerType";
 import { Employee } from "./Employee";
 import { Gender } from "./Gender";
 
-@Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
+@Index("reg_no_UNIQUE", ["number"], { unique: true })
 @Index("customer_mobile_UNIQUE", ["customerMobile"], { unique: true })
+@Index("nic_UNIQUE", ["nic"], { unique: true })
 @Index("email_UNIQUE", ["email"], { unique: true })
+@Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
+@Index("fk_customer_gender1_idx", ["genderId"], {})
 @Index("fk_customer_customer_status1_idx", ["customerStatusId"], {})
 @Index("fk_customer_customer_type1_idx", ["customerTypeId"], {})
 @Index("fk_customer_employee1_idx", ["employeeId"], {})
-@Index("fk_customer_gender1_idx", ["genderId"], {})
-@Index("nic_UNIQUE", ["nic"], { unique: true })
-@Index("reg_no_UNIQUE", ["number"], { unique: true })
 @Entity("customer", { schema: "twoelephantsfireworks" })
 export class Customer {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -43,8 +43,13 @@ export class Customer {
   @Column("int", { name: "gender_id" })
   genderId: number;
 
-  @Column("varchar", { name: "email", unique: true, length: 255 })
-  email: string;
+  @Column("varchar", {
+    name: "email",
+    nullable: true,
+    unique: true,
+    length: 255,
+  })
+  email: string | null;
 
   @Column("int", { name: "customer_status_id" })
   customerStatusId: number;
