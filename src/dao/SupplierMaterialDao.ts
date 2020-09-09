@@ -7,7 +7,7 @@ export class SupplierMaterialDao {
             .createQueryBuilder("s")
             .leftJoinAndSelect("s.materials", "sm")
             .select([
-                "s.id", "s.code", "sm.id"
+                "s.id", "s.code", "sm.id", "sm.name", "sm.code"
             ])
             .where("s.id = :keyword", { keyword: supplierId })
             .getOne()
