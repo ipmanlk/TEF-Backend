@@ -22,8 +22,8 @@ export class QuotationRequestMaterial {
   @Column("tinyint", { name: "accepted", nullable: true, width: 1 })
   accepted: boolean | null;
 
-  @Column("tinyint", { name: "recieved", nullable: true, width: 1 })
-  recieved: boolean | null;
+  @Column("tinyint", { name: "received", nullable: true, width: 1 })
+  received: boolean | null;
 
   @ManyToOne(() => Material, (material) => material.quotationRequestMaterials, {
     onDelete: "NO ACTION",
