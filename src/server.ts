@@ -39,6 +39,7 @@ import { ProductPackageController } from "./controller/ProductPackageController"
 import { SupplierController } from "./controller/SupplierController";
 import { SupplierMaterialController } from "./controller/SupplierMaterialController";
 import { MaterialAnalysisController } from "./controller/MaterialAnalysisController";
+import { QuotationRequestController } from "./controller/QuotationRequestController";
 
 /* 
 =====================================================================================
@@ -527,7 +528,6 @@ app.route("/api/supplier_materials")
    })
 
 
-
 // Routes: Material Analysis
 app.route("/api/material_analysis")
    .all((req, res, next) => {
@@ -544,6 +544,20 @@ app.route("/api/material_analysis")
 
    .put((req, res) => {
       MaterialAnalysisController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+// Routes: Material Analysis
+app.route("/api/quotation_requests")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "QUOTATION_REQUEST").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .post((req, res) => {
+      QuotationRequestController.save(req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    })
