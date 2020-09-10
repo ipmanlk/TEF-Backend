@@ -127,7 +127,7 @@ export class QuotationRequestController {
   static async update(data) {
 
     // check if an entry is present with given id
-    const selectedEntry = await getRepository(QuotationRequest).find(data.id).catch(e => {
+    const selectedEntry = await getRepository(QuotationRequest).findOne(data.id).catch(e => {
       console.log(e.code, e);
       throw {
         status: false,
@@ -145,6 +145,7 @@ export class QuotationRequestController {
     }
 
     const editedEntry = data as QuotationRequest;
+    editedEntry.employeeId = selectedEntry.employeeId;
 
     try {
       // update quatation request
@@ -179,7 +180,7 @@ export class QuotationRequestController {
     return {
       status: true,
       msg: "Quotation request has been updated!."
-    };
+    }
   }
 
   static async delete({ id }) {

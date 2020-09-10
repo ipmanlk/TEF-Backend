@@ -568,6 +568,18 @@ app.route("/api/quotation_requests")
          .catch(e => sendErrors(res, e));
    })
 
+   .put((req, res) => {
+      QuotationRequestController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      QuotationRequestController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
 // Routes: Misc Routes
 app.route("/api/regexes")
    .all((req, res, next) => {
