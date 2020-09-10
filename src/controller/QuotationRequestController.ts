@@ -1,6 +1,8 @@
 import { getRepository } from "typeorm";
 import { QuotationRequest } from "../entity/QuotationRequest";
 import { QuotationRequestMaterial } from "../entity/QuotationRequestMaterial";
+import { QuotationRequestStatus } from "../entity/QuotationRequestStatus";
+
 import { QuotationRequestDao } from "../dao/QuotationRequestDao";
 import { MiscUtil } from "../util/MiscUtil";
 
@@ -119,6 +121,120 @@ export class QuotationRequestController {
       status: true,
       data: { qrnumber: entry.qrnumber },
       msg: "Quotation request has been created!"
+    };
+  }
+
+  static async update(data) {
+
+    // check if an entry is present with given id
+    const selectedEntry = await getRepository(QuotationRequest).find(data.id).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    if (!selectedEntry) {
+      throw {
+        status: false,
+        type: "input",
+        msg: "That entry doesn't exist in our database!."
+      }
+    }
+
+    const editedEntry = data as QuotationRequest;
+
+    try {
+      // update quatation request
+      await getRepository(QuotationRequest).save(editedEntry);
+
+      // create request materials array
+      const requestMaterials = [];
+      data.requestMaterials.forEach(rm => {
+        const requestMaterial = new QuotationRequestMaterial();
+        requestMaterial.quotationRequestId = editedEntry.id;
+        requestMaterial.materialId = rm.materialId;
+        requestMaterial.requested = rm.requested;
+        requestMaterial.accepted = rm.accepted;
+        requestMaterial.received = rm.received;
+        requestMaterials.push(requestMaterial);
+      });
+
+      // remove existing request materials
+      await getRepository(QuotationRequestMaterial).createQueryBuilder()
+        .delete()
+        .where("quotationRequestId = :id", { id: editedEntry.id })
+        .execute();
+
+      // save request materials
+      await getRepository(QuotationRequestMaterial).save(requestMaterials);
+
+    } catch (e) {
+      console.log(e.code, e);
+      throw e;
+    }
+
+    return {
+      status: true,
+      msg: "Quotation request has been updated!."
+    };
+  }
+
+  static async delete({ id }) {
+    // find entry with the given id
+    const entry = await getRepository(QuotationRequest).findOne({ id: id }).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    if (!entry) {
+      throw {
+        status: false,
+        type: "input",
+        msg: "That entry doesn't exist in our database!."
+      }
+    }
+
+    // find deleted status
+    const deletedStatus = await getRepository(QuotationRequestStatus).findOne({ name: "Deleted" }).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    // if there is no status called deleted
+    if (!deletedStatus) {
+      throw {
+        status: false,
+        type: "server",
+        msg: "Deleted status doesn't exist in the database!."
+      }
+    }
+
+    // set status to delete
+    entry.quotationRequestStatus = deletedStatus;
+
+    await getRepository(QuotationRequest).save(entry).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    return {
+      status: true,
+      msg: "That quatation request has been deleted!"
     };
   }
 }
