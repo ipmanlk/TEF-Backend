@@ -556,6 +556,12 @@ app.route("/api/quotation_requests")
       }).catch(e => sendErrors(res, e));
    })
 
+   .get((req, res) => {
+      QuotationRequestController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
    .post((req, res) => {
       QuotationRequestController.save(req.body.data, req.session)
          .then(r => res.json(r))

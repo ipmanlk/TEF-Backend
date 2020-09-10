@@ -24,20 +24,5 @@
     "regex": "^[\\d]+$",
     "attribute": "quotationRequestStatusId",
     "error": "Please select a valid request status!."
-  },
-  {
-    "regex": "^[\\d]{1}$",
-    "attribute": "requested",
-    "error": "Please provide a valid value for requested!."
-  },
-  {
-    "regex": "^[\\d]{1}$",
-    "attribute": "accepted",
-    "error": "Please provide a valid value for accepted!."
-  },
-  {
-    "regex": "^[\\d]{1}$",
-    "attribute": "recieved",
-    "error": "Please provide a valid value for accepted!."
-  },
+  }
 ]

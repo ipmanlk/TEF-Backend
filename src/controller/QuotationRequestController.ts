@@ -1,9 +1,64 @@
 import { getRepository } from "typeorm";
 import { QuotationRequest } from "../entity/QuotationRequest";
 import { QuotationRequestMaterial } from "../entity/QuotationRequestMaterial";
+import { QuotationRequestDao } from "../dao/QuotationRequestDao";
 import { MiscUtil } from "../util/MiscUtil";
 
 export class QuotationRequestController {
+
+  static async get(data) {
+    if (data !== undefined && data.id) {
+      return this.getOne(data);
+    } else {
+      return this.search(data);
+    }
+  }
+
+  private static async getOne({ id }) {
+    // search for an entry with given id
+    const entry = await QuotationRequestDao.getOne(id).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      };
+    });
+
+    // check if entry exists
+    if (entry !== undefined) {
+      // remove useless elements
+      entry["createdEmployee"] = `${entry.employee.number} (${entry.employee.fullName})`;
+      delete entry.employee;
+
+      return {
+        status: true,
+        data: entry
+      };
+    } else {
+      throw {
+        status: false,
+        type: "input",
+        msg: "Unable to find an entry with that id."
+      };
+    }
+  }
+
+  private static async search(data = {}) {
+    const qrs = await QuotationRequestDao.search(data).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    return {
+      status: true,
+      data: qrs
+    };
+  }
 
   static async save(data, session) {
 
