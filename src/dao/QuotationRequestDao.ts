@@ -25,11 +25,11 @@ export class QuotationRequestDao {
   static getOne(id) {
     return getRepository(QuotationRequest)
       .createQueryBuilder("qr")
-      .leftJoinAndSelect("qr.supplier", "sup")
       .leftJoinAndSelect("qr.employee", "emp")
       .select([
-        "qr.id", "qr.qrnumber", "qr.description", "qr.addedDate", "qr.dueDate", "qr.description", "sup.id", "sup.personName", "sup.companyName", "emp.id", "emp.number", "emp.fullName"
+        "qr.id", "qr.qrnumber", "qr.description", "qr.addedDate", "qr.dueDate", "qr.description", "emp.id", "emp.number", "emp.fullName"
       ])
+      .leftJoinAndSelect("qr.supplier", "sup")
       .leftJoinAndSelect("qr.quotationRequestStatus", "qrs")
       .leftJoinAndSelect("qr.quotationRequestMaterials", "qrm")
       .leftJoinAndSelect("qrm.material", "m")
