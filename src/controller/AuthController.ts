@@ -15,13 +15,11 @@ export class AuthController {
         const hashedPass = crypto.createHash("sha512").update(`${password}${process.env.SALT}`).digest("hex");
 
         // find user with the given username
-        let user;
-
-        user = await getRepository(User).findOne({
+        const user = await getRepository(User).findOne({
             where: {
                 username: username
             },
-            relations: ["userRoles"]
+            relations: ["userRoles", "userStatus"]
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -39,6 +37,25 @@ export class AuthController {
                 msg: "Unable to find a user with that username!"
             };
         }
+
+        // check user is suspended
+        if (user.userStatus.name == "Suspended") {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Your user account is currently suspended!"
+            };
+        }
+
+        // check user is deleted
+        if (user.userStatus.name == "Deleted") {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Your user account doesn't exist!"
+            };
+        }
+
 
         // check password
         if (user.password !== hashedPass) {
