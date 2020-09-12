@@ -238,4 +238,28 @@ export class QuotationRequestController {
       msg: "That quatation request has been deleted!"
     };
   }
+
+  // find requests belong to single supplier
+  static async getSupplierRequests({ supplierId }) {
+    let entires = await getRepository(QuotationRequest).find({
+      where: { supplierId: supplierId },
+      relations: ["quotationRequestStatus"]
+    }).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    // filter out accepted ones and deleted ones
+    entires = entires.filter(e => e.quotationRequestStatus.name !== "Accepted" && e.quotationRequestStatus.name !== "Deleted");
+
+    return {
+      data: entires,
+      status: true
+    };
+  }
+
 }

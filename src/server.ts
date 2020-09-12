@@ -548,7 +548,7 @@ app.route("/api/material_analysis")
          .catch(e => sendErrors(res, e));
    })
 
-// Routes: Material Analysis
+// Routes: Quotation Requests
 app.route("/api/quotation_requests")
    .all((req, res, next) => {
       isAuthorized(req, false, "QUOTATION_REQUEST").then(() => {
@@ -579,6 +579,20 @@ app.route("/api/quotation_requests")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
+
+// Routes: Quotation Requests belongs to a single supplier
+app.route("/api/supplier_quotation_requests")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "QUOTATION_REQUEST").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      QuotationRequestController.getSupplierRequests(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
 
 // Routes: Misc Routes
 app.route("/api/regexes")
