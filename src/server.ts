@@ -40,6 +40,7 @@ import { SupplierController } from "./controller/SupplierController";
 import { SupplierMaterialController } from "./controller/SupplierMaterialController";
 import { MaterialAnalysisController } from "./controller/MaterialAnalysisController";
 import { QuotationRequestController } from "./controller/QuotationRequestController";
+import { QuotationController } from "./controller/QuotationController";
 
 /* 
 =====================================================================================
@@ -580,7 +581,6 @@ app.route("/api/quotation_requests")
          .catch(e => sendErrors(res, e));
    });
 
-// Routes: Quotation Requests belongs to a single supplier
 app.route("/api/supplier_quotation_requests")
    .all((req, res, next) => {
       isAuthorized(req, false, "QUOTATION_REQUEST").then(() => {
@@ -593,6 +593,38 @@ app.route("/api/supplier_quotation_requests")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    })
+
+// Routes: Quotations
+app.route("/api/quotations")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "QUOTATION").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      QuotationController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .post((req, res) => {
+      QuotationController.save(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      QuotationController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      QuotationController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
 
 // Routes: Misc Routes
 app.route("/api/regexes")
@@ -607,6 +639,7 @@ app.route("/api/regexes")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
+
 
 app.route("/api/general")
    .all((req, res, next) => {
