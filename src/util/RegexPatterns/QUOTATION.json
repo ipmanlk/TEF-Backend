@@ -1,0 +1,68 @@
+[
+  {
+    "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+    "attribute": "description",
+    "error": "Please provide a valid description!.",
+    "optional": true
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "dueDate",
+    "error": "Please provide a valid due date!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "supplierId",
+    "error": "Please select a valid supplier!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "quotationRequestId",
+    "error": "Please select a valid quotation request!."
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "validFrom",
+    "error": "Please provide a valid \"valid from\" date!."
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "validTo",
+    "error": "Please provide a valid \"valid to\" date!."
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "addedDate",
+    "error": "Please provide a valid request date!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "materialId",
+    "error": "Please select a valid quotation request!."
+  },
+  {
+    "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+    "attribute": "purchasePrice",
+    "error": "Please select a valid quotation request!."
+  },
+  {
+    "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+    "attribute": "availableQty",
+    "error": "Please provide an avaialble quantity!."
+  },
+  {
+    "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+    "attribute": "minimumRequestQty",
+    "error": "Please provide a minimum reuqest quantity!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "unitTypeId",
+    "error": "Please select a valid unit type!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "quotationStatusId",
+    "error": "Please select a valid quotation status!."
+  }
+]
