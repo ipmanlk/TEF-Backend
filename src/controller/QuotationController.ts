@@ -147,32 +147,33 @@ export class QuotationController {
     }
 
     const editedEntry = data as Quotation;
-    editedEntry.employeeId = selectedEntry.employeeId;
 
     try {
-      // update quatation request
-      await getRepository(Quotation).save(editedEntry);
-
-      // create request materials array
-      // const requestMaterials = [];
-      // data.requestMaterials.forEach(rm => {
-      //   const requestMaterial = new QuotationMaterial();
-      //   requestMaterial.QuotationId = editedEntry.id;
-      //   requestMaterial.materialId = rm.materialId;
-      //   requestMaterial.requested = rm.requested;
-      //   requestMaterial.accepted = rm.accepted;
-      //   requestMaterial.received = rm.received;
-      //   requestMaterials.push(requestMaterial);
-      // });
-
-      // remove existing request materials
+      // remove existing quotation materials
       await getRepository(QuotationMaterial).createQueryBuilder()
         .delete()
-        .where("QuotationId = :id", { id: editedEntry.id })
+        .where("quotationId = :id", { id: editedEntry.id })
         .execute();
 
-      // save request materials
-      // await getRepository(QuotationMaterial).save(requestMaterials);
+      // update quatation
+      await getRepository(Quotation).save(editedEntry);
+
+      // set empty array for quatation materials
+      const quotationMaterials = [];
+
+      data.quotationMaterials.forEach(qm => {
+        const quotationMaterial = new QuotationMaterial();
+        quotationMaterial.materialId = qm.materialId;
+        quotationMaterial.quotationId = editedEntry.id;
+        quotationMaterial.purchasePrice = qm.purchasePrice;
+        quotationMaterial.availableQty = qm.availableQty;
+        quotationMaterial.minimumRequestQty = qm.minimumRequestQty;
+        quotationMaterial.unitTypeId = qm.unitTypeId;
+        quotationMaterials.push(quotationMaterial);
+      });
+
+      // save quotation mateirals
+      await getRepository(QuotationMaterial).save(quotationMaterials);
 
     } catch (e) {
       console.log(e.code, e);
@@ -181,7 +182,7 @@ export class QuotationController {
 
     return {
       status: true,
-      msg: "Quotation request has been updated!."
+      msg: "Quotation has been updated!."
     }
   }
 
@@ -237,30 +238,7 @@ export class QuotationController {
 
     return {
       status: true,
-      msg: "That quatation request has been deleted!"
-    };
-  }
-
-  // find requests belong to single supplier
-  static async getSupplierRequests({ supplierId }) {
-    let entires = await getRepository(Quotation).find({
-      where: { supplierId: supplierId },
-      relations: ["QuotationStatus"]
-    }).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
-
-    // filter out accepted ones and deleted ones
-    entires = entires.filter(e => e.quotationStatus.name !== "Accepted" && e.quotationStatus.name !== "Deleted");
-
-    return {
-      data: entires,
-      status: true
+      msg: "That quatation has been deleted!"
     };
   }
 
