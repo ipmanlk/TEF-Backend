@@ -33,6 +33,7 @@ export class QuotationRequestDao {
       .leftJoinAndSelect("qr.quotationRequestStatus", "qrs")
       .leftJoinAndSelect("qr.quotationRequestMaterials", "qrm")
       .leftJoinAndSelect("qrm.material", "m")
+      .leftJoinAndSelect("m.unitType", "ut")
       .where("qr.id = :keyword", { keyword: id })
       .getOne()
   }
