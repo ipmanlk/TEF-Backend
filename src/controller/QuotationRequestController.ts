@@ -240,11 +240,8 @@ export class QuotationRequestController {
   }
 
   // find requests belong to single supplier
-  static async getSupplierRequests({ supplierId }) {
-    let entires = await getRepository(QuotationRequest).find({
-      where: { supplierId: supplierId },
-      relations: ["quotationRequestStatus"]
-    }).catch(e => {
+  static async getSupplierRequests({ supplierId, quotationRequestStatusName }) {
+    let entires = await QuotationRequestDao.getSupplierRequests(supplierId, quotationRequestStatusName).catch(e => {
       console.log(e.code, e);
       throw {
         status: false,
@@ -252,9 +249,6 @@ export class QuotationRequestController {
         msg: "Server Error!. Please check logs."
       }
     });
-
-    // filter out accepted ones and deleted ones
-    // entires = entires.filter(e => e.quotationRequestStatus.name == "Active");
 
     return {
       data: entires,

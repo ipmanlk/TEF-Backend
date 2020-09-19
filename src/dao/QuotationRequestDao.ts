@@ -2,6 +2,8 @@ import { getRepository } from "typeorm";
 import { QuotationRequest } from "../entity/QuotationRequest";
 
 export class QuotationRequestDao {
+
+  // search quotation requests (for table)
   static search({ keyword = "", skip = 0 }) {
     return getRepository(QuotationRequest)
       .createQueryBuilder("qr")
@@ -21,7 +23,7 @@ export class QuotationRequestDao {
       .getMany()
   }
 
-
+  // get single quotation request (for editing and viewing)
   static getOne(id) {
     return getRepository(QuotationRequest)
       .createQueryBuilder("qr")
@@ -36,5 +38,15 @@ export class QuotationRequestDao {
       .leftJoinAndSelect("m.unitType", "ut")
       .where("qr.id = :keyword", { keyword: id })
       .getOne()
+  }
+
+  // get quotation requests belong to a single supplier
+  static getSupplierRequests(supplierId, quotationRequestStatusName = "") {
+    return getRepository(QuotationRequest)
+      .createQueryBuilder("qr")
+      .leftJoinAndSelect("qr.quotationRequestStatus", "qrs")
+      .where("qr.supplierId = :keyword", { keyword: supplierId })
+      .orWhere("qrs.name LIKE :keyword", { keyword: `%${quotationRequestStatusName}%` })
+      .getMany()
   }
 }
