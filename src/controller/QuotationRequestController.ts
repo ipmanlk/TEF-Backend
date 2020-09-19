@@ -254,7 +254,7 @@ export class QuotationRequestController {
     });
 
     // filter out accepted ones and deleted ones
-    entires = entires.filter(e => e.quotationRequestStatus.name !== "Accepted" && e.quotationRequestStatus.name !== "Deleted");
+    // entires = entires.filter(e => e.quotationRequestStatus.name == "Active");
 
     return {
       data: entires,
