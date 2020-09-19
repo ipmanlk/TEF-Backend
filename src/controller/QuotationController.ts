@@ -1,7 +1,10 @@
 import { getRepository } from "typeorm";
 import { Quotation } from "../entity/Quotation";
 import { QuotationMaterial } from "../entity/QuotationMaterial";
+import { QuotationRequestMaterial } from "../entity/QuotationRequestMaterial";
 import { QuotationStatus } from "../entity/QuotationStatus";
+import { QuotationRequest } from "../entity/QuotationRequest";
+import { QuotationRequestStatus } from "../entity/QuotationRequestStatus";
 
 import { QuotationDao } from "../dao/QuotationDao";
 import { MiscUtil } from "../util/MiscUtil";
@@ -83,47 +86,73 @@ export class QuotationController {
     // set created employee
     quotation.employeeId = session.data.employeeId;
 
-    // save entry
-    const entry = await getRepository(Quotation).save(quotation).catch(e => {
+
+    try {
+      // save entry
+      const entry = await getRepository(Quotation).save(quotation);
+
+      // set empty array for quatation materials
+      const quotationMaterials = [];
+
+      data.quotationMaterials.forEach(qm => {
+        const quotationMaterial = new QuotationMaterial();
+        quotationMaterial.materialId = qm.materialId;
+        quotationMaterial.quotationId = entry.id;
+        quotationMaterial.purchasePrice = qm.purchasePrice;
+        quotationMaterial.availableQty = qm.availableQty;
+        quotationMaterial.minimumRequestQty = qm.minimumRequestQty;
+        quotationMaterial.unitTypeId = qm.unitTypeId;
+        quotationMaterials.push(quotationMaterial);
+      });
+
+      // save quotation mateirals
+      await getRepository(QuotationMaterial).save(quotationMaterials);
+
+
+      // mark quotation request as completed
+      const quotationRequestCompltedStatus = await getRepository(QuotationRequestStatus).findOne({ where: { name: "Completed" } });
+
+      const quotationRequest = await getRepository(QuotationRequest).findOne(entry.quotationRequestId);
+
+      quotationRequest.quotationRequestStatus = quotationRequestCompltedStatus;
+
+      await getRepository(QuotationRequest).save(quotationRequest);
+
+      // update quotation request mateirals
+      for (let quotationMaterial of quotationMaterials) {
+        let quotationRequestMaterial = await getRepository(QuotationRequestMaterial).findOne({
+          where: { quotationRequestId: entry.quotationRequestId, materialId: quotationMaterial.materialId }
+        });
+
+        quotationRequestMaterial.accepted = true;
+        quotationRequestMaterial.received = true;
+
+        await getRepository(QuotationRequestMaterial).save(quotationRequestMaterial);
+      }
+
+      return {
+        status: true,
+        data: { qnumber: entry.qnumber },
+        msg: "Quotation has been created!"
+      };
+
+    } catch (e) {
       console.log(e.code, e);
+
+      if (e.code == "ER_DUP_ENTRY") {
+        throw {
+          status: false,
+          type: "input",
+          msg: "Quotation already exists for the given quotation request!."
+        }
+      }
 
       throw {
         status: false,
         type: "server",
         msg: "Server Error!. Please check logs."
       }
-    });
-
-    // set empty array for quatation materials
-    const quotationMaterials = [];
-
-    data.quotationMaterials.forEach(qm => {
-      const quotationMaterial = new QuotationMaterial();
-      quotationMaterial.materialId = qm.materialId;
-      quotationMaterial.quotationId = entry.id;
-      quotationMaterial.purchasePrice = qm.purchasePrice;
-      quotationMaterial.availableQty = qm.availableQty;
-      quotationMaterial.minimumRequestQty = qm.minimumRequestQty;
-      quotationMaterial.unitTypeId = qm.unitTypeId;
-      quotationMaterials.push(quotationMaterial);
-    });
-
-    // save quotation mateirals
-    await getRepository(QuotationMaterial).save(quotationMaterials).catch(e => {
-      console.log(e.code, e);
-
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
-
-    return {
-      status: true,
-      data: { qnumber: entry.qnumber },
-      msg: "Quotation has been created!"
-    };
+    }
   }
 
   static async update(data) {
