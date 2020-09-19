@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Employee } from "./Employee";
@@ -16,6 +17,7 @@ import { QuotationMaterial } from "./QuotationMaterial";
 @Index("fk_quotation_quotation_request1_idx", ["quotationRequestId"], {})
 @Index("fk_quotation_quotation_status1_idx", ["quotationStatusId"], {})
 @Index("qnumber_UNIQUE", ["qnumber"], { unique: true })
+@Index("quotation_request_id_UNIQUE", ["quotationRequestId"], { unique: true })
 @Entity("quotation", { schema: "twoelephantsfireworks" })
 export class Quotation {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -39,7 +41,7 @@ export class Quotation {
   @Column("int", { name: "quotation_status_id" })
   quotationStatusId: number;
 
-  @Column("int", { name: "quotation_request_id" })
+  @Column("int", { name: "quotation_request_id", unique: true })
   quotationRequestId: number;
 
   @Column("int", { name: "employee_id" })
@@ -52,9 +54,9 @@ export class Quotation {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
-  @ManyToOne(
+  @OneToOne(
     () => QuotationRequest,
-    (quotationRequest) => quotationRequest.quotations,
+    (quotationRequest) => quotationRequest.quotation,
     { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
   )
   @JoinColumn([{ name: "quotation_request_id", referencedColumnName: "id" }])

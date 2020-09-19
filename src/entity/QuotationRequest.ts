@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Quotation } from "./Quotation";
@@ -47,8 +48,8 @@ export class QuotationRequest {
   @Column("int", { name: "quotation_request_status_id" })
   quotationRequestStatusId: number;
 
-  @OneToMany(() => Quotation, (quotation) => quotation.quotationRequest)
-  quotations: Quotation[];
+  @OneToOne(() => Quotation, (quotation) => quotation.quotationRequest)
+  quotation: Quotation;
 
   @ManyToOne(() => Employee, (employee) => employee.quotationRequests, {
     onDelete: "NO ACTION",

@@ -15,6 +15,7 @@ import { MaterialType } from "./MaterialType";
 import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
 import { MaterialAnalysis } from "./MaterialAnalysis";
+import { MaterialInventory } from "./MaterialInventory";
 import { QuotationMaterial } from "./QuotationMaterial";
 import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 import { Supplier } from "./Supplier";
@@ -48,9 +49,6 @@ export class Material {
 
   @Column("int", { name: "roq", nullable: true })
   roq: number | null;
-
-  @Column("int", { name: "qty", nullable: true })
-  qty: number | null;
 
   @Column("int", { name: "material_type_id" })
   materialTypeId: number;
@@ -114,6 +112,12 @@ export class Material {
     (materialAnalysis) => materialAnalysis.material
   )
   materialAnalyses: MaterialAnalysis[];
+
+  @OneToMany(
+    () => MaterialInventory,
+    (materialInventory) => materialInventory.material
+  )
+  materialInventories: MaterialInventory[];
 
   @OneToMany(
     () => QuotationMaterial,
