@@ -61,6 +61,11 @@
         "error": "Please select a valid supplier status!."
     },
     {
+        "regex": "^[\\d]+$",
+        "attribute": "supplierTypeId",
+        "error": "Please select a valid supplier type!."
+    },
+    {
         "regex": "^[\\w\\s\\.]{5,200}$",
         "attribute": "bankacHolder",
         "error": "Please provide a valid bank account holder name!.",
