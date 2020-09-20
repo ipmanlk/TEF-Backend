@@ -26,7 +26,7 @@
     },
     {
         "regex": "^.{5,12}$",
-        "attribute": "regNumber",
+        "attribute": "companyRegNumber",
         "error": "Please provide a valid registration number!."
     },
     {
@@ -39,7 +39,6 @@
         "attribute": "address",
         "error": "Please provide a valid address!."
     },
-
     {
         "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
         "attribute": "description",
@@ -60,5 +59,29 @@
         "regex": "^[\\d]+$",
         "attribute": "supplierStatusId",
         "error": "Please select a valid supplier status!."
+    },
+    {
+        "regex": "^[\\w\\s]{5,200}$",
+        "attribute": "bankacHolder",
+        "error": "Please provide a valid bank account holder name!.",
+        "optional": true
+    },
+    {
+        "regex": "^[\\d]{4, 12}$",
+        "attribute": "bankacNo",
+        "error": "Please provide a valid  bank account number!.",
+        "optional": true
+    },
+    {
+        "regex": "^[\\w\\s]{5,200}$",
+        "attribute": "bankacBank",
+        "error": "Please provide a valid bank name!.",
+        "optional": true
+    },
+    {
+        "regex": "^[\\w\\s]{5,100}$",
+        "attribute": "bankacBranch",
+        "error": "Please provide a valid bank branch name!.",
+        "optional": true
     }
 ]
