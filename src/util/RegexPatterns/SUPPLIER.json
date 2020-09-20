@@ -61,13 +61,13 @@
         "error": "Please select a valid supplier status!."
     },
     {
-        "regex": "^[\\w\\s]{5,200}$",
+        "regex": "^[\\w\\s\\.]{5,200}$",
         "attribute": "bankacHolder",
         "error": "Please provide a valid bank account holder name!.",
         "optional": true
     },
     {
-        "regex": "^[\\d]{4, 12}$",
+        "regex": "^[\\d]{4,12}$",
         "attribute": "bankacNo",
         "error": "Please provide a valid  bank account number!.",
         "optional": true
