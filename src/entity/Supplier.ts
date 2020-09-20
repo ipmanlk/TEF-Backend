@@ -87,6 +87,18 @@ export class Supplier {
   @Column("int", { name: "supplier_type_id" })
   supplierTypeId: number;
 
+  @Column("varchar", { name: "bankac_holder", nullable: true, length: 100 })
+  bankacHolder: string | null;
+
+  @Column("int", { name: "bankac_no", nullable: true })
+  bankacNo: number | null;
+
+  @Column("varchar", { name: "bankac_bank", nullable: true, length: 100 })
+  bankacBank: string | null;
+
+  @Column("varchar", { name: "bankac_branch", nullable: true, length: 100 })
+  bankacBranch: string | null;
+
   @OneToMany(
     () => QuotationRequest,
     (quotationRequest) => quotationRequest.supplier
