@@ -42,11 +42,14 @@ export class QuotationRequestDao {
 
   // get quotation requests belong to a single supplier
   static getSupplierRequests(supplierId, quotationRequestStatusName = "") {
+    
+    console.log(supplierId, quotationRequestStatusName);
+    
     return getRepository(QuotationRequest)
       .createQueryBuilder("qr")
       .leftJoinAndSelect("qr.quotationRequestStatus", "qrs")
-      .where("qr.supplierId = :keyword", { keyword: supplierId })
-      .orWhere("qrs.name LIKE :keyword", { keyword: `%${quotationRequestStatusName}%` })
+      .where("qr.supplierId = :supplierId", { supplierId: supplierId })
+      .andWhere("qrs.name LIKE :statusName", { statusName: `%${quotationRequestStatusName}%` })
       .getMany()
   }
 }
