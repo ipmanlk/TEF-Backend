@@ -20,7 +20,7 @@ export class MaterialInventory {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("decimal", { name: "qty", precision: 7, scale: 2 })
+  @Column("decimal", { name: "qty", precision: 15, scale: 2 })
   qty: string;
 
   @Column("decimal", { name: "available_qty", precision: 7, scale: 2 })
