@@ -3,6 +3,7 @@ import { Material } from "./Material";
 import { MaterialAnalysis } from "./MaterialAnalysis";
 import { Product } from "./Product";
 import { ProductPackage } from "./ProductPackage";
+import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { QuotationMaterial } from "./QuotationMaterial";
 
 @Entity("unit_type", { schema: "twoelephantsfireworks" })
@@ -27,6 +28,12 @@ export class UnitType {
 
   @OneToMany(() => ProductPackage, (productPackage) => productPackage.unitType)
   productPackages: ProductPackage[];
+
+  @OneToMany(
+    () => PurchaseOrderMaterial,
+    (purchaseOrderMaterial) => purchaseOrderMaterial.unitType
+  )
+  purchaseOrderMaterials: PurchaseOrderMaterial[];
 
   @OneToMany(
     () => QuotationMaterial,

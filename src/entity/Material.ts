@@ -16,6 +16,7 @@ import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
 import { MaterialAnalysis } from "./MaterialAnalysis";
 import { MaterialInventory } from "./MaterialInventory";
+import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { QuotationMaterial } from "./QuotationMaterial";
 import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 import { Supplier } from "./Supplier";
@@ -118,6 +119,12 @@ export class Material {
     (materialInventory) => materialInventory.material
   )
   materialInventories: MaterialInventory[];
+
+  @OneToMany(
+    () => PurchaseOrderMaterial,
+    (purchaseOrderMaterial) => purchaseOrderMaterial.material
+  )
+  purchaseOrderMaterials: PurchaseOrderMaterial[];
 
   @OneToMany(
     () => QuotationMaterial,

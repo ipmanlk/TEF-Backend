@@ -8,6 +8,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { PurchaseOrder } from "./PurchaseOrder";
 import { Employee } from "./Employee";
 import { QuotationRequest } from "./QuotationRequest";
 import { QuotationStatus } from "./QuotationStatus";
@@ -46,6 +47,9 @@ export class Quotation {
 
   @Column("int", { name: "employee_id" })
   employeeId: number;
+
+  @OneToMany(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.quotation)
+  purchaseOrders: PurchaseOrder[];
 
   @ManyToOne(() => Employee, (employee) => employee.quotations, {
     onDelete: "NO ACTION",

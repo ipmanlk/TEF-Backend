@@ -16,6 +16,7 @@ import { Gender } from "./Gender";
 import { Material } from "./Material";
 import { OperationLog } from "./OperationLog";
 import { Product } from "./Product";
+import { PurchaseOrder } from "./PurchaseOrder";
 import { Quotation } from "./Quotation";
 import { QuotationRequest } from "./QuotationRequest";
 import { Supplier } from "./Supplier";
@@ -119,6 +120,9 @@ export class Employee {
 
   @OneToMany(() => Product, (product) => product.employee)
   products: Product[];
+
+  @OneToMany(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.employee)
+  purchaseOrders: PurchaseOrder[];
 
   @OneToMany(() => Quotation, (quotation) => quotation.employee)
   quotations: Quotation[];
