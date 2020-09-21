@@ -41,10 +41,7 @@ export class QuotationRequestDao {
   }
 
   // get quotation requests belong to a single supplier
-  static getSupplierRequests(supplierId, quotationRequestStatusName = "") {
-    
-    console.log(supplierId, quotationRequestStatusName);
-    
+  static getSupplierRequests(supplierId, quotationRequestStatusName = "") {    
     return getRepository(QuotationRequest)
       .createQueryBuilder("qr")
       .leftJoinAndSelect("qr.quotationRequestStatus", "qrs")
