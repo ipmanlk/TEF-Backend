@@ -41,6 +41,7 @@ import { SupplierMaterialController } from "./controller/SupplierMaterialControl
 import { MaterialAnalysisController } from "./controller/MaterialAnalysisController";
 import { QuotationRequestController } from "./controller/QuotationRequestController";
 import { QuotationController } from "./controller/QuotationController";
+import { MaterialInventoryController } from "./controller/MaterialInventoryController";
 
 /* 
 =====================================================================================
@@ -625,6 +626,21 @@ app.route("/api/quotations")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
+
+// Routes: Material inventory
+app.route("/api/material_inventory")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "MATERIAL_INVENTORY").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      MaterialInventoryController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
 
 // Routes: Misc Routes
 app.route("/api/regexes")
