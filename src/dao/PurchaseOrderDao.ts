@@ -28,14 +28,14 @@ export class PurchaseOrderDao {
       .leftJoinAndSelect("po.employee", "emp")
       .leftJoinAndSelect("po.quotation", "poq")
       .select([
-        "po.id", "po.pocode", "po.requiredDate", "po.addedDate", "po.totalPrice", "emp.id", "emp.number", "emp.fullName", "poq.id", "poq.qnumber"
+        "po.id", "po.pocode", "po.requiredDate", "po.addedDate", "po.totalPrice", "po.description", "emp.id", "emp.number", "emp.fullName", "poq.id", "poq.qnumber"
       ])
       .leftJoinAndSelect("po.purchaseOrderStatus", "pos")
       .leftJoinAndSelect("po.purchaseOrderMaterials", "pom")
       .leftJoinAndSelect("pom.material", "pomm")
       .leftJoinAndSelect("pomm.unitType", "ut")
       .leftJoinAndSelect("poq.quotationRequest", "poqr")
-      // .leftJoinAndSelect("poqr.supplier", "poqrs")
+      .leftJoinAndSelect("poqr.supplier", "poqrs")
       .where("po.id = :keyword", { keyword: id })
       .getOne()
   }
