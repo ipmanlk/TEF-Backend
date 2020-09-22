@@ -96,7 +96,7 @@ export class PurchaseOrderController {
         purchaseOrderMaterial.purchaseOrderId = entry.id;
         purchaseOrderMaterial.materialId = pom.materialId;
         purchaseOrderMaterial.purchasePrice = pom.purchasePrice;
-        purchaseOrderMaterial.quantity = pom.quantity;
+        purchaseOrderMaterial.qty = pom.qty;
         purchaseOrderMaterial.lineTotal = pom.lineTotal;
         purchaseOrderMaterial.unitTypeId = pom.unitTypeId;
       });
@@ -169,7 +169,7 @@ export class PurchaseOrderController {
         purchaseOrderMaterial.purchaseOrderId = editedEntry.id;
         purchaseOrderMaterial.materialId = pom.materialId;
         purchaseOrderMaterial.purchasePrice = pom.purchasePrice;
-        purchaseOrderMaterial.quantity = pom.quantity;
+        purchaseOrderMaterial.qty = pom.qty;
         purchaseOrderMaterial.lineTotal = pom.lineTotal;
         purchaseOrderMaterial.unitTypeId = pom.unitTypeId;
       });
