@@ -42,6 +42,7 @@ import { MaterialAnalysisController } from "./controller/MaterialAnalysisControl
 import { QuotationRequestController } from "./controller/QuotationRequestController";
 import { QuotationController } from "./controller/QuotationController";
 import { MaterialInventoryController } from "./controller/MaterialInventoryController";
+import { PurchaseOrderController } from "./controller/PurchaseOrderController";
 
 /* 
 =====================================================================================
@@ -626,6 +627,52 @@ app.route("/api/quotations")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
+
+app.route("/api/supplier_quotations")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "QUOTATION").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      QuotationController.getSupplierQuotations(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+// Routes: Purchase Order
+app.route("/api/purchase_orders")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "PURCHASE_ORDER").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      PurchaseOrderController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .post((req, res) => {
+      PurchaseOrderController.save(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      PurchaseOrderController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      PurchaseOrderController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
 
 // Routes: Material inventory
 app.route("/api/material_inventory")

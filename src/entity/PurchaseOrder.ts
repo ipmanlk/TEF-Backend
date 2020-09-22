@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Employee } from "./Employee";
@@ -20,6 +21,7 @@ import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 )
 @Index("fk_purchase_order_quotation1_idx", ["quotationId"], {})
 @Index("pocode_UNIQUE", ["pocode"], { unique: true })
+@Index("quotation_id_UNIQUE", ["quotationId"], { unique: true })
 @Entity("purchase_order", { schema: "twoelephantsfireworks" })
 export class PurchaseOrder {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -28,7 +30,7 @@ export class PurchaseOrder {
   @Column("char", { name: "pocode", unique: true, length: 12 })
   pocode: string;
 
-  @Column("int", { name: "quotation_id" })
+  @Column("int", { name: "quotation_id", unique: true })
   quotationId: number;
 
   @Column("date", { name: "required_date" })
@@ -66,7 +68,7 @@ export class PurchaseOrder {
   ])
   purchaseOrderStatus: PurchaseOrderStatus;
 
-  @ManyToOne(() => Quotation, (quotation) => quotation.purchaseOrders, {
+  @OneToOne(() => Quotation, (quotation) => quotation.purchaseOrder, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
