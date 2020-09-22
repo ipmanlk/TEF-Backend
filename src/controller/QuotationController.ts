@@ -271,4 +271,21 @@ export class QuotationController {
     };
   }
 
+  // find quotations belong to single supplier
+  static async getSupplierQuotations({ supplierId, quotationStatusName }) {
+    let entires = await QuotationDao.getSupplierQuotations(supplierId, quotationStatusName).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    return {
+      data: entires,
+      status: true
+    };
+  }
+
 }

@@ -37,4 +37,15 @@ export class QuotationDao {
       .where("q.id = :keyword", { keyword: id })
       .getOne()
   }
+
+  // get quotations belong to a single supplier
+  static getSupplierQuotations(supplierId, quotationStatusName = "") {
+    return getRepository(Quotation)
+      .createQueryBuilder("q")
+      .leftJoin("q.quotationRequest", "qr")
+      .leftJoinAndSelect("q.quotationStatus", "qs")
+      .where("qr.supplierId = :supplierId", { supplierId: supplierId })
+      .andWhere("qs.name LIKE :statusName", { statusName: `%${quotationStatusName}%` })
+      .getMany()
+  }
 }
