@@ -3,9 +3,9 @@ import { UnitType } from "./UnitType";
 import { Material } from "./Material";
 import { Product } from "./Product";
 
-@Index("fk_material_analysis_unit_type1_idx", ["unitTypeId"], {})
 @Index("fk_product_has_material_material1_idx", ["materialId"], {})
 @Index("fk_product_has_material_product1_idx", ["productId"], {})
+@Index("fk_material_analysis_unit_type1_idx", ["unitTypeId"], {})
 @Entity("material_analysis", { schema: "twoelephantsfireworks" })
 export class MaterialAnalysis {
   @Column("int", { primary: true, name: "product_id" })

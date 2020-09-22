@@ -22,14 +22,14 @@ import { QuotationRequest } from "./QuotationRequest";
 import { Supplier } from "./Supplier";
 import { User } from "./User";
 
-@Index("fk_employee_civilstatus1_idx", ["civilStatusId"], {})
-@Index("fk_employee_designation1_idx", ["designationId"], {})
-@Index("fk_employee_employeestatus1_idx", ["employeeStatusId"], {})
-@Index("fk_employee_gender_idx", ["genderId"], {})
-@Index("land_UNIQUE", ["land"], { unique: true })
 @Index("mobile_UNIQUE", ["mobile"], { unique: true })
 @Index("nic_UNIQUE", ["nic"], { unique: true })
+@Index("land_UNIQUE", ["land"], { unique: true })
 @Index("number_UNIQUE", ["number"], { unique: true })
+@Index("fk_employee_gender_idx", ["genderId"], {})
+@Index("fk_employee_designation1_idx", ["designationId"], {})
+@Index("fk_employee_civilstatus1_idx", ["civilStatusId"], {})
+@Index("fk_employee_employeestatus1_idx", ["employeeStatusId"], {})
 @Entity("employee", { schema: "twoelephantsfireworks" })
 export class Employee {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

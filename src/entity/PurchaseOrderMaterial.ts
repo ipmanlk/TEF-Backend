@@ -21,8 +21,8 @@ export class PurchaseOrderMaterial {
   @Column("decimal", { name: "purchase_price", precision: 7, scale: 2 })
   purchasePrice: string;
 
-  @Column("decimal", { name: "quantity", precision: 7, scale: 2 })
-  quantity: string;
+  @Column("decimal", { name: "qty", precision: 7, scale: 2 })
+  qty: string;
 
   @Column("decimal", { name: "line_total", precision: 8, scale: 2 })
   lineTotal: string;
