@@ -2,7 +2,8 @@ import { getRepository } from "typeorm";
 import { PurchaseOrder } from "../entity/PurchaseOrder";
 import { PurchaseOrderMaterial } from "../entity/PurchaseOrderMaterial";
 import { PurchaseOrderStatus } from "../entity/PurchaseOrderStatus";
-
+import { Quotation } from "../entity/Quotation";
+import { QuotationStatus } from "../entity/QuotationStatus";
 import { PurchaseOrderDao } from "../dao/PurchaseOrderDao";
 import { MiscUtil } from "../util/MiscUtil";
 
@@ -70,11 +71,10 @@ export class PurchaseOrderController {
       order: { id: "DESC" }
     });
 
-    // set a qnumber for new entry
     if (lastEntry) {
-      data.qnumber = MiscUtil.getNextNumber("PUR", lastEntry.pocode, 5);
+      data.pocode = MiscUtil.getNextNumber("PUR", lastEntry.pocode, 5);
     } else {
-      data.qnumber = MiscUtil.getNextNumber("PUR", undefined, 5);
+      data.pocode = MiscUtil.getNextNumber("PUR", undefined, 5);
     }
 
     // create a purchase order object
@@ -99,11 +99,22 @@ export class PurchaseOrderController {
         purchaseOrderMaterial.qty = pom.qty;
         purchaseOrderMaterial.lineTotal = pom.lineTotal;
         purchaseOrderMaterial.unitTypeId = pom.unitTypeId;
+        purchaseOrderMaterials.push(purchaseOrderMaterial);
       });
 
       // save purchase order materials
       await getRepository(PurchaseOrderMaterial).save(purchaseOrderMaterials);
 
+
+      // mark quotation as completed
+      const quotationCompletedStatus = await getRepository(QuotationStatus).findOne({ where: { name: "Completed" } });
+
+      const quotation = await getRepository(Quotation).findOne(entry.quotationId);
+      quotation.quotationStatus = quotationCompletedStatus;
+
+      getRepository(Quotation).save(quotation);
+
+      // send success response
       return {
         status: true,
         data: { pocode: entry.pocode },
@@ -130,7 +141,6 @@ export class PurchaseOrderController {
   }
 
   static async update(data) {
-
     // check if an entry is present with given id
     const selectedEntry = await getRepository(PurchaseOrder).findOne(data.id).catch(e => {
       console.log(e.code, e);
@@ -172,6 +182,7 @@ export class PurchaseOrderController {
         purchaseOrderMaterial.qty = pom.qty;
         purchaseOrderMaterial.lineTotal = pom.lineTotal;
         purchaseOrderMaterial.unitTypeId = pom.unitTypeId;
+        purchaseOrderMaterials.push(purchaseOrderMaterial);
       });
 
       // save purchase order materials
