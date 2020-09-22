@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Material } from "./Material";
 import { MaterialAnalysis } from "./MaterialAnalysis";
-import { Product } from "./Product";
+import { Material } from "./Material";
 import { ProductPackage } from "./ProductPackage";
+import { Product } from "./Product";
 import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { QuotationMaterial } from "./QuotationMaterial";
 
@@ -14,20 +14,20 @@ export class UnitType {
   @Column("varchar", { name: "name", nullable: true, length: 45 })
   name: string | null;
 
-  @OneToMany(() => Material, (material) => material.unitType)
-  materials: Material[];
-
   @OneToMany(
     () => MaterialAnalysis,
     (materialAnalysis) => materialAnalysis.unitType
   )
   materialAnalyses: MaterialAnalysis[];
 
-  @OneToMany(() => Product, (product) => product.unitType)
-  products: Product[];
+  @OneToMany(() => Material, (material) => material.unitType)
+  materials: Material[];
 
   @OneToMany(() => ProductPackage, (productPackage) => productPackage.unitType)
   productPackages: ProductPackage[];
+
+  @OneToMany(() => Product, (product) => product.unitType)
+  products: Product[];
 
   @OneToMany(
     () => PurchaseOrderMaterial,

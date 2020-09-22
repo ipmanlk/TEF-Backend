@@ -8,10 +8,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { UserRole } from "./UserRole";
 import { SessionLog } from "./SessionLog";
 import { Employee } from "./Employee";
 import { UserStatus } from "./UserStatus";
-import { UserRole } from "./UserRole";
 
 @Index("employee_id_UNIQUE", ["employeeId"], { unique: true })
 @Index("username_UNIQUE", ["username"], { unique: true })
@@ -49,6 +49,9 @@ export class User {
   @Column("int", { name: "employee_created_id" })
   employeeCreatedId: number;
 
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  userRoles: UserRole[];
+
   @OneToMany(() => SessionLog, (sessionLog) => sessionLog.user)
   sessionLogs: SessionLog[];
 
@@ -72,7 +75,4 @@ export class User {
   })
   @JoinColumn([{ name: "user_status_id", referencedColumnName: "id" }])
   userStatus: UserStatus;
-
-  @OneToMany(() => UserRole, (userRole) => userRole.user)
-  userRoles: UserRole[];
 }

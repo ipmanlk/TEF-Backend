@@ -10,9 +10,9 @@ import {
 } from "typeorm";
 import { QuotationRequest } from "./QuotationRequest";
 import { Employee } from "./Employee";
+import { Material } from "./Material";
 import { SupplierStatus } from "./SupplierStatus";
 import { SupplierType } from "./SupplierType";
-import { Material } from "./Material";
 
 @Index("person_mobile_UNIQUE", ["personMobile"], { unique: true })
 @Index("nic_UNIQUE", ["nic"], { unique: true })
@@ -90,8 +90,8 @@ export class Supplier {
   @Column("varchar", { name: "bankac_holder", nullable: true, length: 100 })
   bankacHolder: string | null;
 
-  @Column("int", { name: "bankac_no", nullable: true })
-  bankacNo: number | null;
+  @Column("varchar", { name: "bankac_no", nullable: true, length: 15 })
+  bankacNo: string | null;
 
   @Column("varchar", { name: "bankac_bank", nullable: true, length: 100 })
   bankacBank: string | null;
@@ -112,6 +112,9 @@ export class Supplier {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
+  @ManyToMany(() => Material, (material) => material.suppliers)
+  materials: Material[];
+
   @ManyToOne(
     () => SupplierStatus,
     (supplierStatus) => supplierStatus.suppliers,
@@ -126,7 +129,4 @@ export class Supplier {
   })
   @JoinColumn([{ name: "supplier_type_id", referencedColumnName: "id" }])
   supplierType: SupplierType;
-
-  @ManyToMany(() => Material, (material) => material.suppliers)
-  materials: Material[];
 }
