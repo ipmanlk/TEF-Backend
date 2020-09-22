@@ -12,23 +12,18 @@
   },
   {
     "regex": "^[\\d]+$",
-    "attribute": "quotationRequestId",
-    "error": "Please select a valid quotation request!."
+    "attribute": "quotationId",
+    "error": "Please select a valid quotation!."
   },
   {
     "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
-    "attribute": "validFrom",
-    "error": "Please provide a valid \"valid from\" date!."
-  },
-  {
-    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
-    "attribute": "validTo",
-    "error": "Please provide a valid \"valid to\" date!."
+    "attribute": "requiredDate",
+    "error": "Please provide a valid \"Required Date\"!."
   },
   {
     "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
     "attribute": "addedDate",
-    "error": "Please provide a valid request date!."
+    "error": "Please provide a valid added date!."
   },
   {
     "regex": "^[\\d]+$",
@@ -42,13 +37,8 @@
   },
   {
     "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
-    "attribute": "availableQty",
-    "error": "Please provide an avaialble quantity!."
-  },
-  {
-    "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
-    "attribute": "minimumRequestQty",
-    "error": "Please provide a minimum reuqest quantity!."
+    "attribute": "qty",
+    "error": "Please provide a quantity!."
   },
   {
     "regex": "^[\\d]+$",
@@ -57,7 +47,7 @@
   },
   {
     "regex": "^[\\d]+$",
-    "attribute": "quotationStatusId",
-    "error": "Please select a valid quotation status!."
+    "attribute": "purchaseOrderStatusId",
+    "error": "Please select a valid purchase order status!."
   }
 ]
