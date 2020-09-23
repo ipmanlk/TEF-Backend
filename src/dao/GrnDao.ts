@@ -20,7 +20,6 @@ export class GrnDao {
       .getMany()
   }
 
-
   static getOne(id) {
     return getRepository(Grn)
       .createQueryBuilder("grn")
@@ -38,5 +37,19 @@ export class GrnDao {
       .leftJoinAndSelect("grnmm.unitType", "ut")
       .where("grn.id = :keyword", { keyword: id })
       .getOne()
+  }
+  // get grns belong to a single supplier
+  static getSupplierGrns(supplierId, grnStatusName = "") {
+    return getRepository(Grn)
+      .createQueryBuilder("grn")
+      .select(["grn.id", "grn.grncode"])
+      .leftJoin("grn.purchaseOrder", "po")
+      .leftJoin("po.quotation", "poq")
+      .leftJoin("poq.quotationRequest", "poqr")
+      .leftJoin("poqr.supplier", "poqrs")
+      .leftJoin("grn.grnStatus", "grns")
+      .where("poqr.supplierId = :supplierId", { supplierId: supplierId })
+      .andWhere("grns.name LIKE :statusName", { statusName: `%${grnStatusName}%` })
+      .getMany()
   }
 }

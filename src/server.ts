@@ -735,6 +735,19 @@ app.route("/api/grns")
          .catch(e => sendErrors(res, e));
    });
 
+app.route("/api/supplier_grns")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "GRN").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      GrnController.getSupplierGrns(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
 // Routes: GRN
 app.route("/api/supplier_payments")
    .all((req, res, next) => {

@@ -254,4 +254,21 @@ export class GrnController {
     };
   }
 
+  // find grns belong to single supplier
+  static async getSupplierGrns({ supplierId, grnStatusName }) {
+    let entires = await GrnDao.getSupplierGrns(supplierId, grnStatusName).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    return {
+      data: entires,
+      status: true
+    };
+  }
+
 }
