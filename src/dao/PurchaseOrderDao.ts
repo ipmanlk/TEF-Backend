@@ -39,4 +39,16 @@ export class PurchaseOrderDao {
       .where("po.id = :keyword", { keyword: id })
       .getOne()
   }
+
+  // get purchase orders belong to a single supplier
+  static getSupplierPurchaseOrders(supplierId, purchaseOrderStatusName = "") {
+    return getRepository(PurchaseOrder)
+      .createQueryBuilder("po")
+      .leftJoinAndSelect("po.purchaseOrderStatus", "pos")
+      .leftJoin("po.quotation", "poq")
+      .leftJoin("poq.quotationRequest", "poqr")
+      .where("poqr.supplierId = :supplierId", { supplierId: supplierId })
+      .andWhere("pos.name LIKE :statusName", { statusName: `%${purchaseOrderStatusName}%` })
+      .getMany()
+  }
 }

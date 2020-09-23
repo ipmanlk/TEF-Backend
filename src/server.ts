@@ -43,6 +43,7 @@ import { QuotationRequestController } from "./controller/QuotationRequestControl
 import { QuotationController } from "./controller/QuotationController";
 import { MaterialInventoryController } from "./controller/MaterialInventoryController";
 import { PurchaseOrderController } from "./controller/PurchaseOrderController";
+import { GrnController } from "./controller/GrnController";
 
 /* 
 =====================================================================================
@@ -673,6 +674,19 @@ app.route("/api/purchase_orders")
          .catch(e => sendErrors(res, e));
    });
 
+app.route("/api/supplier_purchase_orders")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "PURCHASE_ORDER").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      PurchaseOrderController.getSupplierPurchaseOrders(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
 
 // Routes: Material inventory
 app.route("/api/material_inventory")
@@ -687,6 +701,38 @@ app.route("/api/material_inventory")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    })
+
+// Routes: GRN
+app.route("/api/grns")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "GRN").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      GrnController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .post((req, res) => {
+      GrnController.save(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      GrnController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      GrnController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
 
 
 // Routes: Misc Routes
