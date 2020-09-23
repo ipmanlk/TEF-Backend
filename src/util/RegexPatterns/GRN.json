@@ -1,0 +1,73 @@
+[
+  {
+    "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+    "attribute": "description",
+    "error": "Please provide a valid description!.",
+    "optional": true
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "supplierId",
+    "error": "Please select a valid supplier!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "purchaseOrderId",
+    "error": "Please select a valid purchase order!."
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "receivedDate",
+    "error": "Please provide a valid \"Received Date\"!."
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "addedDate",
+    "error": "Please provide a valid added date!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "materialId",
+    "error": "Please select a valid material!."
+  },
+  {
+    "regex": "^[\\d]{1,9}\\.[\\d]{2}$",
+    "attribute": "purchasePrice",
+    "error": "Please provide a valid purchase price!."
+  },
+  {
+    "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+    "attribute": "grandTotal",
+    "error": "Please provide a valid grand total price."
+  },
+  {
+    "regex": "^[\\d]{1,5}\\.[\\d]{2}$",
+    "attribute": "discountRatio",
+    "error": "Please provide a valid discount ratio!."
+  },
+  {
+    "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+    "attribute": "netTotal",
+    "error": "Please provide a valid net total price."
+  },
+  {
+    "regex": "^[\\d]{1,9}\\.[\\d]{2}$",
+    "attribute": "receivedQty",
+    "error": "Please provide a quantity!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "unitTypeId",
+    "error": "Please select a valid unit type!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "grnStatusId",
+    "error": "Please select a valid GRN status!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "purchaseOrderId",
+    "error": "Please select a valid purchase order!."
+  }
+]
