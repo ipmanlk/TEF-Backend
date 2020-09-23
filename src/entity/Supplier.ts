@@ -66,7 +66,7 @@ export class Supplier {
 
   @Column("decimal", {
     name: "arrears",
-    precision: 7,
+    precision: 10,
     scale: 2,
     default: () => "'0.00'",
   })
@@ -90,7 +90,7 @@ export class Supplier {
   @Column("varchar", { name: "bankac_holder", nullable: true, length: 100 })
   bankacHolder: string | null;
 
-  @Column("varchar", { name: "bankac_no", nullable: true, length: 15 })
+  @Column("char", { name: "bankac_no", nullable: true, length: 15 })
   bankacNo: string | null;
 
   @Column("varchar", { name: "bankac_bank", nullable: true, length: 100 })

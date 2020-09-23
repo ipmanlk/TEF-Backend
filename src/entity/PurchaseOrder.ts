@@ -52,8 +52,8 @@ export class PurchaseOrder {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
-  @OneToMany(() => Grn, (grn) => grn.purchaseOrder)
-  grns: Grn[];
+  @OneToOne(() => Grn, (grn) => grn.purchaseOrder)
+  grn: Grn;
 
   @ManyToOne(() => Employee, (employee) => employee.purchaseOrders, {
     onDelete: "NO ACTION",

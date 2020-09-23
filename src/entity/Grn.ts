@@ -5,14 +5,17 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Employee } from "./Employee";
 import { GrnStatus } from "./GrnStatus";
 import { PurchaseOrder } from "./PurchaseOrder";
 import { GrnMaterial } from "./GrnMaterial";
+import { SupplierPayment } from "./SupplierPayment";
 
 @Index("grncode_UNIQUE", ["grncode"], { unique: true })
+@Index("purchase_order_id_UNIQUE", ["purchaseOrderId"], { unique: true })
 @Index("fk_grn_grn_status1_idx", ["grnStatusId"], {})
 @Index("fk_grn_purchase_order1_idx", ["purchaseOrderId"], {})
 @Index("fk_grn_employee1_idx", ["employeeId"], {})
@@ -48,7 +51,7 @@ export class Grn {
   @Column("int", { name: "grn_status_id" })
   grnStatusId: number;
 
-  @Column("int", { name: "purchase_order_id" })
+  @Column("int", { name: "purchase_order_id", unique: true })
   purchaseOrderId: number;
 
   @Column("int", { name: "employee_id" })
@@ -68,7 +71,7 @@ export class Grn {
   @JoinColumn([{ name: "grn_status_id", referencedColumnName: "id" }])
   grnStatus: GrnStatus;
 
-  @ManyToOne(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.grns, {
+  @OneToOne(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.grn, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
@@ -77,4 +80,7 @@ export class Grn {
 
   @OneToMany(() => GrnMaterial, (grnMaterial) => grnMaterial.grn)
   grnMaterials: GrnMaterial[];
+
+  @OneToMany(() => SupplierPayment, (supplierPayment) => supplierPayment.grn)
+  supplierPayments: SupplierPayment[];
 }

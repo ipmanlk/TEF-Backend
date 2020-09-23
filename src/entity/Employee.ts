@@ -21,6 +21,7 @@ import { PurchaseOrder } from "./PurchaseOrder";
 import { Quotation } from "./Quotation";
 import { QuotationRequest } from "./QuotationRequest";
 import { Supplier } from "./Supplier";
+import { SupplierPayment } from "./SupplierPayment";
 import { User } from "./User";
 
 @Index("mobile_UNIQUE", ["mobile"], { unique: true })
@@ -139,6 +140,12 @@ export class Employee {
 
   @OneToMany(() => Supplier, (supplier) => supplier.employee)
   suppliers: Supplier[];
+
+  @OneToMany(
+    () => SupplierPayment,
+    (supplierPayment) => supplierPayment.employee
+  )
+  supplierPayments: SupplierPayment[];
 
   @OneToMany(() => User, (user) => user.employeeCreated)
   users: User[];
