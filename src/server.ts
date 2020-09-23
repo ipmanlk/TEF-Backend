@@ -44,6 +44,7 @@ import { QuotationController } from "./controller/QuotationController";
 import { MaterialInventoryController } from "./controller/MaterialInventoryController";
 import { PurchaseOrderController } from "./controller/PurchaseOrderController";
 import { GrnController } from "./controller/GrnController";
+import { SupplierPaymentController } from "./controller/SupplierPaymentController";
 
 /* 
 =====================================================================================
@@ -730,6 +731,38 @@ app.route("/api/grns")
 
    .delete((req, res) => {
       GrnController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
+// Routes: GRN
+app.route("/api/supplier_payments")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "SUPPLIER_PAYMENT").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      SupplierPaymentController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .post((req, res) => {
+      SupplierPaymentController.save(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      SupplierPaymentController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      SupplierPaymentController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
