@@ -14,13 +14,13 @@ export class QuotationMaterial {
   @Column("int", { primary: true, name: "quotation_id" })
   quotationId: number;
 
-  @Column("decimal", { name: "purchase_price", precision: 7, scale: 2 })
+  @Column("decimal", { name: "purchase_price", precision: 9, scale: 2 })
   purchasePrice: string;
 
   @Column("decimal", {
     name: "available_qty",
     nullable: true,
-    precision: 7,
+    precision: 9,
     scale: 2,
   })
   availableQty: string | null;
@@ -28,7 +28,7 @@ export class QuotationMaterial {
   @Column("decimal", {
     name: "minimum_request_qty",
     nullable: true,
-    precision: 7,
+    precision: 9,
     scale: 2,
   })
   minimumRequestQty: string | null;

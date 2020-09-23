@@ -18,13 +18,13 @@ export class PurchaseOrderMaterial {
   @Column("int", { primary: true, name: "material_id" })
   materialId: number;
 
-  @Column("decimal", { name: "purchase_price", precision: 7, scale: 2 })
+  @Column("decimal", { name: "purchase_price", precision: 9, scale: 2 })
   purchasePrice: string;
 
-  @Column("decimal", { name: "qty", precision: 7, scale: 2 })
+  @Column("decimal", { name: "qty", precision: 9, scale: 2 })
   qty: string;
 
-  @Column("decimal", { name: "line_total", precision: 8, scale: 2 })
+  @Column("decimal", { name: "line_total", precision: 10, scale: 2 })
   lineTotal: string;
 
   @Column("int", { name: "unit_type_id" })

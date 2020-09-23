@@ -8,10 +8,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Grn } from "./Grn";
 import { Employee } from "./Employee";
-import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { PurchaseOrderStatus } from "./PurchaseOrderStatus";
 import { Quotation } from "./Quotation";
+import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 
 @Index("pocode_UNIQUE", ["pocode"], { unique: true })
 @Index("quotation_id_UNIQUE", ["quotationId"], { unique: true })
@@ -39,7 +40,7 @@ export class PurchaseOrder {
   @Column("date", { name: "added_date" })
   addedDate: string;
 
-  @Column("decimal", { name: "total_price", precision: 7, scale: 2 })
+  @Column("decimal", { name: "total_price", precision: 10, scale: 2 })
   totalPrice: string;
 
   @Column("text", { name: "description", nullable: true })
@@ -51,18 +52,15 @@ export class PurchaseOrder {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
+  @OneToMany(() => Grn, (grn) => grn.purchaseOrder)
+  grns: Grn[];
+
   @ManyToOne(() => Employee, (employee) => employee.purchaseOrders, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
-
-  @OneToMany(
-    () => PurchaseOrderMaterial,
-    (purchaseOrderMaterial) => purchaseOrderMaterial.purchaseOrder
-  )
-  purchaseOrderMaterials: PurchaseOrderMaterial[];
 
   @ManyToOne(
     () => PurchaseOrderStatus,
@@ -80,4 +78,10 @@ export class PurchaseOrder {
   })
   @JoinColumn([{ name: "quotation_id", referencedColumnName: "id" }])
   quotation: Quotation;
+
+  @OneToMany(
+    () => PurchaseOrderMaterial,
+    (purchaseOrderMaterial) => purchaseOrderMaterial.purchaseOrder
+  )
+  purchaseOrderMaterials: PurchaseOrderMaterial[];
 }

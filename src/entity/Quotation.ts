@@ -8,11 +8,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { QuotationMaterial } from "./QuotationMaterial";
 import { PurchaseOrder } from "./PurchaseOrder";
 import { Employee } from "./Employee";
 import { QuotationRequest } from "./QuotationRequest";
 import { QuotationStatus } from "./QuotationStatus";
+import { QuotationMaterial } from "./QuotationMaterial";
 
 @Index("qnumber_UNIQUE", ["qnumber"], { unique: true })
 @Index("quotation_request_id_UNIQUE", ["quotationRequestId"], { unique: true })
@@ -48,12 +48,6 @@ export class Quotation {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
-  @OneToMany(
-    () => QuotationMaterial,
-    (quotationMaterial) => quotationMaterial.quotation
-  )
-  quotationMaterials: QuotationMaterial[];
-
   @OneToOne(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.quotation)
   purchaseOrder: PurchaseOrder;
 
@@ -79,4 +73,10 @@ export class Quotation {
   )
   @JoinColumn([{ name: "quotation_status_id", referencedColumnName: "id" }])
   quotationStatus: QuotationStatus;
+
+  @OneToMany(
+    () => QuotationMaterial,
+    (quotationMaterial) => quotationMaterial.quotation
+  )
+  quotationMaterials: QuotationMaterial[];
 }

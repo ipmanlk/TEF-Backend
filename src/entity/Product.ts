@@ -7,13 +7,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ProductPackage } from "./ProductPackage";
+import { MaterialAnalysis } from "./MaterialAnalysis";
 import { ProductCategory } from "./ProductCategory";
 import { Employee } from "./Employee";
-import { MaterialAnalysis } from "./MaterialAnalysis";
 import { ProductStatus } from "./ProductStatus";
 import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
+import { ProductPackage } from "./ProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("fk_product_risk_category1_idx", ["riskCategoryId"], {})
@@ -88,8 +88,11 @@ export class Product {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
-  @OneToMany(() => ProductPackage, (productPackage) => productPackage.product)
-  productPackages: ProductPackage[];
+  @OneToMany(
+    () => MaterialAnalysis,
+    (materialAnalysis) => materialAnalysis.product
+  )
+  materialAnalyses: MaterialAnalysis[];
 
   @ManyToOne(
     () => ProductCategory,
@@ -105,12 +108,6 @@ export class Product {
   })
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
-
-  @OneToMany(
-    () => MaterialAnalysis,
-    (materialAnalysis) => materialAnalysis.product
-  )
-  materialAnalyses: MaterialAnalysis[];
 
   @ManyToOne(() => ProductStatus, (productStatus) => productStatus.products, {
     onDelete: "NO ACTION",
@@ -132,4 +129,7 @@ export class Product {
   })
   @JoinColumn([{ name: "unit_type_id", referencedColumnName: "id" }])
   unitType: UnitType;
+
+  @OneToMany(() => ProductPackage, (productPackage) => productPackage.product)
+  productPackages: ProductPackage[];
 }

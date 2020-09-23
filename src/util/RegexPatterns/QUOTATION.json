@@ -36,17 +36,17 @@
     "error": "Please select a valid material!."
   },
   {
-    "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+    "regex": "^[\\d]{1,9}\\.[\\d]{2}$",
     "attribute": "purchasePrice",
     "error": "Please select a valid purchase price!."
   },
   {
-    "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+    "regex": "^[\\d]{1,9}\\.[\\d]{2}$",
     "attribute": "availableQty",
     "error": "Please provide an avaialble quantity!."
   },
   {
-    "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+    "regex": "^[\\d]{1,9}\\.[\\d]{2}$",
     "attribute": "minimumRequestQty",
     "error": "Please provide a minimum reuqest quantity!."
   },
