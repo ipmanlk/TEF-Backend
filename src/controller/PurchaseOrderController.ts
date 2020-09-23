@@ -112,7 +112,7 @@ export class PurchaseOrderController {
       const quotation = await getRepository(Quotation).findOne(entry.quotationId);
       quotation.quotationStatus = quotationCompletedStatus;
 
-      getRepository(Quotation).save(quotation);
+      await getRepository(Quotation).save(quotation);
 
       // send success response
       return {
@@ -252,6 +252,23 @@ export class PurchaseOrderController {
     return {
       status: true,
       msg: "That purchase order has been deleted!"
+    };
+  }
+
+  // find purchase orders belong to single supplier
+  static async getSupplierPurchaseOrders({ supplierId, purchaseOrderStatusName }) {
+    let entires = await PurchaseOrderDao.getSupplierPurchaseOrders(supplierId, purchaseOrderStatusName).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    return {
+      data: entires,
+      status: true
     };
   }
 
