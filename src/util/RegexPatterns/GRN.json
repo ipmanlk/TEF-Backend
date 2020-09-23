@@ -69,5 +69,10 @@
     "regex": "^[\\d]+$",
     "attribute": "purchaseOrderId",
     "error": "Please select a valid purchase order!."
+  },
+  {
+    "regex": "^[\\w]{3,12}$",
+    "attribute": "invoiceNo",
+    "error": "Please enter a valid invoice number!."
   }
 ]
