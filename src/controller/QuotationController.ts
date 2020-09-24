@@ -33,7 +33,7 @@ export class QuotationController {
     // check if entry exists
     if (entry !== undefined) {
       // remove useless elements
-      entry["createdEmployee"] = `${entry.employee.number} (${entry.employee.fullName})`;
+      entry["createdEmployee"] = `${entry.employee.fullName} (${entry.employee.number})`;
       delete entry.employee;
 
       return {

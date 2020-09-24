@@ -31,7 +31,7 @@ export class ProductController {
         // check if entry exists
         if (product !== undefined) {
             // remove useless elements
-            product["createdEmployee"] = `${product.employee.number} (${product.employee.fullName})`;
+            product["createdEmployee"] = `${product.employee.fullName} (${product.employee.number})`;
             delete product.employee;
 
             return {
