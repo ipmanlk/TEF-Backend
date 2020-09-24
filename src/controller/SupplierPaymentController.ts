@@ -2,6 +2,10 @@ import { getRepository } from "typeorm";
 import { SupplierPayment } from "../entity/SupplierPayment";
 import { SupplierPaymentStatus } from "../entity/SupplierPaymentStatus";
 import { SupplierPaymentDao } from "../dao/SupplierPaymentDao";
+import { Grn } from "../entity/Grn";
+import { GrnController } from "../controller/GrnController";
+import { GrnStatus } from "../entity/GrnStatus";
+import { Supplier } from "../entity/Supplier";
 import { MiscUtil } from "../util/MiscUtil";
 
 export class SupplierPaymentController {
@@ -84,6 +88,20 @@ export class SupplierPaymentController {
     try {
       // save entry
       const entry = await getRepository(SupplierPayment).save(supplierPayment);
+
+      // mark grn as completed
+      if (entry.payAmount >= entry.grnNetTotal) {
+        const grn = await getRepository(Grn).findOne(entry.grnId);
+        const grnCompletedStatus = await getRepository(GrnStatus).findOne({ where: { name: "Completed" } });
+        grn.grnStatus = grnCompletedStatus;
+        await getRepository(Grn).save(grn);
+      }
+
+      // update supplier arreas
+      const grn = await GrnController.getOne({ id: entry.grnId });
+      const supplier = await getRepository(Supplier).findOne(grn.data.purchaseOrder.quotation.quotationRequest.supplier.id);
+      supplier.arrears = (parseFloat(supplier.arrears) + parseFloat(entry.balance)).toString();
+      await getRepository(Supplier).save(supplier);
 
       // send success response
       return {

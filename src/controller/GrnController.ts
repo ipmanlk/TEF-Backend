@@ -17,7 +17,7 @@ export class GrnController {
     }
   }
 
-  private static async getOne({ id }) {
+  static async getOne({ id }) {
     // search for an entry with given id
     const entry = await GrnDao.getOne(id).catch(e => {
       console.log(e.code, e);
