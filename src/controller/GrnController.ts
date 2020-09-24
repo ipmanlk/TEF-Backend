@@ -5,6 +5,7 @@ import { GrnMaterial } from "../entity/GrnMaterial";
 import { GrnDao } from "../dao/GrnDao";
 import { PurchaseOrder } from "../entity/PurchaseOrder";
 import { PurchaseOrderStatus } from "../entity/PurchaseOrderStatus";
+import { MaterialInventory } from "../entity/MaterialInventory";
 import { MiscUtil } from "../util/MiscUtil";
 
 export class GrnController {
@@ -91,7 +92,7 @@ export class GrnController {
       // set empty array for grn materials
       const grnMaterials = [];
 
-      data.grnMaterials.forEach(gm => {
+      for (let gm of data.grnMaterials) {
         const grnMaterial = new GrnMaterial();
         grnMaterial.grnId = entry.id;
         grnMaterial.materialId = gm.materialId;
@@ -100,7 +101,26 @@ export class GrnController {
         grnMaterial.lineTotal = gm.lineTotal;
         grnMaterial.unitTypeId = gm.unitTypeId;
         grnMaterials.push(grnMaterial);
-      });
+
+        // update material inventory
+        const miMaterial = await getRepository(MaterialInventory).findOne({ where: { materialId: gm.materialId } });
+
+        if (miMaterial) {
+          miMaterial.qty = (parseFloat(miMaterial.qty) + parseFloat(grnMaterial.receivedQty)).toString();
+          miMaterial.availableQty = (parseFloat(miMaterial.availableQty) + parseFloat(grnMaterial.receivedQty)).toString();
+          
+          await getRepository(MaterialInventory).save(miMaterial);
+
+        } else {
+          const newMiMaterail = new MaterialInventory();
+          newMiMaterail.materialId = grnMaterial.materialId;
+          newMiMaterail.availableQty = grnMaterial.receivedQty;
+          newMiMaterail.qty = grnMaterial.receivedQty;
+          newMiMaterail.materialInventoryStatusId = 1;
+
+          await getRepository(MaterialInventory).save(newMiMaterail);
+        }
+      }
 
       // save grn materials
       await getRepository(GrnMaterial).save(grnMaterials);
