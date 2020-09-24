@@ -26,7 +26,7 @@ export class QuotationDao {
       .createQueryBuilder("q")
       .leftJoinAndSelect("q.employee", "emp")
       .select([
-        "q.id", "q.qnumber", "q.validFrom", "q.validTo", "q.description", "q.addedDate", "emp.id", "emp.number", "emp.fullName"
+        "q.id", "q.qnumber", "q.validFrom", "q.validTo", "q.description", "q.addedDate", "emp.id", "emp.number", "emp.callingName"
       ])
       .leftJoinAndSelect("q.quotationStatus", "qs")
       .leftJoinAndSelect("q.quotationMaterials", "qm")

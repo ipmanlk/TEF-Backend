@@ -29,7 +29,7 @@ export class QuotationRequestDao {
       .createQueryBuilder("qr")
       .leftJoinAndSelect("qr.employee", "emp")
       .select([
-        "qr.id", "qr.qrnumber", "qr.description", "qr.addedDate", "qr.dueDate", "qr.description", "emp.id", "emp.number", "emp.fullName"
+        "qr.id", "qr.qrnumber", "qr.description", "qr.addedDate", "qr.dueDate", "qr.description", "emp.id", "emp.number", "emp.callingName"
       ])
       .leftJoinAndSelect("qr.supplier", "sup")
       .leftJoinAndSelect("qr.quotationRequestStatus", "qrs")
@@ -41,7 +41,7 @@ export class QuotationRequestDao {
   }
 
   // get quotation requests belong to a single supplier
-  static getSupplierRequests(supplierId, quotationRequestStatusName = "") {    
+  static getSupplierRequests(supplierId, quotationRequestStatusName = "") {
     return getRepository(QuotationRequest)
       .createQueryBuilder("qr")
       .leftJoinAndSelect("qr.quotationRequestStatus", "qrs")

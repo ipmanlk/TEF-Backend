@@ -28,7 +28,7 @@ export class PurchaseOrderDao {
       .leftJoinAndSelect("po.employee", "emp")
       .leftJoinAndSelect("po.quotation", "poq")
       .select([
-        "po.id", "po.pocode", "po.requiredDate", "po.addedDate", "po.totalPrice", "po.description", "emp.id", "emp.number", "emp.fullName", "poq.id", "poq.qnumber"
+        "po.id", "po.pocode", "po.requiredDate", "po.addedDate", "po.totalPrice", "po.description", "emp.id", "emp.number", "emp.callingName", "poq.id", "poq.qnumber"
       ])
       .leftJoinAndSelect("po.purchaseOrderStatus", "pos")
       .leftJoinAndSelect("po.purchaseOrderMaterials", "pom")

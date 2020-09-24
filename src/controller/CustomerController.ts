@@ -32,7 +32,7 @@ export class CustomerController {
 		// check if employee exists
 		if (customer !== undefined) {
 			// remove useless elements
-			customer["createdEmployee"] = `${customer.employee.fullName} (${customer.employee.number})`;
+			customer["createdEmployee"] = `${customer.employee.callingName} (${customer.employee.number})`;
 			delete customer.employee;
 
 			return {

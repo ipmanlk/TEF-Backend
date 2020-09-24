@@ -31,7 +31,7 @@ export class SupplierController {
 		// check if supplier exists
 		if (supplier !== undefined) {
 			// remove useless elements
-			supplier["createdEmployee"] = `${supplier.employee.fullName} (${supplier.employee.number})`;
+			supplier["createdEmployee"] = `${supplier.employee.callingName} (${supplier.employee.number})`;
 			delete supplier.employee;
 
 			return {
