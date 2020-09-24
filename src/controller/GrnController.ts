@@ -18,7 +18,7 @@ export class GrnController {
     }
   }
 
-  static async getOne({ id }) {
+  private static async getOne({ id }) {
     // search for an entry with given id
     const entry = await GrnDao.getOne(id).catch(e => {
       console.log(e.code, e);
@@ -108,7 +108,7 @@ export class GrnController {
         if (miMaterial) {
           miMaterial.qty = (parseFloat(miMaterial.qty) + parseFloat(grnMaterial.receivedQty)).toString();
           miMaterial.availableQty = (parseFloat(miMaterial.availableQty) + parseFloat(grnMaterial.receivedQty)).toString();
-          
+
           await getRepository(MaterialInventory).save(miMaterial);
 
         } else {

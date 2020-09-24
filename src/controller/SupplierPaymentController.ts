@@ -3,7 +3,6 @@ import { SupplierPayment } from "../entity/SupplierPayment";
 import { SupplierPaymentStatus } from "../entity/SupplierPaymentStatus";
 import { SupplierPaymentDao } from "../dao/SupplierPaymentDao";
 import { Grn } from "../entity/Grn";
-import { GrnController } from "../controller/GrnController";
 import { GrnStatus } from "../entity/GrnStatus";
 import { Supplier } from "../entity/Supplier";
 import { MiscUtil } from "../util/MiscUtil";
@@ -98,8 +97,7 @@ export class SupplierPaymentController {
       }
 
       // update supplier arreas
-      const grn = await GrnController.getOne({ id: entry.grnId });
-      const supplier = await getRepository(Supplier).findOne(grn.data.purchaseOrder.quotation.quotationRequest.supplier.id);
+      const supplier = await getRepository(Supplier).findOne(data.supplierId);
 
       const supplierArrears = parseFloat(supplier.arrears);
       const balance = parseFloat(entry.balance);
