@@ -7,7 +7,7 @@ export class SupplierPaymentDao {
 			.createQueryBuilder("sp")
 			.leftJoinAndSelect("sp.grn", "grn")
 			.select([
-				"sp.id", "sp.pnumber", "sp.payAmount", "grn.id", "grn.grncode"
+				"sp.id", "sp.pnumber", "sp.payAmount", "grn.id", "grn.grncode", "sp.addedDate"
 			])
 			.leftJoinAndSelect("sp.supplierPaymentMethod", "spm")
 			.leftJoinAndSelect("sp.supplierPaymentStatus", "sps")
@@ -33,6 +33,7 @@ export class SupplierPaymentDao {
 			.select([
 				"sp.id", "sp.pnumber", "sp.grnId", "sp.grnNetTotal", "sp.payAmount", "sp.supTotalAmount", "sp.balance", "sp.chequeNo", "sp.chequeDate", "sp.bankacHolder", "sp.bankacNo", "sp.bankacBank", "sp.bankacBranch", "sp.description", "sp.addedDate", "grn.id", "grn.grncode", "po.id", "po.pocode", "emp.id", "emp.number", "emp.fullName", "poq.id", "poq.qnumber", "poqr.id", "poqr.qrnumber"
 			])
+			.leftJoinAndSelect("poqr.supplier", "poqrs")
 			.leftJoinAndSelect("sp.supplierPaymentMethod", "spm")
 			.leftJoinAndSelect("sp.supplierPaymentStatus", "sps")
 			.where("sp.id = :keyword", { keyword: id })
