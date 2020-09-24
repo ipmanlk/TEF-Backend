@@ -100,7 +100,16 @@ export class SupplierPaymentController {
       // update supplier arreas
       const grn = await GrnController.getOne({ id: entry.grnId });
       const supplier = await getRepository(Supplier).findOne(grn.data.purchaseOrder.quotation.quotationRequest.supplier.id);
-      supplier.arrears = (parseFloat(supplier.arrears) + parseFloat(entry.balance)).toString();
+
+      const supplierArrears = parseFloat(supplier.arrears);
+      const balance = parseFloat(entry.balance);
+
+      if (balance == 0) {
+        supplier.arrears = "0.00";
+      } else {
+        supplier.arrears = (supplierArrears + balance).toString();
+      }
+
       await getRepository(Supplier).save(supplier);
 
       // send success response
