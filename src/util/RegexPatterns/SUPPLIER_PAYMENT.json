@@ -1,0 +1,89 @@
+[
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "supplierId",
+        "error": "Please select a valid supplier!"
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "grnId",
+        "error": "Please select a valid GRN!"
+    },
+    {
+        "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+        "attribute": "grnNetTotal",
+        "error": "Please provide a valid grn net total!."
+    },
+    {
+        "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+        "attribute": "supTotalAmount",
+        "error": "Please provide a valid supplier total!."
+    },
+    {
+        "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+        "attribute": "payAmount",
+        "error": "Please provide a valid pay amount!."
+    },
+    {
+        "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+        "attribute": "balance",
+        "error": "Please provide a valid balance!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "supplierPaymentMethodId",
+        "error": "Please select a valid payment method!"
+    },
+    {
+        "regex": "^[\\d]{1,10}$",
+        "attribute": "chequeNo",
+        "error": "Please provide a valid cheque number!.",
+        "optional": true
+    },
+    {
+        "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+        "attribute": "chequeDate",
+        "error": "Please provide a valid cheque date!.",
+        "optional": true
+    },
+    {
+        "regex": "^[\\w\\s\\.]{5,200}$",
+        "attribute": "bankacHolder",
+        "error": "Please provide a valid bank account holder name!.",
+        "optional": true
+    },
+    {
+        "regex": "^[\\d]{4,12}$",
+        "attribute": "bankacNo",
+        "error": "Please provide a valid  bank account number!.",
+        "optional": true
+    },
+    {
+        "regex": "^[\\w\\s]{5,200}$",
+        "attribute": "bankacBank",
+        "error": "Please provide a valid bank name!.",
+        "optional": true
+    },
+    {
+        "regex": "^[\\w\\s]{5,100}$",
+        "attribute": "bankacBranch",
+        "error": "Please provide a valid bank branch name!.",
+        "optional": true
+    },
+    {
+        "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+        "attribute": "description",
+        "error": "Please provide a valid description!.",
+        "optional": true
+    },
+    {
+        "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+        "attribute": "addedDate",
+        "error": "Please provide a valid added date!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "supplierPaymentStatusId",
+        "error": "Please select a supplier payment status!"
+    }
+]
