@@ -4,6 +4,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Employee } from "./Employee";
@@ -11,19 +12,20 @@ import { Grn } from "./Grn";
 import { SupplierPaymentMethod } from "./SupplierPaymentMethod";
 import { SupplierPaymentStatus } from "./SupplierPaymentStatus";
 
-@Index("pnumber_UNIQUE", ["pnumber"], { unique: true })
-@Index("fk_supplier_payment_grn1_idx", ["grnId"], {})
-@Index(
-  "fk_supplier_payment_supplier_payment_status1_idx",
-  ["supplierPaymentStatusId"],
-  {}
-)
 @Index("fk_supplier_payment_employee1_idx", ["employeeId"], {})
+@Index("fk_supplier_payment_grn1_idx", ["grnId"], {})
 @Index(
   "fk_supplier_payment_supplier_payment_method1_idx",
   ["supplierPaymentMethodId"],
   {}
 )
+@Index(
+  "fk_supplier_payment_supplier_payment_status1_idx",
+  ["supplierPaymentStatusId"],
+  {}
+)
+@Index("grn_id_UNIQUE", ["grnId"], { unique: true })
+@Index("pnumber_UNIQUE", ["pnumber"], { unique: true })
 @Entity("supplier_payment", { schema: "twoelephantsfireworks" })
 export class SupplierPayment {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -32,14 +34,11 @@ export class SupplierPayment {
   @Column("char", { name: "pnumber", unique: true, length: 12 })
   pnumber: string;
 
-  @Column("int", { name: "grn_id" })
+  @Column("int", { name: "grn_id", unique: true })
   grnId: number;
 
   @Column("decimal", { name: "grn_net_total", precision: 10, scale: 2 })
   grnNetTotal: string;
-
-  @Column("int", { name: "payment_type_id" })
-  paymentTypeId: number;
 
   @Column("decimal", { name: "pay_amount", precision: 10, scale: 2 })
   payAmount: string;
@@ -77,9 +76,6 @@ export class SupplierPayment {
   @Column("int", { name: "supplier_payment_status_id" })
   supplierPaymentStatusId: number;
 
-  @Column("int", { name: "supplier_pyament_type_id" })
-  supplierPyamentTypeId: number;
-
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
@@ -93,7 +89,7 @@ export class SupplierPayment {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
-  @ManyToOne(() => Grn, (grn) => grn.supplierPayments, {
+  @OneToOne(() => Grn, (grn) => grn.supplierPayment, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })

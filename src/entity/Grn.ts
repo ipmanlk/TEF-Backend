@@ -14,11 +14,11 @@ import { PurchaseOrder } from "./PurchaseOrder";
 import { GrnMaterial } from "./GrnMaterial";
 import { SupplierPayment } from "./SupplierPayment";
 
-@Index("grncode_UNIQUE", ["grncode"], { unique: true })
-@Index("purchase_order_id_UNIQUE", ["purchaseOrderId"], { unique: true })
+@Index("fk_grn_employee1_idx", ["employeeId"], {})
 @Index("fk_grn_grn_status1_idx", ["grnStatusId"], {})
 @Index("fk_grn_purchase_order1_idx", ["purchaseOrderId"], {})
-@Index("fk_grn_employee1_idx", ["employeeId"], {})
+@Index("grncode_UNIQUE", ["grncode"], { unique: true })
+@Index("purchase_order_id_UNIQUE", ["purchaseOrderId"], { unique: true })
 @Entity("grn", { schema: "twoelephantsfireworks" })
 export class Grn {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -81,6 +81,6 @@ export class Grn {
   @OneToMany(() => GrnMaterial, (grnMaterial) => grnMaterial.grn)
   grnMaterials: GrnMaterial[];
 
-  @OneToMany(() => SupplierPayment, (supplierPayment) => supplierPayment.grn)
-  supplierPayments: SupplierPayment[];
+  @OneToOne(() => SupplierPayment, (supplierPayment) => supplierPayment.grn)
+  supplierPayment: SupplierPayment;
 }
