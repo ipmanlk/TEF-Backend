@@ -369,12 +369,6 @@ app.route("/api/privileges")
          .catch(e => sendErrors(res, e))
    })
 
-   .post((req, res) => {
-      PrivilegeController.save(req.body.data)
-         .then(r => res.json(r))
-         .catch(e => sendErrors(res, e));
-   })
-
    .put((req, res) => {
       PrivilegeController.update(req.body.data)
          .then(r => res.json(r))

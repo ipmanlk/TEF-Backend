@@ -57,57 +57,13 @@ export class PrivilegeController {
 		};
 	}
 
-	static async save(data) {
-		try {
-			// check if previleges are empty
-			if (data.privileges.length == 0) {
-				return {
-					status: false,
-					type: "input",
-					msg: "You need to provide at least one privilege!."
-				}
-			}
-
-			// delete exisiting privileges to avoid conflict
-			for (let p of data.privileges) {
-				const privilege = await getRepository(Privilege).findOne({ roleId: p.roleId, moduleId: p.moduleId });
-				if (!privilege) continue;
-				await getRepository(Privilege).delete(privilege);
-			}
-
-			// insert privileges
-			for (let p of data.privileges) {
-				let privilege = new Privilege();
-				privilege.moduleId = p.moduleId;
-				privilege.roleId = p.roleId;
-				privilege.permission = p.permission;
-				await getRepository(Privilege).save(privilege);
-			}
-
-			return {
-				status: true,
-				msg: "Privileges has been updated!"
-			};
-		} catch (e) {
-			console.log(e.code, e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
-		}
-	}
-
 	static async update(data) {
 		try {
+
 			// check if previleges are empty
-			if (data.privileges.length == 0) {
-				await PrivilegeDao.delete(data.roleId);
-			}
-
-
-			console.log(data.privileges);
-
+			// if (data.privileges.length == 0) {
+			// 	await PrivilegeDao.delete(data.roleId);
+			// }
 
 			// delete exisiting privileges to avoid conflict
 			await getRepository(Privilege).createQueryBuilder()
