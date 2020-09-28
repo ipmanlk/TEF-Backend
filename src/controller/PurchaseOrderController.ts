@@ -106,13 +106,13 @@ export class PurchaseOrderController {
       await getRepository(PurchaseOrderMaterial).save(purchaseOrderMaterials);
 
 
-      // mark quotation as completed
-      const quotationCompletedStatus = await getRepository(QuotationStatus).findOne({ where: { name: "Completed" } });
+      // // mark quotation as completed
+      // const quotationCompletedStatus = await getRepository(QuotationStatus).findOne({ where: { name: "Completed" } });
 
-      const quotation = await getRepository(Quotation).findOne(entry.quotationId);
-      quotation.quotationStatus = quotationCompletedStatus;
+      // const quotation = await getRepository(Quotation).findOne(entry.quotationId);
+      // quotation.quotationStatus = quotationCompletedStatus;
 
-      await getRepository(Quotation).save(quotation);
+      // await getRepository(Quotation).save(quotation);
 
       // send success response
       return {

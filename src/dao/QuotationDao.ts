@@ -1,8 +1,12 @@
-import { getRepository } from "typeorm";
+import { getRepository, getConnection } from "typeorm";
 import { Quotation } from "../entity/Quotation";
+import { QuotationStatus } from "../entity/QuotationStatus";
 
 export class QuotationDao {
-  static search({ keyword = "", skip = 0 }) {
+  static async search({ keyword = "", skip = 0 }) {
+    
+    await this.checkQuotationStatus();
+
     return getRepository(Quotation)
       .createQueryBuilder("q")
       .leftJoinAndSelect("q.quotationRequest", "qr")
@@ -19,7 +23,6 @@ export class QuotationDao {
       .take(15)
       .getMany()
   }
-
 
   static getOne(id) {
     return getRepository(Quotation)
@@ -39,13 +42,30 @@ export class QuotationDao {
   }
 
   // get quotations belong to a single supplier
-  static getSupplierQuotations(supplierId, quotationStatusName = "") {
+  static async getSupplierQuotations(supplierId, quotationStatusName = "") {
+    
+    await this.checkQuotationStatus();
+
     return getRepository(Quotation)
       .createQueryBuilder("q")
       .leftJoin("q.quotationRequest", "qr")
       .leftJoinAndSelect("q.quotationStatus", "qs")
       .where("qr.supplierId = :supplierId", { supplierId: supplierId })
-      .andWhere("qs.name LIKE :statusName", { statusName: `%${quotationStatusName}%` })
+      .andWhere("qs.name LIKE :statusName", { statusName: (quotationStatusName == "" ? "%%" : quotationStatusName) })
       .getMany()
+  }
+
+  private static async checkQuotationStatus() {
+    // update quotation status on quotations
+    const inactiveStatus = await getRepository(QuotationStatus).findOne({ where: { name: "Inactive" } });
+
+    await getConnection()
+      .createQueryBuilder()
+      .update(Quotation)
+      .set({
+        quotationStatus: inactiveStatus
+      })
+      .where("validTo < :date", { date: new Date() })
+      .execute();
   }
 }
