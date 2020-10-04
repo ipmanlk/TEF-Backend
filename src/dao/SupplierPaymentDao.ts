@@ -31,7 +31,7 @@ export class SupplierPaymentDao {
 			.leftJoinAndSelect("po.quotation", "poq")
 			.leftJoinAndSelect("poq.quotationRequest", "poqr")
 			.select([
-				"sp.id", "sp.pnumber", "sp.grnId", "sp.grnNetTotal", "sp.payAmount", "sp.supTotalAmount", "sp.balance", "sp.chequeNo", "sp.chequeDate", "sp.bankacHolder", "sp.bankacNo", "sp.bankacBank", "sp.bankacBranch", "sp.description", "sp.addedDate", "grn.id", "grn.grncode", "po.id", "po.pocode", "emp.id", "emp.number", "emp.callingName", "poq.id", "poq.qnumber", "poqr.id", "poqr.qrnumber"
+				"sp.id", "sp.pnumber", "sp.grnId", "sp.grnNetTotal", "sp.payAmount", "sp.supTotalAmount", "sp.balance", "sp.chequeNo", "sp.chequeDate", "sp.bankacHolder", "sp.bankacNo", "sp.bankacBank", "sp.bankacBranch", "sp.description", "sp.addedDate", "grn.id", "grn.grncode", "grn.payedAmount", "po.id", "po.pocode", "emp.id", "emp.number", "emp.callingName", "poq.id", "poq.qnumber", "poqr.id", "poqr.qrnumber"
 			])
 			.leftJoinAndSelect("poqr.supplier", "poqrs")
 			.leftJoinAndSelect("sp.supplierPaymentMethod", "spm")

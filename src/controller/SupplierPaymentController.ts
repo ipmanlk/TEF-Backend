@@ -88,13 +88,27 @@ export class SupplierPaymentController {
       // save entry
       const entry = await getRepository(SupplierPayment).save(supplierPayment);
 
+      // find relevent grn for the given payment
+      const grn = await getRepository(Grn).findOne(entry.grnId);
+
       // mark grn as completed
-      if (entry.payAmount >= entry.grnNetTotal) {
-        const grn = await getRepository(Grn).findOne(entry.grnId);
+      const payAmount = parseFloat(entry.payAmount);
+      const grnNetTotal = parseFloat(grn.netTotal);
+      const grnPayedAmount = parseFloat(grn.payedAmount);
+
+      // update grn
+      if ((payAmount >= grnNetTotal) || (payAmount >= (grnNetTotal - grnPayedAmount))) {
+        grn.payedAmount = grnNetTotal.toString();
         const grnCompletedStatus = await getRepository(GrnStatus).findOne({ where: { name: "Completed" } });
         grn.grnStatus = grnCompletedStatus;
-        await getRepository(Grn).save(grn);
+
+      } else {
+
+        // add payed amount to grn payedAmount
+        grn.payedAmount = (grnPayedAmount + payAmount).toString();
       }
+
+      await getRepository(Grn).save(grn);
 
       // update supplier arreas
       const supplier = await getRepository(Supplier).findOne(data.supplierId);
@@ -102,10 +116,17 @@ export class SupplierPaymentController {
       const supplierArrears = parseFloat(supplier.arrears);
       const balance = parseFloat(entry.balance);
 
-      if (balance == 0) {
-        supplier.arrears = "0.00";
-      } else {
-        supplier.arrears = (supplierArrears + balance).toString();
+      // find payments for the current grn
+      const payments = await getRepository(SupplierPayment).find({ grnId: grn.id });
+
+      // if this is a partial payment for a grn which already has payments
+      if (balance > 0 && payments.length > 0) {
+        supplier.arrears = (supplierArrears - (payAmount + balance) + balance).toString();
+      }
+
+      // if this is a complete payment for a grn which already has payments
+      if (balance == 0 && payments.length > 0) {
+        supplier.arrears = (supplierArrears - payAmount).toString();
       }
 
       await getRepository(Supplier).save(supplier);

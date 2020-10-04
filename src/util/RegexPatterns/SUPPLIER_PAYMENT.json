@@ -30,6 +30,11 @@
         "error": "Please provide a valid balance!."
     },
     {
+        "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+        "attribute": "grnPayedAmount",
+        "error": "Please provide a valid grn payed amount!."
+    },
+    {
         "regex": "^[\\d]+$",
         "attribute": "supplierPaymentMethodId",
         "error": "Please select a valid payment method!"

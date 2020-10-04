@@ -28,7 +28,7 @@ export class GrnDao {
       .leftJoinAndSelect("po.quotation", "poq")
       .leftJoinAndSelect("poq.quotationRequest", "poqr")
       .select([
-        "grn.id", "grn.grncode", "grn.invoiceNo", "grn.netTotal", "grn.receivedDate", "grn.addedDate", "grn.grandTotal", "grn.discountRatio", "grn.description", "po.id", "po.pocode", "emp.id", "emp.number", "emp.callingName", "poq.id", "poq.qnumber", "poqr.id", "poqr.qrnumber"
+        "grn.id", "grn.grncode", "grn.invoiceNo", "grn.netTotal", "grn.receivedDate", "grn.addedDate", "grn.grandTotal", "grn.discountRatio", "grn.description", "grn.payedAmount", "po.id", "po.pocode", "emp.id", "emp.number", "emp.callingName", "poq.id", "poq.qnumber", "poqr.id", "poqr.qrnumber"
       ])
       .leftJoinAndSelect("poqr.supplier", "poqrs")
       .leftJoinAndSelect("grn.grnStatus", "grns")
