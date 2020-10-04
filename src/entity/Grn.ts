@@ -57,6 +57,14 @@ export class Grn {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
+  @Column("decimal", {
+    name: "payed_amount",
+    precision: 10,
+    scale: 2,
+    default: () => "'0.00'",
+  })
+  payedAmount: string;
+
   @ManyToOne(() => Employee, (employee) => employee.grns, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
@@ -81,6 +89,6 @@ export class Grn {
   @OneToMany(() => GrnMaterial, (grnMaterial) => grnMaterial.grn)
   grnMaterials: GrnMaterial[];
 
-  @OneToOne(() => SupplierPayment, (supplierPayment) => supplierPayment.grn)
-  supplierPayment: SupplierPayment;
+  @OneToMany(() => SupplierPayment, (supplierPayment) => supplierPayment.grn)
+  supplierPayments: SupplierPayment[];
 }

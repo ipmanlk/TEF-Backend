@@ -4,7 +4,6 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Employee } from "./Employee";
@@ -13,7 +12,6 @@ import { SupplierPaymentMethod } from "./SupplierPaymentMethod";
 import { SupplierPaymentStatus } from "./SupplierPaymentStatus";
 
 @Index("pnumber_UNIQUE", ["pnumber"], { unique: true })
-@Index("grn_id_UNIQUE", ["grnId"], { unique: true })
 @Index("fk_supplier_payment_grn1_idx", ["grnId"], {})
 @Index(
   "fk_supplier_payment_supplier_payment_status1_idx",
@@ -34,7 +32,7 @@ export class SupplierPayment {
   @Column("char", { name: "pnumber", unique: true, length: 12 })
   pnumber: string;
 
-  @Column("int", { name: "grn_id", unique: true })
+  @Column("int", { name: "grn_id" })
   grnId: number;
 
   @Column("decimal", { name: "grn_net_total", precision: 10, scale: 2 })
@@ -89,7 +87,7 @@ export class SupplierPayment {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
-  @OneToOne(() => Grn, (grn) => grn.supplierPayment, {
+  @ManyToOne(() => Grn, (grn) => grn.supplierPayments, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
