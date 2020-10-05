@@ -112,23 +112,7 @@ export class SupplierPaymentController {
 
       // update supplier arreas
       const supplier = await getRepository(Supplier).findOne(data.supplierId);
-
-      const supplierArrears = parseFloat(supplier.arrears);
-      const balance = parseFloat(entry.balance);
-
-      // find payments for the current grn
-      const payments = await getRepository(SupplierPayment).find({ grnId: grn.id });
-
-      // if this is a partial payment for a grn which already has payments
-      if (balance > 0 && payments.length > 0) {
-        supplier.arrears = (supplierArrears - (payAmount + balance) + balance).toString();
-      }
-
-      // if this is a complete payment for a grn which already has payments
-      if (balance == 0 && payments.length > 0) {
-        supplier.arrears = (supplierArrears - payAmount).toString();
-      }
-
+      supplier.arrears = (parseFloat(supplier.arrears) - payAmount).toString();
       await getRepository(Supplier).save(supplier);
 
       // send success response
