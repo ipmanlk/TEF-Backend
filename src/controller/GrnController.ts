@@ -6,6 +6,7 @@ import { GrnDao } from "../dao/GrnDao";
 import { PurchaseOrder } from "../entity/PurchaseOrder";
 import { PurchaseOrderStatus } from "../entity/PurchaseOrderStatus";
 import { MaterialInventory } from "../entity/MaterialInventory";
+import { Supplier } from "../entity/Supplier";
 import { MiscUtil } from "../util/MiscUtil";
 
 export class GrnController {
@@ -132,6 +133,11 @@ export class GrnController {
       purchaseOrder.purchaseOrderStatus = purchaseOrderCompletedStatus;
 
       await getRepository(PurchaseOrder).save(purchaseOrder);
+
+      // add to supplier arreas
+      const supplier = await getRepository(Supplier).findOne(data.supplierId);
+      supplier.arrears = (parseFloat(supplier.arrears) + parseFloat(grn.netTotal)).toString();
+      await getRepository(Supplier).save(supplier);
 
       // send success response
       return {
