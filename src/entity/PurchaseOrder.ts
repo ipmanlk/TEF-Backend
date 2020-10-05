@@ -15,7 +15,6 @@ import { Quotation } from "./Quotation";
 import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 
 @Index("pocode_UNIQUE", ["pocode"], { unique: true })
-@Index("quotation_id_UNIQUE", ["quotationId"], { unique: true })
 @Index("fk_purchase_order_quotation1_idx", ["quotationId"], {})
 @Index(
   "fk_purchase_order_purchase_order_status1_idx",
@@ -31,7 +30,7 @@ export class PurchaseOrder {
   @Column("char", { name: "pocode", unique: true, length: 12 })
   pocode: string;
 
-  @Column("int", { name: "quotation_id", unique: true })
+  @Column("int", { name: "quotation_id" })
   quotationId: number;
 
   @Column("date", { name: "required_date" })
@@ -72,7 +71,7 @@ export class PurchaseOrder {
   ])
   purchaseOrderStatus: PurchaseOrderStatus;
 
-  @OneToOne(() => Quotation, (quotation) => quotation.purchaseOrder, {
+  @ManyToOne(() => Quotation, (quotation) => quotation.purchaseOrders, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })

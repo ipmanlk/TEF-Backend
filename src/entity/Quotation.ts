@@ -48,8 +48,8 @@ export class Quotation {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
-  @OneToOne(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.quotation)
-  purchaseOrder: PurchaseOrder;
+  @OneToMany(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.quotation)
+  purchaseOrders: PurchaseOrder[];
 
   @ManyToOne(() => Employee, (employee) => employee.quotations, {
     onDelete: "NO ACTION",
