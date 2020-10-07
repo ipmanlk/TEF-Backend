@@ -1,0 +1,22 @@
+[
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "materialId",
+        "error": "Please select a valid material."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "productId",
+        "error": "Please select a valid product!."
+    },
+    {
+        "regex": "^[\\d]+$",
+        "attribute": "unitTypeId",
+        "error": "Please select a valid unit type!."
+    },
+    {
+        "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+        "attribute": "amount",
+        "error": "Please provide a valid amount!."
+    }
+]
