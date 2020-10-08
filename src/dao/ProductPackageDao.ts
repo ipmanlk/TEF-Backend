@@ -27,10 +27,11 @@ export class ProductPackageDao {
 		} else {
 			return getRepository(ProductPackage)
 				.createQueryBuilder("pkg")
-				.leftJoinAndSelect("pkg.product", "p")
+				.leftJoin("pkg.productPackageStatus", "pkgst")
 				.select([
 					"pkg.id", "pkg.code", "pkg.name"
 				])
+				.where("pkgst.name = :name", { name: "Available" })
 				.getMany()
 		}
 
