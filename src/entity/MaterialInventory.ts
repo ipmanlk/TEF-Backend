@@ -9,12 +9,12 @@ import {
 import { Material } from "./Material";
 import { MaterialInventoryStatus } from "./MaterialInventoryStatus";
 
+@Index("fk_material_inventory_material1_idx", ["materialId"], {})
 @Index(
   "fk_material_inventory_material_inventory_status1_idx",
   ["materialInventoryStatusId"],
   {}
 )
-@Index("fk_material_inventory_material1_idx", ["materialId"], {})
 @Entity("material_inventory", { schema: "twoelephantsfireworks" })
 export class MaterialInventory {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

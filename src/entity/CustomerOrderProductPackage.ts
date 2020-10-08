@@ -3,13 +3,13 @@ import { CustomerOrder } from "./CustomerOrder";
 import { ProductPackage } from "./ProductPackage";
 
 @Index(
-  "fk_customer_order_has_product_package_product_package1_idx",
-  ["productPackageId"],
+  "fk_customer_order_has_product_package_customer_order1_idx",
+  ["customerOrderId"],
   {}
 )
 @Index(
-  "fk_customer_order_has_product_package_customer_order1_idx",
-  ["customerOrderId"],
+  "fk_customer_order_has_product_package_product_package1_idx",
+  ["productPackageId"],
   {}
 )
 @Entity("customer_order_product_package", { schema: "twoelephantsfireworks" })
@@ -23,8 +23,8 @@ export class CustomerOrderProductPackage {
   @Column("decimal", { name: "sale_price", precision: 9, scale: 2 })
   salePrice: string;
 
-  @Column("decimal", { name: "qty", precision: 9, scale: 2 })
-  qty: string;
+  @Column("int", { name: "qty" })
+  qty: number;
 
   @Column("decimal", { name: "line_total", precision: 10, scale: 2 })
   lineTotal: string;

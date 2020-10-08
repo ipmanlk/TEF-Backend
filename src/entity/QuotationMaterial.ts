@@ -3,8 +3,8 @@ import { Material } from "./Material";
 import { Quotation } from "./Quotation";
 import { UnitType } from "./UnitType";
 
-@Index("fk_material_has_quotation_quotation1_idx", ["quotationId"], {})
 @Index("fk_material_has_quotation_material1_idx", ["materialId"], {})
+@Index("fk_material_has_quotation_quotation1_idx", ["quotationId"], {})
 @Index("fk_quotation_material_unit_type1_idx", ["unitTypeId"], {})
 @Entity("quotation_material", { schema: "twoelephantsfireworks" })
 export class QuotationMaterial {

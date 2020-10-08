@@ -14,10 +14,10 @@ import { UserStatus } from "./UserStatus";
 import { UserRole } from "./UserRole";
 
 @Index("employee_id_UNIQUE", ["employeeId"], { unique: true })
-@Index("username_UNIQUE", ["username"], { unique: true })
-@Index("fk_user_userstatus1_idx", ["userStatusId"], {})
 @Index("fk_user_employee1_idx", ["employeeCreatedId"], {})
 @Index("fk_user_employee2_idx", ["employeeId"], {})
+@Index("fk_user_userstatus1_idx", ["userStatusId"], {})
+@Index("username_UNIQUE", ["username"], { unique: true })
 @Entity("user", { schema: "twoelephantsfireworks" })
 export class User {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

@@ -1,0 +1,58 @@
+[
+  {
+    "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+    "attribute": "description",
+    "error": "Please provide a valid description!.",
+    "optional": true
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "customerId",
+    "error": "Please select a valid customer!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "productPackageId",
+    "error": "Please select a valid product!."
+  },
+  {
+    "regex": "^[\\d]{1,7}\\.[\\d]{2}$",
+    "attribute": "productPackageSalePrice",
+    "error": "Please provide a valid product package sale price!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "productPackageQty",
+    "error": "Please provide a valid product package qty!."
+  },
+  {
+    "regex": "^[\\d]{1,8}\\.[\\d]{2}$",
+    "attribute": "grandTotal",
+    "error": "Please provide a valid grand total!."
+  },
+  {
+    "regex": "^[\\d]{1,8}\\.[\\d]{2}$",
+    "attribute": "discountRatio",
+    "error": "Please provide a valid discount ratio!."
+  },
+  {
+    "regex": "^[\\d]{1,8}\\.[\\d]{2}$",
+    "attribute": "netTotal",
+    "error": "Please provide a valid net total!."
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "requiredDate",
+    "error": "Please provide a valid \"Required Date\"!."
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "addedDate",
+    "error": "Please provide a valid added date!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "customerOrderStatusId",
+    "error": "Please select a valid order status!."
+  }
+]
