@@ -12,7 +12,7 @@ import { CustomerOrderStatus } from "./CustomerOrderStatus";
 import { Employee } from "./Employee";
 import { CustomerOrderProductPackage } from "./CustomerOrderProductPackage";
 
-@Index("cusno_UNIQUE", ["cusocode"], { unique: true })
+@Index("cusno_UNIQUE", ["cocode"], { unique: true })
 @Index("fk_customer_order_customer1_idx", ["customerId"], {})
 @Index(
   "fk_customer_order_customer_order_status1_idx",
@@ -25,8 +25,8 @@ export class CustomerOrder {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("char", { name: "cusocode", unique: true, length: 12 })
-  cusocode: string;
+  @Column("char", { name: "cocode", unique: true, length: 12 })
+  cocode: string;
 
   @Column("int", { name: "customer_id" })
   customerId: number;
