@@ -4,8 +4,10 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { CustomerOrderProductPackage } from "./CustomerOrderProductPackage";
 import { Product } from "./Product";
 import { ProductPackageStatus } from "./ProductPackageStatus";
 import { ProductPackageType } from "./ProductPackageType";
@@ -72,6 +74,12 @@ export class ProductPackage {
 
   @Column("int", { name: "unit_type_id" })
   unitTypeId: number;
+
+  @OneToMany(
+    () => CustomerOrderProductPackage,
+    (customerOrderProductPackage) => customerOrderProductPackage.productPackage
+  )
+  customerOrderProductPackages: CustomerOrderProductPackage[];
 
   @ManyToOne(() => Product, (product) => product.productPackages, {
     onDelete: "NO ACTION",

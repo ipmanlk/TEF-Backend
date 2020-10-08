@@ -4,12 +4,14 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { CustomerStatus } from "./CustomerStatus";
 import { CustomerType } from "./CustomerType";
 import { Employee } from "./Employee";
 import { Gender } from "./Gender";
+import { CustomerOrder } from "./CustomerOrder";
 
 @Index("reg_no_UNIQUE", ["number"], { unique: true })
 @Index("customer_mobile_UNIQUE", ["customerMobile"], { unique: true })
@@ -116,4 +118,7 @@ export class Customer {
   })
   @JoinColumn([{ name: "gender_id", referencedColumnName: "id" }])
   gender: Gender;
+
+  @OneToMany(() => CustomerOrder, (customerOrder) => customerOrder.customer)
+  customerOrders: CustomerOrder[];
 }

@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Customer } from "./Customer";
+import { CustomerOrder } from "./CustomerOrder";
 import { CivilStatus } from "./CivilStatus";
 import { Designation } from "./Designation";
 import { EmployeeStatus } from "./EmployeeStatus";
@@ -84,6 +85,9 @@ export class Employee {
 
   @OneToMany(() => Customer, (customer) => customer.employee)
   customers: Customer[];
+
+  @OneToMany(() => CustomerOrder, (customerOrder) => customerOrder.employee)
+  customerOrders: CustomerOrder[];
 
   @ManyToOne(() => CivilStatus, (civilStatus) => civilStatus.employees, {
     onDelete: "NO ACTION",
