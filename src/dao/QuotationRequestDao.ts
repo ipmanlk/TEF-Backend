@@ -32,6 +32,7 @@ export class QuotationRequestDao {
         "qr.id", "qr.qrnumber", "qr.description", "qr.addedDate", "qr.dueDate", "qr.description", "emp.id", "emp.number", "emp.callingName"
       ])
       .leftJoinAndSelect("qr.supplier", "sup")
+      .leftJoinAndSelect("sup.supplierType", "supt")
       .leftJoinAndSelect("qr.quotationRequestStatus", "qrs")
       .leftJoinAndSelect("qr.quotationRequestMaterials", "qrm")
       .leftJoinAndSelect("qrm.material", "m")
