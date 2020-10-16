@@ -31,6 +31,7 @@ export class GrnDao {
         "grn.id", "grn.grncode", "grn.invoiceNo", "grn.netTotal", "grn.receivedDate", "grn.addedDate", "grn.grandTotal", "grn.discountRatio", "grn.description", "grn.payedAmount", "po.id", "po.pocode", "emp.id", "emp.number", "emp.callingName", "poq.id", "poq.qnumber", "poqr.id", "poqr.qrnumber"
       ])
       .leftJoinAndSelect("poqr.supplier", "poqrs")
+      .leftJoinAndSelect("poqrs.supplierType", "poqrst")
       .leftJoinAndSelect("grn.grnStatus", "grns")
       .leftJoinAndSelect("grn.grnMaterials", "grnm")
       .leftJoinAndSelect("grnm.material", "grnmm")
