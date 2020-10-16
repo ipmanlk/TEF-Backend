@@ -4,7 +4,7 @@ import { QuotationStatus } from "../entity/QuotationStatus";
 
 export class QuotationDao {
   static async search({ keyword = "", skip = 0 }) {
-    
+
     await this.checkQuotationStatus();
 
     return getRepository(Quotation)
@@ -37,13 +37,14 @@ export class QuotationDao {
       .leftJoinAndSelect("qmm.unitType", "ut")
       .leftJoinAndSelect("q.quotationRequest", "qr")
       .leftJoinAndSelect("qr.supplier", "qrs")
+      .leftJoinAndSelect("qrs.supplierType", "qrst")
       .where("q.id = :keyword", { keyword: id })
       .getOne()
   }
 
   // get quotations belong to a single supplier
   static async getSupplierQuotations(supplierId, quotationStatusName = "") {
-    
+
     await this.checkQuotationStatus();
 
     return getRepository(Quotation)
