@@ -36,6 +36,7 @@ export class PurchaseOrderDao {
       .leftJoinAndSelect("pomm.unitType", "ut")
       .leftJoinAndSelect("poq.quotationRequest", "poqr")
       .leftJoinAndSelect("poqr.supplier", "poqrs")
+      .leftJoinAndSelect("poqrs.supplierType", "poqrst")
       .where("po.id = :keyword", { keyword: id })
       .getOne()
   }
