@@ -23,30 +23,32 @@ Controllers
 =====================================================================================
 */
 
-import { AuthController } from "./controller/AuthController";
-import { EmployeeController } from "./controller/EmployeeController";
-import { DesignationController } from "./controller/DesignationController";
-import { EmployeeStatusController } from "./controller/EmployeeStatusController";
-import { UserController } from "./controller/UserController";
-import { PrivilegeController } from "./controller/PrivilegeController";
-import { GeneralController } from "./controller/GeneralController";
-import { RoleController } from "./controller/RoleController";
-import { ProfileController } from "./controller/ProfileController";
-import { CustomerController } from "./controller/CustomerController";
-import { MaterialController } from "./controller/MaterialController";
-import { ProductController } from "./controller/ProductController";
-import { ProductPackageController } from "./controller/ProductPackageController";
-import { SupplierController } from "./controller/SupplierController";
-import { SupplierMaterialController } from "./controller/SupplierMaterialController";
-import { MaterialAnalysisController } from "./controller/MaterialAnalysisController";
-import { QuotationRequestController } from "./controller/QuotationRequestController";
-import { QuotationController } from "./controller/QuotationController";
-import { MaterialInventoryController } from "./controller/MaterialInventoryController";
-import { PurchaseOrderController } from "./controller/PurchaseOrderController";
-import { GrnController } from "./controller/GrnController";
-import { SupplierPaymentController } from "./controller/SupplierPaymentController";
-import { CustomerOrderController } from "./controller/CustomerOrderController";
-import { CustomerInvoiceController } from "./controller/CustomerInvoiceController";
+import {
+   AuthController,
+   EmployeeController,
+   DesignationController,
+   EmployeeStatusController,
+   UserController,
+   PrivilegeController,
+   GeneralController,
+   RoleController,
+   ProfileController,
+   CustomerController,
+   MaterialController,
+   ProductController,
+   ProductPackageController,
+   SupplierController,
+   SupplierMaterialController,
+   MaterialAnalysisController,
+   QuotationRequestController,
+   QuotationController,
+   MaterialInventoryController,
+   PurchaseOrderController,
+   GrnController,
+   SupplierPaymentController,
+   CustomerOrderController,
+   CustomerInvoiceController
+} from "./controller";
 
 /* 
 =====================================================================================
