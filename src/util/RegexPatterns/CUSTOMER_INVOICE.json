@@ -1,0 +1,109 @@
+[
+  {
+    "regex": "^[\\w\\s\\d\\,\\\\\\.\\n\\/]{10,100}$",
+    "attribute": "description",
+    "error": "Please provide a valid description!.",
+    "optional": true
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "addedDate",
+    "error": "Please provide a valid add date!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "customerId",
+    "error": "Please select a valid customer!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "customerOrderId",
+    "error": "Please select a valid customer order!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "customerInvoiceStatusId",
+    "error": "Please select a valid customer invoice status!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "customerPaymentMethodId",
+    "error": "Please select a valid customer payment method!."
+  },
+  {
+    "regex": "^[\\w\\s]{5,200}$",
+    "attribute": "customerName",
+    "error": "Please provide a valid customer name!."
+  },
+  {
+    "regex": "^[\\d]{10}$",
+    "attribute": "customerMobile",
+    "error": "Please provide a valid mobile number!."
+  },
+  {
+    "regex": "^([\\d]{9}(\\V|\\X))$|^([\\d]{12})$",
+    "attribute": "nic",
+    "error": "Please provide a valid NIC!."
+  },
+  {
+    "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+    "attribute": "grandTotal",
+    "error": "Please provide a valid grand total price."
+  },
+  {
+    "regex": "^[\\d]{1,5}\\.[\\d]{2}$",
+    "attribute": "discountRatio",
+    "error": "Please provide a valid discount ratio!."
+  },
+  {
+    "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+    "attribute": "netTotal",
+    "error": "Please provide a valid net total price."
+  },
+  {
+    "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+    "attribute": "cusTotalAmount",
+    "error": "Please provide a valid customer total."
+  },
+  {
+    "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+    "attribute": "payAmount",
+    "error": "Please provide a valid pay amount."
+  },
+  {
+    "regex": "^[\\d]{1,10}$",
+    "attribute": "chequeNo",
+    "error": "Please provide a valid cheque number!.",
+    "optional": true
+  },
+  {
+    "regex": "^(\\d{4})-(\\d{2})-(\\d{2})$",
+    "attribute": "chequeDate",
+    "error": "Please provide a valid cheque date!.",
+    "optional": true
+  },
+  {
+    "regex": "^[\\w\\s\\.]{5,200}$",
+    "attribute": "bankacHolder",
+    "error": "Please provide a valid bank account holder name!.",
+    "optional": true
+  },
+  {
+    "regex": "^[\\d]{4,12}$",
+    "attribute": "bankacNo",
+    "error": "Please provide a valid  bank account number!.",
+    "optional": true
+  },
+  {
+    "regex": "^[\\w\\s]{5,200}$",
+    "attribute": "bankacBank",
+    "error": "Please provide a valid bank name!.",
+    "optional": true
+  },
+  {
+    "regex": "^[\\w\\s]{5,100}$",
+    "attribute": "bankacBranch",
+    "error": "Please provide a valid bank branch name!.",
+    "optional": true
+  }
+]

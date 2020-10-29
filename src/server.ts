@@ -46,6 +46,7 @@ import { PurchaseOrderController } from "./controller/PurchaseOrderController";
 import { GrnController } from "./controller/GrnController";
 import { SupplierPaymentController } from "./controller/SupplierPaymentController";
 import { CustomerOrderController } from "./controller/CustomerOrderController";
+import { CustomerInvoiceController } from "./controller/CustomerInvoiceController";
 
 /* 
 =====================================================================================
@@ -803,6 +804,38 @@ app.route("/api/customer_orders")
 
    .delete((req, res) => {
       CustomerOrderController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
+// Routes: customer invoice
+app.route("/api/customer_invoices")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "CUSTOMER_INVOICE").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      CustomerInvoiceController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .post((req, res) => {
+      CustomerInvoiceController.save(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      CustomerInvoiceController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      CustomerInvoiceController.delete(req.query.data)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });

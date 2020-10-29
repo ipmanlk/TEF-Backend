@@ -8,9 +8,11 @@ import { MiscUtil } from "../util/MiscUtil";
 export class CustomerOrderController {
 
   static async get(data) {
-    if (data !== undefined && data.id) {
+    if (data !== undefined && data.id) { // request for a single entry
       return this.getOne(data);
-    } else {
+    } else if (data.customerId && data.customerOrderStatusName) { // request for orders belong to a single customer
+      return this.getCustomerOrders(data);
+    } else { // else, run a search
       return this.search(data);
     }
   }
@@ -234,21 +236,21 @@ export class CustomerOrderController {
     };
   }
 
-  // // find purchase orders belong to single supplier
-  // static async getSupplierPurchaseOrders({ supplierId, purchaseOrderStatusName }) {
-  //   let entires = await PurchaseOrderDao.getSupplierPurchaseOrders(supplierId, purchaseOrderStatusName).catch(e => {
-  //     console.log(e.code, e);
-  //     throw {
-  //       status: false,
-  //       type: "server",
-  //       msg: "Server Error!. Please check logs."
-  //     }
-  //   });
+  // find customer orders belong to a single customer
+  private static async getCustomerOrders({ customerId, customerOrderStatusName }) {
+    let entires = await CustomerOrderDao.getCustomerOrders(customerId, customerOrderStatusName).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
 
-  //   return {
-  //     data: entires,
-  //     status: true
-  //   };
-  // }
+    return {
+      data: entires,
+      status: true
+    };
+  }
 
 }
