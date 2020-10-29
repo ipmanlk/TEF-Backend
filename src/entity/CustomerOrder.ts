@@ -5,8 +5,10 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { CustomerInvoice } from "./CustomerInvoice";
 import { Customer } from "./Customer";
 import { CustomerOrderStatus } from "./CustomerOrderStatus";
 import { Employee } from "./Employee";
@@ -59,6 +61,12 @@ export class CustomerOrder {
 
   @Column("int", { name: "employee_id" })
   employeeId: number;
+
+  @OneToOne(
+    () => CustomerInvoice,
+    (customerInvoice) => customerInvoice.customerOrder
+  )
+  customerInvoice: CustomerInvoice;
 
   @ManyToOne(() => Customer, (customer) => customer.customerOrders, {
     onDelete: "NO ACTION",

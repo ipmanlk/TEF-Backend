@@ -3,8 +3,8 @@ import { Grn } from "./Grn";
 import { Material } from "./Material";
 import { UnitType } from "./UnitType";
 
-@Index("fk_grn_has_material_grn1_idx", ["grnId"], {})
 @Index("fk_grn_has_material_material1_idx", ["materialId"], {})
+@Index("fk_grn_has_material_grn1_idx", ["grnId"], {})
 @Index("fk_grn_material_unit_type1_idx", ["unitTypeId"], {})
 @Entity("grn_material", { schema: "twoelephantsfireworks" })
 export class GrnMaterial {

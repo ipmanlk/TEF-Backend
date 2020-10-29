@@ -7,6 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { CustomerInvoiceProductPackage } from "./CustomerInvoiceProductPackage";
 import { CustomerOrderProductPackage } from "./CustomerOrderProductPackage";
 import { Product } from "./Product";
 import { ProductPackageStatus } from "./ProductPackageStatus";
@@ -74,6 +75,13 @@ export class ProductPackage {
 
   @Column("int", { name: "unit_type_id" })
   unitTypeId: number;
+
+  @OneToMany(
+    () => CustomerInvoiceProductPackage,
+    (customerInvoiceProductPackage) =>
+      customerInvoiceProductPackage.productPackage
+  )
+  customerInvoiceProductPackages: CustomerInvoiceProductPackage[];
 
   @OneToMany(
     () => CustomerOrderProductPackage,
