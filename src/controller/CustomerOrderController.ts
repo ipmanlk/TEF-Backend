@@ -8,11 +8,13 @@ import { MiscUtil } from "../util/MiscUtil";
 export class CustomerOrderController {
 
   static async get(data) {
-    if (data !== undefined && data.id) { // request for a single entry
-      return this.getOne(data);
-    } else if (data.customerId && data.customerOrderStatusName) { // request for orders belong to a single customer
-      return this.getCustomerOrders(data);
-    } else { // else, run a search
+    if (data !== undefined) {
+      if (data.id) {
+        return this.getOne(data);
+      } else if (data.customerId && data.customerOrderStatusName) {
+        return this.getCustomerOrders(data);
+      }
+    } else {
       return this.search(data);
     }
   }
