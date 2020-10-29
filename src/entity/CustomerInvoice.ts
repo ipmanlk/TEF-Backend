@@ -37,14 +37,14 @@ export class CustomerInvoice {
   @Column("char", { name: "code", unique: true, length: 12 })
   code: string;
 
-  @Column("varchar", { name: "name", nullable: true, length: 100 })
-  name: string | null;
+  @Column("varchar", { name: "customer_name", nullable: true, length: 100 })
+  customerName: string | null;
 
   @Column("char", { name: "nic", nullable: true, length: 12 })
   nic: string | null;
 
-  @Column("varchar", { name: "mobile", nullable: true, length: 45 })
-  mobile: string | null;
+  @Column("varchar", { name: "customer_mobile", nullable: true, length: 45 })
+  customerMobile: string | null;
 
   @Column("decimal", { name: "grand_total", precision: 10, scale: 2 })
   grandTotal: string;
