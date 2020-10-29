@@ -67,8 +67,8 @@
   },
   {
     "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
-    "attribute": "payAmount",
-    "error": "Please provide a valid pay amount."
+    "attribute": "payedAmount",
+    "error": "Please provide a valid payed amount."
   },
   {
     "regex": "^[\\d]{1,10}$",
@@ -105,5 +105,15 @@
     "attribute": "bankacBranch",
     "error": "Please provide a valid bank branch name!.",
     "optional": true
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "productPackageId",
+    "error": "Please select a valid product package!."
+  }
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "deliveredQty",
+    "error": "Please provide a valid delivered qty!."
   }
 ]
