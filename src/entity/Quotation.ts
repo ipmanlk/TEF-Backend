@@ -8,17 +8,17 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { QuotationMaterial } from "./QuotationMaterial";
 import { PurchaseOrder } from "./PurchaseOrder";
 import { Employee } from "./Employee";
 import { QuotationRequest } from "./QuotationRequest";
 import { QuotationStatus } from "./QuotationStatus";
-import { QuotationMaterial } from "./QuotationMaterial";
 
+@Index("fk_quotation_employee1_idx", ["employeeId"], {})
+@Index("fk_quotation_quotation_request1_idx", ["quotationRequestId"], {})
+@Index("fk_quotation_quotation_status1_idx", ["quotationStatusId"], {})
 @Index("qnumber_UNIQUE", ["qnumber"], { unique: true })
 @Index("quotation_request_id_UNIQUE", ["quotationRequestId"], { unique: true })
-@Index("fk_quotation_quotation_status1_idx", ["quotationStatusId"], {})
-@Index("fk_quotation_quotation_request1_idx", ["quotationRequestId"], {})
-@Index("fk_quotation_employee1_idx", ["employeeId"], {})
 @Entity("quotation", { schema: "twoelephantsfireworks" })
 export class Quotation {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -48,6 +48,12 @@ export class Quotation {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
+  @OneToMany(
+    () => QuotationMaterial,
+    (quotationMaterial) => quotationMaterial.quotation
+  )
+  quotationMaterials: QuotationMaterial[];
+
   @OneToMany(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.quotation)
   purchaseOrders: PurchaseOrder[];
 
@@ -73,10 +79,4 @@ export class Quotation {
   )
   @JoinColumn([{ name: "quotation_status_id", referencedColumnName: "id" }])
   quotationStatus: QuotationStatus;
-
-  @OneToMany(
-    () => QuotationMaterial,
-    (quotationMaterial) => quotationMaterial.quotation
-  )
-  quotationMaterials: QuotationMaterial[];
 }

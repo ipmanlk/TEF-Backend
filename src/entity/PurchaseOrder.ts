@@ -10,18 +10,18 @@ import {
 } from "typeorm";
 import { Grn } from "./Grn";
 import { Employee } from "./Employee";
+import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { PurchaseOrderStatus } from "./PurchaseOrderStatus";
 import { Quotation } from "./Quotation";
-import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 
-@Index("pocode_UNIQUE", ["pocode"], { unique: true })
-@Index("fk_purchase_order_quotation1_idx", ["quotationId"], {})
+@Index("fk_purchase_order_employee1_idx", ["employeeId"], {})
 @Index(
   "fk_purchase_order_purchase_order_status1_idx",
   ["purchaseOrderStatusId"],
   {}
 )
-@Index("fk_purchase_order_employee1_idx", ["employeeId"], {})
+@Index("fk_purchase_order_quotation1_idx", ["quotationId"], {})
+@Index("pocode_UNIQUE", ["pocode"], { unique: true })
 @Entity("purchase_order", { schema: "twoelephantsfireworks" })
 export class PurchaseOrder {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -61,6 +61,12 @@ export class PurchaseOrder {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
+  @OneToMany(
+    () => PurchaseOrderMaterial,
+    (purchaseOrderMaterial) => purchaseOrderMaterial.purchaseOrder
+  )
+  purchaseOrderMaterials: PurchaseOrderMaterial[];
+
   @ManyToOne(
     () => PurchaseOrderStatus,
     (purchaseOrderStatus) => purchaseOrderStatus.purchaseOrders,
@@ -77,10 +83,4 @@ export class PurchaseOrder {
   })
   @JoinColumn([{ name: "quotation_id", referencedColumnName: "id" }])
   quotation: Quotation;
-
-  @OneToMany(
-    () => PurchaseOrderMaterial,
-    (purchaseOrderMaterial) => purchaseOrderMaterial.purchaseOrder
-  )
-  purchaseOrderMaterials: PurchaseOrderMaterial[];
 }

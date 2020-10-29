@@ -7,20 +7,20 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { MaterialAnalysis } from "./MaterialAnalysis";
+import { ProductPackage } from "./ProductPackage";
 import { ProductCategory } from "./ProductCategory";
 import { Employee } from "./Employee";
+import { MaterialAnalysis } from "./MaterialAnalysis";
 import { ProductStatus } from "./ProductStatus";
 import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
-import { ProductPackage } from "./ProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
-@Index("fk_product_risk_category1_idx", ["riskCategoryId"], {})
-@Index("fk_product_product_status1_idx", ["productStatusId"], {})
 @Index("fk_product_category1_idx", ["categoryId"], {})
-@Index("fk_product_unit_type1_idx", ["unitTypeId"], {})
 @Index("fk_product_employee1_idx", ["employeeId"], {})
+@Index("fk_product_product_status1_idx", ["productStatusId"], {})
+@Index("fk_product_risk_category1_idx", ["riskCategoryId"], {})
+@Index("fk_product_unit_type1_idx", ["unitTypeId"], {})
 @Entity("product", { schema: "twoelephantsfireworks" })
 export class Product {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -88,11 +88,8 @@ export class Product {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
-  @OneToMany(
-    () => MaterialAnalysis,
-    (materialAnalysis) => materialAnalysis.product
-  )
-  materialAnalyses: MaterialAnalysis[];
+  @OneToMany(() => ProductPackage, (productPackage) => productPackage.product)
+  productPackages: ProductPackage[];
 
   @ManyToOne(
     () => ProductCategory,
@@ -108,6 +105,12 @@ export class Product {
   })
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
+
+  @OneToMany(
+    () => MaterialAnalysis,
+    (materialAnalysis) => materialAnalysis.product
+  )
+  materialAnalyses: MaterialAnalysis[];
 
   @ManyToOne(() => ProductStatus, (productStatus) => productStatus.products, {
     onDelete: "NO ACTION",
@@ -129,7 +132,4 @@ export class Product {
   })
   @JoinColumn([{ name: "unit_type_id", referencedColumnName: "id" }])
   unitType: UnitType;
-
-  @OneToMany(() => ProductPackage, (productPackage) => productPackage.product)
-  productPackages: ProductPackage[];
 }

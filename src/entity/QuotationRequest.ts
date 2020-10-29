@@ -10,18 +10,18 @@ import {
 } from "typeorm";
 import { Quotation } from "./Quotation";
 import { Employee } from "./Employee";
+import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 import { QuotationRequestStatus } from "./QuotationRequestStatus";
 import { Supplier } from "./Supplier";
-import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 
-@Index("qrnumber_UNIQUE", ["qrnumber"], { unique: true })
 @Index("fk_quotation_request_employee1_idx", ["employeeId"], {})
-@Index("fk_quotation_request_supplier1_idx", ["supplierId"], {})
 @Index(
   "fk_quotation_request_quotation_request_status1_idx",
   ["quotationRequestStatusId"],
   {}
 )
+@Index("fk_quotation_request_supplier1_idx", ["supplierId"], {})
+@Index("qrnumber_UNIQUE", ["qrnumber"], { unique: true })
 @Entity("quotation_request", { schema: "twoelephantsfireworks" })
 export class QuotationRequest {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -58,6 +58,12 @@ export class QuotationRequest {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
+  @OneToMany(
+    () => QuotationRequestMaterial,
+    (quotationRequestMaterial) => quotationRequestMaterial.quotationRequest
+  )
+  quotationRequestMaterials: QuotationRequestMaterial[];
+
   @ManyToOne(
     () => QuotationRequestStatus,
     (quotationRequestStatus) => quotationRequestStatus.quotationRequests,
@@ -74,10 +80,4 @@ export class QuotationRequest {
   })
   @JoinColumn([{ name: "supplier_id", referencedColumnName: "id" }])
   supplier: Supplier;
-
-  @OneToMany(
-    () => QuotationRequestMaterial,
-    (quotationRequestMaterial) => quotationRequestMaterial.quotationRequest
-  )
-  quotationRequestMaterials: QuotationRequestMaterial[];
 }

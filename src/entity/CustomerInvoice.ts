@@ -14,21 +14,21 @@ import { CustomerPaymentMethod } from "./CustomerPaymentMethod";
 import { Employee } from "./Employee";
 import { CustomerInvoiceProductPackage } from "./CustomerInvoiceProductPackage";
 
+@Index("cheque_no_UNIQUE", ["chequeNo"], { unique: true })
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("customer_order_id_UNIQUE", ["customerOrderId"], { unique: true })
-@Index("cheque_no_UNIQUE", ["chequeNo"], { unique: true })
 @Index(
   "fk_customer_invoice_customer_invoice_status1_idx",
   ["customerInvoiceStatusId"],
   {}
 )
-@Index("fk_customer_invoice_employee1_idx", ["employeeId"], {})
 @Index("fk_customer_invoice_customer_order1_idx", ["customerOrderId"], {})
 @Index(
   "fk_customer_invoice_customer_payment_method1_idx",
   ["customerPaymentMethodId"],
   {}
 )
+@Index("fk_customer_invoice_employee1_idx", ["employeeId"], {})
 @Entity("customer_invoice", { schema: "twoelephantsfireworks" })
 export class CustomerInvoice {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -58,8 +58,8 @@ export class CustomerInvoice {
   @Column("decimal", { name: "cus_total_amount", precision: 10, scale: 2 })
   cusTotalAmount: string;
 
-  @Column("decimal", { name: "pay_amount", precision: 10, scale: 2 })
-  payAmount: string;
+  @Column("decimal", { name: "payed_amount", precision: 10, scale: 2 })
+  payedAmount: string;
 
   @Column("decimal", {
     name: "balance",
@@ -104,8 +104,8 @@ export class CustomerInvoice {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
-  @Column("int", { name: "customer_order_id", unique: true })
-  customerOrderId: number;
+  @Column("int", { name: "customer_order_id", nullable: true, unique: true })
+  customerOrderId: number | null;
 
   @Column("int", { name: "customer_payment_method_id" })
   customerPaymentMethodId: number;

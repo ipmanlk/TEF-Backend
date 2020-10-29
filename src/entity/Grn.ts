@@ -10,15 +10,15 @@ import {
 } from "typeorm";
 import { Employee } from "./Employee";
 import { GrnStatus } from "./GrnStatus";
-import { PurchaseOrder } from "./PurchaseOrder";
 import { GrnMaterial } from "./GrnMaterial";
+import { PurchaseOrder } from "./PurchaseOrder";
 import { SupplierPayment } from "./SupplierPayment";
 
-@Index("grncode_UNIQUE", ["grncode"], { unique: true })
-@Index("purchase_order_id_UNIQUE", ["purchaseOrderId"], { unique: true })
+@Index("fk_grn_employee1_idx", ["employeeId"], {})
 @Index("fk_grn_grn_status1_idx", ["grnStatusId"], {})
 @Index("fk_grn_purchase_order1_idx", ["purchaseOrderId"], {})
-@Index("fk_grn_employee1_idx", ["employeeId"], {})
+@Index("grncode_UNIQUE", ["grncode"], { unique: true })
+@Index("purchase_order_id_UNIQUE", ["purchaseOrderId"], { unique: true })
 @Entity("grn", { schema: "twoelephantsfireworks" })
 export class Grn {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -79,15 +79,15 @@ export class Grn {
   @JoinColumn([{ name: "grn_status_id", referencedColumnName: "id" }])
   grnStatus: GrnStatus;
 
+  @OneToMany(() => GrnMaterial, (grnMaterial) => grnMaterial.grn)
+  grnMaterials: GrnMaterial[];
+
   @OneToOne(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.grn, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "purchase_order_id", referencedColumnName: "id" }])
   purchaseOrder: PurchaseOrder;
-
-  @OneToMany(() => GrnMaterial, (grnMaterial) => grnMaterial.grn)
-  grnMaterials: GrnMaterial[];
 
   @OneToMany(() => SupplierPayment, (supplierPayment) => supplierPayment.grn)
   supplierPayments: SupplierPayment[];

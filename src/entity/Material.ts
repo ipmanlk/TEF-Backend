@@ -11,22 +11,22 @@ import {
 } from "typeorm";
 import { GrnMaterial } from "./GrnMaterial";
 import { Employee } from "./Employee";
+import { QuotationMaterial } from "./QuotationMaterial";
+import { MaterialInventory } from "./MaterialInventory";
 import { MaterialStatus } from "./MaterialStatus";
 import { MaterialType } from "./MaterialType";
 import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
 import { MaterialAnalysis } from "./MaterialAnalysis";
-import { MaterialInventory } from "./MaterialInventory";
 import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
-import { QuotationMaterial } from "./QuotationMaterial";
 import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 import { Supplier } from "./Supplier";
 
-@Index("fk_material_material_type1_idx", ["materialTypeId"], {})
-@Index("fk_material_unit_type1_idx", ["unitTypeId"], {})
-@Index("fk_material_material_status1_idx", ["materialStatusId"], {})
-@Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
 @Index("fk_material_employee1_idx", ["employeeId"], {})
+@Index("fk_material_material_status1_idx", ["materialStatusId"], {})
+@Index("fk_material_material_type1_idx", ["materialTypeId"], {})
+@Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
+@Index("fk_material_unit_type1_idx", ["unitTypeId"], {})
 @Entity("material", { schema: "twoelephantsfireworks" })
 export class Material {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -83,6 +83,18 @@ export class Material {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
+  @OneToMany(
+    () => QuotationMaterial,
+    (quotationMaterial) => quotationMaterial.material
+  )
+  quotationMaterials: QuotationMaterial[];
+
+  @OneToMany(
+    () => MaterialInventory,
+    (materialInventory) => materialInventory.material
+  )
+  materialInventories: MaterialInventory[];
+
   @ManyToOne(
     () => MaterialStatus,
     (materialStatus) => materialStatus.materials,
@@ -119,22 +131,10 @@ export class Material {
   materialAnalyses: MaterialAnalysis[];
 
   @OneToMany(
-    () => MaterialInventory,
-    (materialInventory) => materialInventory.material
-  )
-  materialInventories: MaterialInventory[];
-
-  @OneToMany(
     () => PurchaseOrderMaterial,
     (purchaseOrderMaterial) => purchaseOrderMaterial.material
   )
   purchaseOrderMaterials: PurchaseOrderMaterial[];
-
-  @OneToMany(
-    () => QuotationMaterial,
-    (quotationMaterial) => quotationMaterial.material
-  )
-  quotationMaterials: QuotationMaterial[];
 
   @OneToMany(
     () => QuotationRequestMaterial,

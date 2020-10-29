@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { GrnMaterial } from "./GrnMaterial";
-import { Material } from "./Material";
 import { MaterialAnalysis } from "./MaterialAnalysis";
-import { Product } from "./Product";
+import { Material } from "./Material";
 import { ProductPackage } from "./ProductPackage";
+import { Product } from "./Product";
 import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { QuotationMaterial } from "./QuotationMaterial";
 
@@ -18,20 +18,20 @@ export class UnitType {
   @OneToMany(() => GrnMaterial, (grnMaterial) => grnMaterial.unitType)
   grnMaterials: GrnMaterial[];
 
-  @OneToMany(() => Material, (material) => material.unitType)
-  materials: Material[];
-
   @OneToMany(
     () => MaterialAnalysis,
     (materialAnalysis) => materialAnalysis.unitType
   )
   materialAnalyses: MaterialAnalysis[];
 
-  @OneToMany(() => Product, (product) => product.unitType)
-  products: Product[];
+  @OneToMany(() => Material, (material) => material.unitType)
+  materials: Material[];
 
   @OneToMany(() => ProductPackage, (productPackage) => productPackage.unitType)
   productPackages: ProductPackage[];
+
+  @OneToMany(() => Product, (product) => product.unitType)
+  products: Product[];
 
   @OneToMany(
     () => PurchaseOrderMaterial,
