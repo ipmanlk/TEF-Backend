@@ -28,7 +28,9 @@ export class CustomerDao {
 				.select([
 					"c.id", "c.customerName", "c.number", "c.companyName",
 				])
+				.leftJoin("c.customerStatus", "cs")
 				.leftJoinAndSelect("c.customerType", "ct")
+				.where("cs.name <> :statusName", { statusName: "Deleted" })
 				.getMany()
 		}
 	}
