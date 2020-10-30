@@ -8,12 +8,12 @@ export class CustomerInvoiceDao {
       .leftJoin("ci.customerOrder", "co")
       .leftJoin("ci.customerPaymentMethod", "cpm")
       .select([
-        "ci.id", "ci.code", "ci.netTotal", "ci.payAmount", "ci.addedDate", "cpm.id", "cpm.name"
+        "ci.id", "ci.code", "ci.netTotal", "ci.payedAmount", "ci.addedDate", "cpm.id", "cpm.name"
       ])
       .leftJoinAndSelect("ci.customerInvoiceStatus", "cis")
       .where("ci.code LIKE :keyword", { keyword: `%${keyword}%` })
       .orWhere("ci.netTotal LIKE :keyword", { keyword: `%${keyword}%` })
-      .orWhere("ci.payAmount LIKE :keyword", { keyword: `%${keyword}%` })
+      .orWhere("ci.payedAmount LIKE :keyword", { keyword: `%${keyword}%` })
       .orWhere("ci.addedDate LIKE :keyword", { keyword: `%${keyword}%` })
       .orWhere("ci.addedDate LIKE :keyword", { keyword: `%${keyword}%` })
       .orWhere("cpm.name LIKE :keyword", { keyword: `%${keyword}%` })

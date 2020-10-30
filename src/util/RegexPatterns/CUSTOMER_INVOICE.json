@@ -13,12 +13,14 @@
   {
     "regex": "^[\\d]+$",
     "attribute": "customerId",
-    "error": "Please select a valid customer!."
+    "error": "Please select a valid customer!.",
+    "optional": true
   },
   {
     "regex": "^[\\d]+$",
     "attribute": "customerOrderId",
-    "error": "Please select a valid customer order!."
+    "error": "Please select a valid customer order!.",
+    "optional": true
   },
   {
     "regex": "^[\\d]+$",
@@ -71,6 +73,11 @@
     "error": "Please provide a valid payed amount."
   },
   {
+    "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+    "attribute": "balance",
+    "error": "Please provide a valid balance."
+  },
+  {
     "regex": "^[\\d]{1,10}$",
     "attribute": "chequeNo",
     "error": "Please provide a valid cheque number!.",
@@ -110,10 +117,15 @@
     "regex": "^[\\d]+$",
     "attribute": "productPackageId",
     "error": "Please select a valid product package!."
-  }
+  },
   {
     "regex": "^[\\d]+$",
     "attribute": "deliveredQty",
     "error": "Please provide a valid delivered qty!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "requestedQty",
+    "error": "Please provide a valid requested qty!."
   }
 ]
