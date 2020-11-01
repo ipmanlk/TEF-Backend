@@ -1,4 +1,7 @@
 import { getRepository } from "typeorm";
+import { Customer } from "../entity/Customer";
+import { CustomerOrder } from "../entity/CustomerOrder";
+import { CustomerOrderStatus } from "../entity/CustomerOrderStatus";
 import { CustomerInvoice } from "../entity/CustomerInvoice";
 import { CustomerInvoiceProductPackage } from "../entity/CustomerInvoiceProductPackage";
 import { CustomerInvoiceStatus } from "../entity/CustomerInvoiceStatus";
@@ -83,6 +86,16 @@ export class CustomerInvoiceController {
 
 
     try {
+      let customerOrder;
+      if (customerInvoice.customerOrderId) {
+        customerOrder = await getRepository(CustomerOrder).findOne({
+          where: { id: customerInvoice.customerOrderId },
+          relations: ["customer"]
+        })
+
+        // TODO: check customer toBePaid with customer maximum arreas amount when it's added
+      }
+
       // save entry
       const entry = await getRepository(CustomerInvoice).save(customerInvoice);
 
@@ -102,6 +115,21 @@ export class CustomerInvoiceController {
 
       // save customer invoice product pkgs
       await getRepository(CustomerInvoiceProductPackage).save(customerInvoiceProductPackages);
+
+      // if this is a customer order
+      if (customerOrder) {
+        // update customer arreass
+        const customer = customerOrder.customer;
+        customer.toBePaid = entry.balance;
+        await getRepository(Customer).save(customer);
+
+        // complete customer order
+        const completedStatus = await getRepository(CustomerOrderStatus).findOne({ where: { name: "Completed" } });
+
+        customerOrder.customerOrderStatus = completedStatus;
+        await getRepository(CustomerOrder).save(customerOrder);
+      }
+
 
       // send success response
       return {
