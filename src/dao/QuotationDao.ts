@@ -59,6 +59,7 @@ export class QuotationDao {
   private static async checkQuotationStatus() {
     // update quotation status on quotations
     const inactiveStatus = await getRepository(QuotationStatus).findOne({ where: { name: "Inactive" } });
+    const deletedStatus = await getRepository(QuotationStatus).findOne({ where: { name: "Deleted" } });
 
     await getConnection()
       .createQueryBuilder()
@@ -67,6 +68,7 @@ export class QuotationDao {
         quotationStatus: inactiveStatus
       })
       .where("validTo < :date", { date: new Date() })
+      .andWhere("quotationStatusId <> :statusId", { statusId: deletedStatus.id })
       .execute();
   }
 }
