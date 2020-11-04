@@ -22,3 +22,4 @@ export { GrnController } from "./GrnController";
 export { SupplierPaymentController } from "./SupplierPaymentController";
 export { CustomerOrderController } from "./CustomerOrderController";
 export { CustomerInvoiceController } from "./CustomerInvoiceController";
+export { ProductionOrderController } from "./ProductionOrderController";

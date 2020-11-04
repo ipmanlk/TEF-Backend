@@ -47,7 +47,8 @@ import {
    GrnController,
    SupplierPaymentController,
    CustomerOrderController,
-   CustomerInvoiceController
+   CustomerInvoiceController,
+   ProductionOrderController
 } from "./controller";
 
 /* 
@@ -841,6 +842,39 @@ app.route("/api/customer_invoices")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
+
+// Routes: production orders
+app.route("/api/production_orders")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "PRODUCTION_ORDER").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      ProductionOrderController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .post((req, res) => {
+      ProductionOrderController.save(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .put((req, res) => {
+      ProductionOrderController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+   .delete((req, res) => {
+      ProductionOrderController.delete(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
 
 
 // Routes: Misc Routes
