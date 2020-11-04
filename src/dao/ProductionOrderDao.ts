@@ -18,7 +18,7 @@ export class ProductionOrderDao {
   static getOne(id) {
     return getRepository(ProductionOrder)
       .createQueryBuilder("po")
-      .leftJoinAndSelect("po.productOrderProductPackages", "popkg")
+      .leftJoinAndSelect("po.productionOrderProductPackages", "popkg")
       .leftJoinAndSelect("po.productionOrderStatus", "pos")
       .leftJoin("po.employee", "emp")
       .addSelect(["emp.id", "emp.number", "emp.callingName"])
