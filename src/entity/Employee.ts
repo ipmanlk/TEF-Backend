@@ -18,8 +18,8 @@ import { Gender } from "./Gender";
 import { Grn } from "./Grn";
 import { Material } from "./Material";
 import { OperationLog } from "./OperationLog";
-import { Product } from "./Product";
 import { ProductionOrder } from "./ProductionOrder";
+import { Product } from "./Product";
 import { PurchaseOrder } from "./PurchaseOrder";
 import { Quotation } from "./Quotation";
 import { QuotationRequest } from "./QuotationRequest";
@@ -135,14 +135,14 @@ export class Employee {
   @OneToMany(() => OperationLog, (operationLog) => operationLog.employee)
   operationLogs: OperationLog[];
 
-  @OneToMany(() => Product, (product) => product.employee)
-  products: Product[];
-
   @OneToMany(
     () => ProductionOrder,
     (productionOrder) => productionOrder.employee
   )
   productionOrders: ProductionOrder[];
+
+  @OneToMany(() => Product, (product) => product.employee)
+  products: Product[];
 
   @OneToMany(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.employee)
   purchaseOrders: PurchaseOrder[];

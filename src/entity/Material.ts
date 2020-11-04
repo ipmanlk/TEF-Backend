@@ -11,14 +11,14 @@ import {
 } from "typeorm";
 import { GrnMaterial } from "./GrnMaterial";
 import { Employee } from "./Employee";
+import { QuotationMaterial } from "./QuotationMaterial";
+import { MaterialInventory } from "./MaterialInventory";
 import { MaterialStatus } from "./MaterialStatus";
 import { MaterialType } from "./MaterialType";
 import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
 import { MaterialAnalysis } from "./MaterialAnalysis";
-import { MaterialInventory } from "./MaterialInventory";
 import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
-import { QuotationMaterial } from "./QuotationMaterial";
 import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 import { Supplier } from "./Supplier";
 
@@ -83,6 +83,18 @@ export class Material {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
+  @OneToMany(
+    () => QuotationMaterial,
+    (quotationMaterial) => quotationMaterial.material
+  )
+  quotationMaterials: QuotationMaterial[];
+
+  @OneToMany(
+    () => MaterialInventory,
+    (materialInventory) => materialInventory.material
+  )
+  materialInventories: MaterialInventory[];
+
   @ManyToOne(
     () => MaterialStatus,
     (materialStatus) => materialStatus.materials,
@@ -119,22 +131,10 @@ export class Material {
   materialAnalyses: MaterialAnalysis[];
 
   @OneToMany(
-    () => MaterialInventory,
-    (materialInventory) => materialInventory.material
-  )
-  materialInventories: MaterialInventory[];
-
-  @OneToMany(
     () => PurchaseOrderMaterial,
     (purchaseOrderMaterial) => purchaseOrderMaterial.material
   )
   purchaseOrderMaterials: PurchaseOrderMaterial[];
-
-  @OneToMany(
-    () => QuotationMaterial,
-    (quotationMaterial) => quotationMaterial.material
-  )
-  quotationMaterials: QuotationMaterial[];
 
   @OneToMany(
     () => QuotationRequestMaterial,

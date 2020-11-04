@@ -10,9 +10,9 @@ import {
 } from "typeorm";
 import { QuotationRequest } from "./QuotationRequest";
 import { Employee } from "./Employee";
+import { Material } from "./Material";
 import { SupplierStatus } from "./SupplierStatus";
 import { SupplierType } from "./SupplierType";
-import { Material } from "./Material";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
@@ -112,6 +112,9 @@ export class Supplier {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
+  @ManyToMany(() => Material, (material) => material.suppliers)
+  materials: Material[];
+
   @ManyToOne(
     () => SupplierStatus,
     (supplierStatus) => supplierStatus.suppliers,
@@ -126,7 +129,4 @@ export class Supplier {
   })
   @JoinColumn([{ name: "supplier_type_id", referencedColumnName: "id" }])
   supplierType: SupplierType;
-
-  @ManyToMany(() => Material, (material) => material.suppliers)
-  materials: Material[];
 }
