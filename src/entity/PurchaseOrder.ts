@@ -10,9 +10,9 @@ import {
 } from "typeorm";
 import { Grn } from "./Grn";
 import { Employee } from "./Employee";
-import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { PurchaseOrderStatus } from "./PurchaseOrderStatus";
 import { Quotation } from "./Quotation";
+import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 
 @Index("fk_purchase_order_employee1_idx", ["employeeId"], {})
 @Index(
@@ -61,12 +61,6 @@ export class PurchaseOrder {
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
 
-  @OneToMany(
-    () => PurchaseOrderMaterial,
-    (purchaseOrderMaterial) => purchaseOrderMaterial.purchaseOrder
-  )
-  purchaseOrderMaterials: PurchaseOrderMaterial[];
-
   @ManyToOne(
     () => PurchaseOrderStatus,
     (purchaseOrderStatus) => purchaseOrderStatus.purchaseOrders,
@@ -83,4 +77,10 @@ export class PurchaseOrder {
   })
   @JoinColumn([{ name: "quotation_id", referencedColumnName: "id" }])
   quotation: Quotation;
+
+  @OneToMany(
+    () => PurchaseOrderMaterial,
+    (purchaseOrderMaterial) => purchaseOrderMaterial.purchaseOrder
+  )
+  purchaseOrderMaterials: PurchaseOrderMaterial[];
 }
