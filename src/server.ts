@@ -875,7 +875,19 @@ app.route("/api/production_orders")
          .catch(e => sendErrors(res, e));
    });
 
+app.route("/api/production_orders_confirm")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "PRODUCTION_ORDER").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
 
+
+   .put((req, res) => {
+      ProductionOrderController.confirmOrder(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
 
 // Routes: Misc Routes
 app.route("/api/regexes")

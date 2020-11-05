@@ -235,7 +235,57 @@ export class ProductionOrderController {
 
     return {
       status: true,
-      msg: "That customer invoice has been deleted!"
+      msg: "That production order has been deleted!."
+    };
+  }
+
+  // used to confirmation and rejection
+  static async confirmOrder(data, session) {
+    // check if an entry is present with given id
+    const selectedEntry = await getRepository(ProductionOrder).findOne(data.id).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    if (!selectedEntry) {
+      throw {
+        status: false,
+        type: "input",
+        msg: "That entry doesn't exist in our database!."
+      }
+    }
+
+    selectedEntry.confirmedEmployee = session.data.employeeId;
+    selectedEntry.confirmedDate = data.confirmedDate;
+
+    // change status
+    const confirmedStatus = await getRepository(ProductionOrderStatus).findOne({ name: data.statusName }).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    selectedEntry.productionOrderStatus = confirmedStatus;
+
+    await getRepository(ProductionOrder).save(selectedEntry).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      }
+    });
+
+    return {
+      status: true,
+      msg: `Production order has been ${confirmedStatus.name.toLowerCase()}`
     };
   }
 
