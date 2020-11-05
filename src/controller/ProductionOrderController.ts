@@ -32,6 +32,14 @@ export class ProductionOrderController {
       entry["createdEmployee"] = `${entry.employee.callingName} (${entry.employee.number})`;
       delete entry.employee;
 
+      if (entry.confirmedEmployee2) {
+        entry["confirmedBy"] = `${entry.confirmedEmployee2.callingName} (${entry.confirmedEmployee2.number})`;
+        delete entry.confirmedEmployee2;
+      } else {
+        entry["confirmedBy"] = null;
+        delete entry.confirmedEmployee2;
+      }
+
       return {
         status: true,
         data: entry
