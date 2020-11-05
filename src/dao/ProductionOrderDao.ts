@@ -23,7 +23,7 @@ export class ProductionOrderDao {
       .leftJoin("po.employee", "emp")
       .addSelect(["emp.id", "emp.number", "emp.callingName"])
       .leftJoin("popkg.productPackage", "pkg")
-      .addSelect(["pkg.id", "pkg.name"])
+      .addSelect(["pkg.id", "pkg.code", "pkg.name"])
       .where("po.id = :productionOrderId", { productionOrderId: id })
       .getOne()
   }
