@@ -13,6 +13,7 @@ import { ProductionOrderStatus } from "./ProductionOrderStatus";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("fk_production_order_employee1_idx", ["employeeId"], {})
+@Index("fk_production_order_employee2_idx", ["confirmedEmployee"], {})
 @Index(
   "fk_production_order_production_order_status1_idx",
   ["productionOrderStatusId"],
@@ -41,12 +42,25 @@ export class ProductionOrder {
   @Column("int", { name: "employee_id" })
   employeeId: number;
 
+  @Column("date", { name: "confirmed_date", nullable: true })
+  confirmedDate: string | null;
+
+  @Column("int", { name: "confirmed_employee" })
+  confirmedEmployee: number;
+
   @ManyToOne(() => Employee, (employee) => employee.productionOrders, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "employee_id", referencedColumnName: "id" }])
   employee: Employee;
+
+  @ManyToOne(() => Employee, (employee) => employee.productionOrders2, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "confirmed_employee", referencedColumnName: "id" }])
+  confirmedEmployee2: Employee;
 
   @OneToMany(
     () => ProductionOrderProductPackage,

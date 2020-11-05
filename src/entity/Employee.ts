@@ -141,6 +141,12 @@ export class Employee {
   )
   productionOrders: ProductionOrder[];
 
+  @OneToMany(
+    () => ProductionOrder,
+    (productionOrder) => productionOrder.confirmedEmployee2
+  )
+  productionOrders2: ProductionOrder[];
+
   @OneToMany(() => Product, (product) => product.employee)
   products: Product[];
 
