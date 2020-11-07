@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Employee } from "./Employee";
-import { ProductionOrderProductPackage } from "./ProductionOrderProductPackage";
 import { ProductionOrderStatus } from "./ProductionOrderStatus";
+import { ProductionOrderProductPackage } from "./ProductionOrderProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("fk_production_order_employee1_idx", ["employeeId"], {})
@@ -45,8 +45,8 @@ export class ProductionOrder {
   @Column("date", { name: "confirmed_date", nullable: true })
   confirmedDate: string | null;
 
-  @Column("int", { name: "confirmed_employee" })
-  confirmedEmployee: number;
+  @Column("int", { name: "confirmed_employee", nullable: true })
+  confirmedEmployee: number | null;
 
   @ManyToOne(() => Employee, (employee) => employee.productionOrders, {
     onDelete: "NO ACTION",
@@ -62,13 +62,6 @@ export class ProductionOrder {
   @JoinColumn([{ name: "confirmed_employee", referencedColumnName: "id" }])
   confirmedEmployee2: Employee;
 
-  @OneToMany(
-    () => ProductionOrderProductPackage,
-    (productionOrderProductPackage) =>
-      productionOrderProductPackage.productionOrder
-  )
-  productionOrderProductPackages: ProductionOrderProductPackage[];
-
   @ManyToOne(
     () => ProductionOrderStatus,
     (productionOrderStatus) => productionOrderStatus.productionOrders,
@@ -78,4 +71,11 @@ export class ProductionOrder {
     { name: "production_order_status_id", referencedColumnName: "id" },
   ])
   productionOrderStatus: ProductionOrderStatus;
+
+  @OneToMany(
+    () => ProductionOrderProductPackage,
+    (productionOrderProductPackage) =>
+      productionOrderProductPackage.productionOrder
+  )
+  productionOrderProductPackages: ProductionOrderProductPackage[];
 }

@@ -10,10 +10,11 @@ import {
 import { CustomerInvoiceProductPackage } from "./CustomerInvoiceProductPackage";
 import { CustomerOrderProductPackage } from "./CustomerOrderProductPackage";
 import { Product } from "./Product";
-import { ProductionOrderProductPackage } from "./ProductionOrderProductPackage";
 import { ProductPackageStatus } from "./ProductPackageStatus";
 import { ProductPackageType } from "./ProductPackageType";
 import { UnitType } from "./UnitType";
+import { ProductionInventory } from "./ProductionInventory";
+import { ProductionOrderProductPackage } from "./ProductionOrderProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("fk_item_package_product1_idx", ["productId"], {})
@@ -97,13 +98,6 @@ export class ProductPackage {
   @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
   product: Product;
 
-  @OneToMany(
-    () => ProductionOrderProductPackage,
-    (productionOrderProductPackage) =>
-      productionOrderProductPackage.productPackage
-  )
-  productionOrderProductPackages: ProductionOrderProductPackage[];
-
   @ManyToOne(
     () => ProductPackageStatus,
     (productPackageStatus) => productPackageStatus.productPackages,
@@ -128,4 +122,17 @@ export class ProductPackage {
   })
   @JoinColumn([{ name: "unit_type_id", referencedColumnName: "id" }])
   unitType: UnitType;
+
+  @OneToMany(
+    () => ProductionInventory,
+    (productionInventory) => productionInventory.productPackage
+  )
+  productionInventories: ProductionInventory[];
+
+  @OneToMany(
+    () => ProductionOrderProductPackage,
+    (productionOrderProductPackage) =>
+      productionOrderProductPackage.productPackage
+  )
+  productionOrderProductPackages: ProductionOrderProductPackage[];
 }
