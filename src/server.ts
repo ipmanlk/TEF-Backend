@@ -48,7 +48,8 @@ import {
    SupplierPaymentController,
    CustomerOrderController,
    CustomerInvoiceController,
-   ProductionOrderController
+   ProductionOrderController,
+   ProductionInventoryController
 } from "./controller";
 
 /* 
@@ -902,6 +903,20 @@ app.route("/api/regexes")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
+
+// Routes: Production inventory
+app.route("/api/production_inventory")
+   .all((req, res, next) => {
+      isAuthorized(req, false, "PRODUCTION_INVENTORY").then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      ProductionInventoryController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
 
 
 app.route("/api/general")
