@@ -1,6 +1,7 @@
 import { getRepository } from "typeorm";
 import { ProductPackage } from "../entity/ProductPackage";
 import { Product } from "../entity/Product";
+import { ProductionInventory } from "../entity/ProductionInventory";
 import { ProductPackageStatus } from "../entity/ProductPackageStatus";
 import { ProductPackageDao } from "../dao/ProductPackageDao";
 import { ValidationUtil } from "../util/ValidationUtil";
@@ -17,36 +18,37 @@ export class ProductPackageController {
     }
 
     private static async getOne({ id }) {
-        // search for an entry with given id
-        const entry = await getRepository(ProductPackage).findOne({
-            relations: ["product"],
-            where: { id: id }
-        }).catch(e => {
+
+        try {
+            // search for an entry with given id
+            const entry = await getRepository(ProductPackage).findOne({
+                where: { id: id },
+                relations: ["product"]
+            });
+
+            // get production inventory pkg info
+            const productionInventoryEntry = await getRepository(ProductionInventory).findOne({ where: { productPackageId: entry.id } })
+
+            // add available qty to entry
+            entry["availableQty"] = productionInventoryEntry.availableQty;
+
+            // remove useless attributes
+            entry["productCode"] = entry.product.code;
+            delete entry.product;
+
+            return {
+                status: true,
+                data: entry
+            };
+        } catch (e) {
             console.log(e.code, e);
             throw {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check logs."
             };
-        });
-
-        // remove useless attributes
-        entry["productCode"] = entry.product.code;
-        delete entry.product;
-
-        // check if entry exists
-        if (entry !== undefined) {
-            return {
-                status: true,
-                data: entry
-            };
-        } else {
-            throw {
-                status: false,
-                type: "input",
-                msg: "Unable to find an entry with that id."
-            };
         }
+
     }
 
     private static async search(data = {}) {
