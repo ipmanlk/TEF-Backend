@@ -305,9 +305,6 @@ export class ProductionOrderController {
       const availableQty = inventoryMaterial.availableQty;
       inventoryMaterial.availableQty = (parseFloat(availableQty) - parseFloat(material.requiredAmount)).toFixed(2);
 
-      console.log(availableQty, material.requiredAmount);
-
-
       // save
       await getRepository(MaterialInventory).save(inventoryMaterial);
     }
