@@ -4,6 +4,7 @@ import { ProductionOrderStatus } from "../entity/ProductionOrderStatus";
 import { ProductionOrderDao } from "../dao/ProductionOrderDao";
 import { MiscUtil } from "../util/MiscUtil";
 import { ProductionOrderProductPackage } from "../entity/ProductionOrderProductPackage";
+import { MaterialInventory } from "../entity/MaterialInventory";
 
 export class ProductionOrderController {
 
@@ -280,6 +281,7 @@ export class ProductionOrderController {
       }
     });
 
+
     selectedEntry.productionOrderStatus = confirmedStatus;
 
     await getRepository(ProductionOrder).save(selectedEntry).catch(e => {
@@ -290,6 +292,25 @@ export class ProductionOrderController {
         msg: "Server Error!. Please check logs."
       }
     });
+
+
+    // update material inventory
+    for (let material of data.materials) {
+      // find material on material inventory
+      const inventoryMaterial = await getRepository(MaterialInventory).findOne({
+        where: { id: material.id }
+      });
+
+      // update qty
+      const availableQty = inventoryMaterial.availableQty;
+      inventoryMaterial.availableQty = (parseFloat(availableQty) - parseFloat(material.requiredAmount)).toFixed(2);
+
+      console.log(availableQty, material.requiredAmount);
+
+
+      // save
+      await getRepository(MaterialInventory).save(inventoryMaterial);
+    }
 
     return {
       status: true,
