@@ -890,20 +890,6 @@ app.route("/api/production_orders_confirm")
          .catch(e => sendErrors(res, e));
    });
 
-// Routes: Misc Routes
-app.route("/api/regexes")
-   .all((req, res, next) => {
-      isAuthorized(req).then(() => {
-         next();
-      }).catch(e => sendErrors(res, e));
-   })
-
-   .get((req, res) => {
-      RegexPatternUtil.getModuleRegex(req.query.data.module)
-         .then(r => res.json(r))
-         .catch(e => sendErrors(res, e));
-   });
-
 // Routes: Production inventory
 app.route("/api/production_inventory")
    .all((req, res, next) => {
@@ -918,6 +904,26 @@ app.route("/api/production_inventory")
          .catch(e => sendErrors(res, e));
    })
 
+   .post((req, res) => {
+      ProductionInventoryController.save(req.body.data, req.session)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
+
+
+// Routes: Misc Routes
+app.route("/api/regexes")
+   .all((req, res, next) => {
+      isAuthorized(req).then(() => {
+         next();
+      }).catch(e => sendErrors(res, e));
+   })
+
+   .get((req, res) => {
+      RegexPatternUtil.getModuleRegex(req.query.data.module)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   });
 
 app.route("/api/general")
    .all((req, res, next) => {
