@@ -6,6 +6,7 @@ import { CustomerInvoice } from "../entity/CustomerInvoice";
 import { CustomerInvoiceProductPackage } from "../entity/CustomerInvoiceProductPackage";
 import { CustomerInvoiceStatus } from "../entity/CustomerInvoiceStatus";
 import { CustomerInvoiceDao } from "../dao/CustomerInvoiceDao";
+import { ProductionInventory } from "../entity/ProductionInventory";
 import { MiscUtil } from "../util/MiscUtil";
 
 export class CustomerInvoiceController {
@@ -94,6 +95,21 @@ export class CustomerInvoiceController {
         })
 
         // TODO: check customer toBePaid with customer maximum arreas amount when it's added
+      }
+
+      // update production inventory
+      for (let pkg of data.productPackages) {
+        // grab production inventory entry
+        const inventoryProductPackage = await getRepository(ProductionInventory).findOne({
+          where: {
+            productPackageId: pkg.productPackageId
+          }
+        });
+
+        // update qty
+        inventoryProductPackage.availableQty -= parseInt(pkg.deliveredQty);
+
+        await getRepository(ProductionInventory).save(inventoryProductPackage);
       }
 
       // save entry
