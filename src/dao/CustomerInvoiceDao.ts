@@ -27,10 +27,12 @@ export class CustomerInvoiceDao {
   static getOne(id) {
     return getRepository(CustomerInvoice)
       .createQueryBuilder("ci")
+      .leftJoinAndSelect("ci.customer", "cic")
       .leftJoinAndSelect("ci.customerOrder", "cico")
       .leftJoinAndSelect("ci.customerInvoiceStatus", "cis")
       .leftJoinAndSelect("ci.customerPaymentMethod", "cpm")
       .leftJoinAndSelect("ci.customerInvoiceProductPackages", "cipkg")
+      .leftJoinAndSelect("ci.customerInvoiceCustomerType", "cict")
       .leftJoin("cipkg.productPackage", "cipkgpkg")
       .addSelect(["cipkgpkg.id", "cipkgpkg.code", "cipkgpkg.name"])
       .leftJoin("ci.employee", "emp")

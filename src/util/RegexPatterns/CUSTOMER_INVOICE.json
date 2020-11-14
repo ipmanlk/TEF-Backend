@@ -33,21 +33,6 @@
     "error": "Please select a valid customer payment method!."
   },
   {
-    "regex": "^[\\w\\s]{5,200}$",
-    "attribute": "customerName",
-    "error": "Please provide a valid customer name!."
-  },
-  {
-    "regex": "^[\\d]{10}$",
-    "attribute": "customerMobile",
-    "error": "Please provide a valid mobile number!."
-  },
-  {
-    "regex": "^([\\d]{9}(\\V|\\X))$|^([\\d]{12})$",
-    "attribute": "nic",
-    "error": "Please provide a valid NIC!."
-  },
-  {
     "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
     "attribute": "grandTotal",
     "error": "Please provide a valid grand total price."
@@ -90,27 +75,15 @@
     "optional": true
   },
   {
-    "regex": "^[\\w\\s\\.]{5,200}$",
-    "attribute": "bankacHolder",
-    "error": "Please provide a valid bank account holder name!.",
-    "optional": true
-  },
-  {
-    "regex": "^[\\d]{4,12}$",
-    "attribute": "bankacNo",
-    "error": "Please provide a valid  bank account number!.",
+    "regex": "^[\\d]+$",
+    "attribute": "bankacRefnumber",
+    "error": "Please provide a valid bank transaction reference number!.",
     "optional": true
   },
   {
     "regex": "^[\\w\\s]{5,200}$",
     "attribute": "bankacBank",
     "error": "Please provide a valid bank name!.",
-    "optional": true
-  },
-  {
-    "regex": "^[\\w\\s]{5,100}$",
-    "attribute": "bankacBranch",
-    "error": "Please provide a valid bank branch name!.",
     "optional": true
   },
   {
@@ -127,5 +100,10 @@
     "regex": "^[\\d]+$",
     "attribute": "requestedQty",
     "error": "Please provide a valid requested qty!."
+  },
+  {
+    "regex": "^[\\d]+$",
+    "attribute": "customerInvoiceCustomerTypeId",
+    "error": "Please select a customer type!."
   }
 ]
