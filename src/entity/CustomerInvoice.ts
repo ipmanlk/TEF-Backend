@@ -8,6 +8,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Customer } from "./Customer";
+import { CustomerInvoiceCustomerType } from "./CustomerInvoiceCustomerType";
 import { CustomerInvoiceStatus } from "./CustomerInvoiceStatus";
 import { CustomerOrder } from "./CustomerOrder";
 import { CustomerPaymentMethod } from "./CustomerPaymentMethod";
@@ -17,6 +19,12 @@ import { CustomerInvoiceProductPackage } from "./CustomerInvoiceProductPackage";
 @Index("cheque_no_UNIQUE", ["chequeNo"], { unique: true })
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("customer_order_id_UNIQUE", ["customerOrderId"], { unique: true })
+@Index("fk_customer_invoice_customer1_idx", ["customerId"], {})
+@Index(
+  "fk_customer_invoice_customer_invoice_customer_type1_idx",
+  ["customerInvoiceCustomerTypeId"],
+  {}
+)
 @Index(
   "fk_customer_invoice_customer_invoice_status1_idx",
   ["customerInvoiceStatusId"],
@@ -36,15 +44,6 @@ export class CustomerInvoice {
 
   @Column("char", { name: "code", unique: true, length: 12 })
   code: string;
-
-  @Column("varchar", { name: "customer_name", nullable: true, length: 100 })
-  customerName: string | null;
-
-  @Column("char", { name: "nic", nullable: true, length: 12 })
-  nic: string | null;
-
-  @Column("varchar", { name: "customer_mobile", nullable: true, length: 45 })
-  customerMobile: string | null;
 
   @Column("decimal", { name: "grand_total", precision: 10, scale: 2 })
   grandTotal: string;
@@ -80,17 +79,11 @@ export class CustomerInvoice {
   @Column("date", { name: "cheque_date", nullable: true })
   chequeDate: string | null;
 
-  @Column("varchar", { name: "bankac_holder", nullable: true, length: 100 })
-  bankacHolder: string | null;
-
   @Column("varchar", { name: "bankac_bank", nullable: true, length: 100 })
   bankacBank: string | null;
 
-  @Column("varchar", { name: "bankac_branch", nullable: true, length: 100 })
-  bankacBranch: string | null;
-
-  @Column("char", { name: "bankac_no", nullable: true, length: 15 })
-  bankacNo: string | null;
+  @Column("varchar", { name: "bankac_refnumber", nullable: true, length: 100 })
+  bankacRefnumber: string | null;
 
   @Column("text", { name: "description", nullable: true })
   description: string | null;
@@ -109,6 +102,30 @@ export class CustomerInvoice {
 
   @Column("int", { name: "customer_payment_method_id" })
   customerPaymentMethodId: number;
+
+  @Column("int", { name: "customer_id", nullable: true })
+  customerId: number | null;
+
+  @Column("int", { name: "customer_invoice_customer_type_id" })
+  customerInvoiceCustomerTypeId: number;
+
+  @ManyToOne(() => Customer, (customer) => customer.customerInvoices, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "customer_id", referencedColumnName: "id" }])
+  customer: Customer;
+
+  @ManyToOne(
+    () => CustomerInvoiceCustomerType,
+    (customerInvoiceCustomerType) =>
+      customerInvoiceCustomerType.customerInvoices,
+    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([
+    { name: "customer_invoice_customer_type_id", referencedColumnName: "id" },
+  ])
+  customerInvoiceCustomerType: CustomerInvoiceCustomerType;
 
   @ManyToOne(
     () => CustomerInvoiceStatus,

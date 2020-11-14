@@ -11,6 +11,7 @@ import { CustomerStatus } from "./CustomerStatus";
 import { CustomerType } from "./CustomerType";
 import { Employee } from "./Employee";
 import { Gender } from "./Gender";
+import { CustomerInvoice } from "./CustomerInvoice";
 import { CustomerOrder } from "./CustomerOrder";
 
 @Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
@@ -118,6 +119,12 @@ export class Customer {
   })
   @JoinColumn([{ name: "gender_id", referencedColumnName: "id" }])
   gender: Gender;
+
+  @OneToMany(
+    () => CustomerInvoice,
+    (customerInvoice) => customerInvoice.customer
+  )
+  customerInvoices: CustomerInvoice[];
 
   @OneToMany(() => CustomerOrder, (customerOrder) => customerOrder.customer)
   customerOrders: CustomerOrder[];
