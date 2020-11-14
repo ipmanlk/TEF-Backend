@@ -25,17 +25,15 @@ export class SupplierPaymentDao {
 	static getOne(id) {
 		return getRepository(SupplierPayment)
 			.createQueryBuilder("sp")
-			.leftJoinAndSelect("sp.employee", "emp")
+			.leftJoin("sp.employee", "emp")
 			.leftJoinAndSelect("sp.grn", "grn")
 			.leftJoinAndSelect("grn.purchaseOrder", "po")
 			.leftJoinAndSelect("po.quotation", "poq")
 			.leftJoinAndSelect("poq.quotationRequest", "poqr")
-			.select([
-				"sp.id", "sp.pnumber", "sp.grnId", "sp.grnNetTotal", "sp.payAmount", "sp.supTotalAmount", "sp.balance", "sp.chequeNo", "sp.chequeDate", "sp.bankacHolder", "sp.bankacNo", "sp.bankacBank", "sp.bankacBranch", "sp.description", "sp.addedDate", "grn.id", "grn.grncode", "grn.payedAmount", "po.id", "po.pocode", "emp.id", "emp.number", "emp.callingName", "poq.id", "poq.qnumber", "poqr.id", "poqr.qrnumber"
-			])
 			.leftJoinAndSelect("poqr.supplier", "poqrs")
 			.leftJoinAndSelect("sp.supplierPaymentMethod", "spm")
 			.leftJoinAndSelect("sp.supplierPaymentStatus", "sps")
+			.addSelect(["emp.id", "emp.number", "emp.callingName"])
 			.where("sp.id = :keyword", { keyword: id })
 			.getOne()
 	}
