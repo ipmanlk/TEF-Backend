@@ -52,27 +52,15 @@
         "optional": true
     },
     {
-        "regex": "^[\\w\\s\\.]{5,200}$",
-        "attribute": "bankacHolder",
-        "error": "Please provide a valid bank account holder name!.",
-        "optional": true
-    },
-    {
-        "regex": "^[\\d]{4,12}$",
-        "attribute": "bankacNo",
-        "error": "Please provide a valid  bank account number!.",
+        "regex": "^[\\d]+$",
+        "attribute": "bankacRefnumber",
+        "error": "Please provide a valid bank transaction reference number!.",
         "optional": true
     },
     {
         "regex": "^[\\w\\s]{5,200}$",
         "attribute": "bankacBank",
         "error": "Please provide a valid bank name!.",
-        "optional": true
-    },
-    {
-        "regex": "^[\\w\\s]{5,100}$",
-        "attribute": "bankacBranch",
-        "error": "Please provide a valid bank branch name!.",
         "optional": true
     },
     {

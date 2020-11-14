@@ -11,19 +11,19 @@ import { Grn } from "./Grn";
 import { SupplierPaymentMethod } from "./SupplierPaymentMethod";
 import { SupplierPaymentStatus } from "./SupplierPaymentStatus";
 
-@Index("fk_supplier_payment_employee1_idx", ["employeeId"], {})
+@Index("pnumber_UNIQUE", ["pnumber"], { unique: true })
 @Index("fk_supplier_payment_grn1_idx", ["grnId"], {})
-@Index(
-  "fk_supplier_payment_supplier_payment_method1_idx",
-  ["supplierPaymentMethodId"],
-  {}
-)
 @Index(
   "fk_supplier_payment_supplier_payment_status1_idx",
   ["supplierPaymentStatusId"],
   {}
 )
-@Index("pnumber_UNIQUE", ["pnumber"], { unique: true })
+@Index("fk_supplier_payment_employee1_idx", ["employeeId"], {})
+@Index(
+  "fk_supplier_payment_supplier_payment_method1_idx",
+  ["supplierPaymentMethodId"],
+  {}
+)
 @Entity("supplier_payment", { schema: "twoelephantsfireworks" })
 export class SupplierPayment {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -53,17 +53,11 @@ export class SupplierPayment {
   @Column("date", { name: "cheque_date", nullable: true })
   chequeDate: string | null;
 
-  @Column("varchar", { name: "bankac_holder", nullable: true, length: 100 })
-  bankacHolder: string | null;
-
-  @Column("char", { name: "bankac_no", nullable: true, length: 15 })
-  bankacNo: string | null;
-
   @Column("varchar", { name: "bankac_bank", nullable: true, length: 100 })
   bankacBank: string | null;
 
-  @Column("varchar", { name: "bankac_branch", nullable: true, length: 100 })
-  bankacBranch: string | null;
+  @Column("varchar", { name: "bankac_refnumber", nullable: true, length: 100 })
+  bankacRefnumber: string | null;
 
   @Column("text", { name: "description", nullable: true })
   description: string | null;

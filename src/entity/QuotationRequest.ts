@@ -14,14 +14,14 @@ import { QuotationRequestStatus } from "./QuotationRequestStatus";
 import { Supplier } from "./Supplier";
 import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 
+@Index("qrnumber_UNIQUE", ["qrnumber"], { unique: true })
 @Index("fk_quotation_request_employee1_idx", ["employeeId"], {})
+@Index("fk_quotation_request_supplier1_idx", ["supplierId"], {})
 @Index(
   "fk_quotation_request_quotation_request_status1_idx",
   ["quotationRequestStatusId"],
   {}
 )
-@Index("fk_quotation_request_supplier1_idx", ["supplierId"], {})
-@Index("qrnumber_UNIQUE", ["qrnumber"], { unique: true })
 @Entity("quotation_request", { schema: "twoelephantsfireworks" })
 export class QuotationRequest {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
