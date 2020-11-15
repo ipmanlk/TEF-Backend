@@ -16,27 +16,27 @@ import { CustomerPaymentMethod } from "./CustomerPaymentMethod";
 import { Employee } from "./Employee";
 import { CustomerInvoiceProductPackage } from "./CustomerInvoiceProductPackage";
 
+@Index("cheque_no_UNIQUE", ["chequeNo"], { unique: true })
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("customer_order_id_UNIQUE", ["customerOrderId"], { unique: true })
-@Index("cheque_no_UNIQUE", ["chequeNo"], { unique: true })
-@Index(
-  "fk_customer_invoice_customer_invoice_status1_idx",
-  ["customerInvoiceStatusId"],
-  {}
-)
-@Index("fk_customer_invoice_employee1_idx", ["employeeId"], {})
-@Index("fk_customer_invoice_customer_order1_idx", ["customerOrderId"], {})
-@Index(
-  "fk_customer_invoice_customer_payment_method1_idx",
-  ["customerPaymentMethodId"],
-  {}
-)
 @Index("fk_customer_invoice_customer1_idx", ["customerId"], {})
 @Index(
   "fk_customer_invoice_customer_invoice_customer_type1_idx",
   ["customerInvoiceCustomerTypeId"],
   {}
 )
+@Index(
+  "fk_customer_invoice_customer_invoice_status1_idx",
+  ["customerInvoiceStatusId"],
+  {}
+)
+@Index("fk_customer_invoice_customer_order1_idx", ["customerOrderId"], {})
+@Index(
+  "fk_customer_invoice_customer_payment_method1_idx",
+  ["customerPaymentMethodId"],
+  {}
+)
+@Index("fk_customer_invoice_employee1_idx", ["employeeId"], {})
 @Entity("customer_invoice", { schema: "twoelephantsfireworks" })
 export class CustomerInvoice {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

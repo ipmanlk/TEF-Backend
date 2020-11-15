@@ -3,13 +3,13 @@ import { CustomerInvoice } from "./CustomerInvoice";
 import { ProductPackage } from "./ProductPackage";
 
 @Index(
-  "fk_customer_invoice_has_product_package_product_package1_idx",
-  ["productPackageId"],
+  "fk_customer_invoice_has_product_package_customer_invoice1_idx",
+  ["customerInvoiceId"],
   {}
 )
 @Index(
-  "fk_customer_invoice_has_product_package_customer_invoice1_idx",
-  ["customerInvoiceId"],
+  "fk_customer_invoice_has_product_package_product_package1_idx",
+  ["productPackageId"],
   {}
 )
 @Entity("customer_invoice_product_package", { schema: "twoelephantsfireworks" })
