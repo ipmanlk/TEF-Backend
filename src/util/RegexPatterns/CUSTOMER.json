@@ -61,5 +61,10 @@
     "regex": "^[\\d]+$",
     "attribute": "customerTypeId",
     "error": "Please select a valid customer type!."
+  },
+  {
+    "regex": "^[\\d]{1,10}\\.[\\d]{2}$",
+    "attribute": "maxToBePaid",
+    "error": "Please provide a valid maximum arrears amount!."
   }
 ]
