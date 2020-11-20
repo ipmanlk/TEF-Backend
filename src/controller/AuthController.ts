@@ -148,15 +148,18 @@ export class AuthController {
         // store privileges for roles user have
         const rolePrivileges = [];
 
+
         for (let role of session.data.userRoles) {
             let privilage = await getRepository(Privilege).findOne({
                 moduleId: module.id,
-                roleId: role.id
+                roleId: role.roleId
             });
 
             // check if record exists before pushing
             if (privilage !== undefined) rolePrivileges.push(privilage);
         }
+
+
 
         // permisison for current module
         let permission = null;
@@ -171,7 +174,7 @@ export class AuthController {
         }
 
         // check if user is an admin
-        let filteredRoles = session.data.userRoles.filter(role => role.id == 1);
+        let filteredRoles = session.data.userRoles.filter(role => role.roleId == 1);
 
         // if user is not an admin and has no access to the module
         if (filteredRoles.length == 0 && rolePrivileges.length == 0) {
@@ -186,8 +189,6 @@ export class AuthController {
         if (filteredRoles.length == 1) {
             permission = "1111";
         } else {
-            console.log(rolePrivileges);
-
             // merge those previleges and get permission for current module
             rolePrivileges.forEach(rp => {
                 if (permission !== null) {
