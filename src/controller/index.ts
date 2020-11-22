@@ -24,3 +24,4 @@ export { CustomerOrderController } from "./CustomerOrderController";
 export { CustomerInvoiceController } from "./CustomerInvoiceController";
 export { ProductionOrderController } from "./ProductionOrderController";
 export { ProductionInventoryController } from "./ProductionInventoryController";
+export { ReportController } from "./ReportController";
