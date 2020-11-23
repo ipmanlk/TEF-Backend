@@ -1,16 +1,28 @@
-import { getRepository, getManager } from "typeorm";
+import { getRepository } from "typeorm";
 import { CustomerInvoice } from "../entity/CustomerInvoice"
 import * as moment from "moment";
 
 export class ReportController {
 
-  static async getSales(start: string, end: string, type: string) {
+  static async getSales({ start, end, type }) {
     let query;
 
     const startDate = moment(start).format("YYYY-MM-DD");
     const endDate = moment(end).format("YYYY-MM-DD");
 
     switch (type) {
+      case "today":
+        query = `
+        SELECT DATE(added_date) AS sales_date,
+         SUM(net_total) AS net_total,
+         SUM(payed_amount) AS payed_amount,
+         COUNT(*) AS transactions
+        FROM customer_invoice
+        WHERE added_date = "${startDate}"
+        GROUP BY DATE(added_date)
+        ORDER BY DATE(added_date)
+        `;
+        break;
       case "day":
         query = `
         SELECT DATE(added_date) AS sales_date,
@@ -18,6 +30,7 @@ export class ReportController {
          SUM(payed_amount) AS payed_amount,
          COUNT(*) AS transactions
         FROM customer_invoice
+        WHERE added_date >= "${startDate}" AND added_date <= "${endDate}"
         GROUP BY DATE(added_date)
         ORDER BY DATE(added_date)
         `;
@@ -46,18 +59,18 @@ export class ReportController {
         ORDER BY DATE(DATE_FORMAT(added_date, '%Y-%m-01'))
         `;
         break;
-      case "quarter":
-        query = `
-        SELECT DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01')) AS quarter_beginning,
-          SUM(net_total) AS net_total,
-          SUM(payed_amount) AS payed_amount,
-          COUNT(*) AS transactions
-        FROM customer_invoice
-        WHERE added_date >= "${startDate}" AND added_date <= "${endDate}"
-        GROUP BY DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01'))
-        ORDER BY DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01'))
-          `;
-        break;
+      // case "quarter":
+      //   query = `
+      //   SELECT DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01')) AS quarter_beginning,
+      //     SUM(net_total) AS net_total,
+      //     SUM(payed_amount) AS payed_amount,
+      //     COUNT(*) AS transactions
+      //   FROM customer_invoice
+      //   WHERE added_date >= "${startDate}" AND added_date <= "${endDate}"
+      //   GROUP BY DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01'))
+      //   ORDER BY DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01'))
+      //     `;
+      //   break;
       case "year":
         query = `
         SELECT YEAR(added_date) as year,
@@ -72,7 +85,19 @@ export class ReportController {
         break;
     }
 
-    const rawResults = await getRepository(CustomerInvoice).query("");
+    const rawResults = await getRepository(CustomerInvoice).query(query).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      };
+    });
+
+    return {
+      status: true,
+      data: rawResults
+    };
   }
 
 }
