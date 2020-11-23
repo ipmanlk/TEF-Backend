@@ -5,6 +5,7 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { ValidationUtil } from "../util/ValidationUtil";
 import { createHash } from "crypto";
+import { UserRole } from "../entity/UserRole";
 
 export class ProfileController {
     static async getOne(session) {
@@ -49,13 +50,24 @@ export class ProfileController {
             });
         });
 
-        // delete user role data
+        // delete useless stuff from userRoles
+        const newUserRoles = profileData.userRoles.map(ur => {
+            return {
+                id: ur.role.id,
+                name: ur.role.name
+            }
+        });
+
         delete profileData.userRoles;
 
-        // add privileges
+        // remove types from profile
         const profile = profileData as any;
-        profile.privileges = modulePermission;
 
+        // add new user roles array
+        profile.userRoles = newUserRoles;
+
+        // add privileges
+        profile.privileges = modulePermission;
 
         return {
             status: true,
