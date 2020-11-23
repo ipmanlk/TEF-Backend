@@ -49,7 +49,8 @@ import {
    CustomerOrderController,
    CustomerInvoiceController,
    ProductionOrderController,
-   ProductionInventoryController
+   ProductionInventoryController,
+   ReportController
 } from "./controller";
 
 /* 
@@ -112,12 +113,13 @@ if (process.env.PRODUCTION == "false") {
       req.session.data = {
          username: "admin",
          logged: true,
-         userRoles: [{ id: 1 }, { id: 2 }],
+         userRoles: [{ roleId: 1 }, { roleId: 2 }],
          userId: 1,
          employeeId: 1
       };
       next();
    });
+
 }
 
 // Express.js: Folder with static HTML files to server the user
@@ -909,6 +911,26 @@ app.route("/api/production_inventory")
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    });
+
+// Routes: Reports
+app.route("/api/reports")
+   // .all((req, res, next) => {
+   //    isAuthorized(req, false, "PRODUCTION_INVENTORY").then(() => {
+   //       next();
+   //    }).catch(e => sendErrors(res, e));
+   // })
+
+   .get((req, res) => {
+      ReportController.getSales(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
+
+// .post((req, res) => {
+//    ProductionInventoryController.save(req.body.data, req.session)
+//       .then(r => res.json(r))
+//       .catch(e => sendErrors(res, e));
+// });
 
 
 // Routes: Misc Routes
