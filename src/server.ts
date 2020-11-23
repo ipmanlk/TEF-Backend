@@ -913,7 +913,7 @@ app.route("/api/production_inventory")
    });
 
 // Routes: Reports
-app.route("/api/reports")
+app.route("/api/reports/sales")
    // .all((req, res, next) => {
    //    isAuthorized(req, false, "PRODUCTION_INVENTORY").then(() => {
    //       next();
