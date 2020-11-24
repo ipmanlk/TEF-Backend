@@ -6,8 +6,10 @@ import { GrnDao } from "../dao/GrnDao";
 import { PurchaseOrder } from "../entity/PurchaseOrder";
 import { PurchaseOrderStatus } from "../entity/PurchaseOrderStatus";
 import { MaterialInventory } from "../entity/MaterialInventory";
+import { QuotationRequestMaterial } from "../entity/QuotationRequestMaterial";
 import { Supplier } from "../entity/Supplier";
 import { MiscUtil } from "../util/MiscUtil";
+import { Quotation } from "../entity/Quotation";
 
 export class GrnController {
 
@@ -138,6 +140,21 @@ export class GrnController {
       const supplier = await getRepository(Supplier).findOne(data.supplierId);
       supplier.arrears = (parseFloat(supplier.arrears) + parseFloat(grn.netTotal)).toString();
       await getRepository(Supplier).save(supplier);
+
+
+      // Mark materials in quotation request as received
+      const quotation = await getRepository(Quotation).findOne({
+        where: { id: purchaseOrder.quotationId },
+      })
+
+      for (let grnMaterial of grnMaterials) {
+        let quotationRequestMaterial = await getRepository(QuotationRequestMaterial).findOne({
+          where: { quotationRequestId: quotation.quotationRequestId, materialId: grnMaterial.materialId }
+        });
+
+        quotationRequestMaterial.received = true;
+        await getRepository(QuotationRequestMaterial).save(quotationRequestMaterial);
+      }
 
       // send success response
       return {
