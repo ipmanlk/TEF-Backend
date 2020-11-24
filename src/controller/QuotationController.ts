@@ -125,7 +125,7 @@ export class QuotationController {
         });
 
         quotationRequestMaterial.accepted = true;
-        quotationRequestMaterial.received = true;
+        // quotationRequestMaterial.received = true;
 
         await getRepository(QuotationRequestMaterial).save(quotationRequestMaterial);
       }
