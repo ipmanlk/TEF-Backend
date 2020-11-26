@@ -30,7 +30,7 @@ export class ProductPackageController {
             const productionInventoryEntry = await getRepository(ProductionInventory).findOne({ where: { productPackageId: entry.id } })
 
             // add available qty to entry
-            entry["availableQty"] = productionInventoryEntry.availableQty;
+            entry["availableQty"] = productionInventoryEntry ? productionInventoryEntry.availableQty : 0;
 
             // remove useless attributes
             entry["productCode"] = entry.product.code;
