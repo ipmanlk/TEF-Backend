@@ -166,6 +166,8 @@ export class CustomerOrderController {
         customerOrderProductPackage.qty = pkg.qty;
         customerOrderProductPackage.salePrice = pkg.salePrice;
         customerOrderProductPackage.lineTotal = pkg.lineTotal;
+
+        customerOrderProductPackages.push(customerOrderProductPackage);
       });
 
       // save customer order product packages
