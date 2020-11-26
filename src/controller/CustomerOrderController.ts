@@ -8,7 +8,7 @@ import { MiscUtil } from "../util/MiscUtil";
 export class CustomerOrderController {
 
   static async get(data) {
-    if (data !== undefined) {
+    if (data !== undefined && !data.keyword && !data.skip) {
       if (data.id) {
         return this.getOne(data);
       } else if (data.customerId && data.customerOrderStatusName) {
