@@ -16,11 +16,11 @@ import { UnitType } from "./UnitType";
 import { ProductPackage } from "./ProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
-@Index("fk_product_category1_idx", ["categoryId"], {})
-@Index("fk_product_employee1_idx", ["employeeId"], {})
-@Index("fk_product_product_status1_idx", ["productStatusId"], {})
 @Index("fk_product_risk_category1_idx", ["riskCategoryId"], {})
+@Index("fk_product_product_status1_idx", ["productStatusId"], {})
+@Index("fk_product_category1_idx", ["categoryId"], {})
 @Index("fk_product_unit_type1_idx", ["unitTypeId"], {})
+@Index("fk_product_employee1_idx", ["employeeId"], {})
 @Entity("product", { schema: "twoelephantsfireworks" })
 export class Product {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -29,49 +29,35 @@ export class Product {
   @Column("char", { name: "code", unique: true, length: 12 })
   code: string;
 
-  @Column("varchar", { name: "name", nullable: true, length: 255 })
-  name: string | null;
+  @Column("varchar", { name: "name", length: 255 })
+  name: string;
 
-  @Column("decimal", { name: "price", nullable: true, precision: 5, scale: 2 })
-  price: string | null;
+  @Column("decimal", { name: "price", precision: 12, scale: 2 })
+  price: string;
 
-  @Column("decimal", { name: "cost", nullable: true, precision: 5, scale: 2 })
-  cost: string | null;
+  @Column("decimal", { name: "cost", precision: 12, scale: 2 })
+  cost: string;
 
-  @Column("mediumblob", { name: "photo", nullable: true })
-  photo: Buffer | null;
+  @Column("mediumblob", { name: "photo" })
+  photo: Buffer;
 
-  @Column("decimal", {
-    name: "weight_firing",
-    nullable: true,
-    precision: 7,
-    scale: 3,
-  })
-  weightFiring: string | null;
+  @Column("decimal", { name: "weight_firing", precision: 7, scale: 3 })
+  weightFiring: string;
 
-  @Column("decimal", {
-    name: "weight_actual",
-    nullable: true,
-    precision: 7,
-    scale: 3,
-  })
-  weightActual: string | null;
+  @Column("decimal", { name: "weight_actual", precision: 7, scale: 3 })
+  weightActual: string;
 
   @Column("int", { name: "unit_type_id" })
   unitTypeId: number;
 
-  @Column("int", { name: "expire_duration", nullable: true })
-  expireDuration: number | null;
+  @Column("int", { name: "expire_duration" })
+  expireDuration: number;
 
-  @Column("int", {
-    name: "available_qty",
-    nullable: true,
-    default: () => "'0'",
-  })
-  availableQty: number | null;
+  @Column("int", { name: "available_qty", default: () => "'0'" })
+  availableQty: number;
 
-  @Column("date", { name: "added_date", nullable: true })
-  addedDate: string | null;
+  @Column("date", { name: "added_date" })
+  addedDate: string;
 
   @Column("int", { name: "risk_category_id" })
   riskCategoryId: number;

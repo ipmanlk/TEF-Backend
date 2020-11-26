@@ -9,8 +9,8 @@ import {
 import { User } from "./User";
 import { SessionAction } from "./SessionAction";
 
-@Index("fk_session_log_session_action1_idx", ["sessionActionId"], {})
 @Index("fk_sessionlog_user1_idx", ["userId"], {})
+@Index("fk_session_log_session_action1_idx", ["sessionActionId"], {})
 @Entity("session_log", { schema: "twoelephantsfireworks" })
 export class SessionLog {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

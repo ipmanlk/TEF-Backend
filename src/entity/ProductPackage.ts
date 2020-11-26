@@ -37,37 +37,32 @@ export class ProductPackage {
   @Column("int", { name: "product_id" })
   productId: number;
 
-  @Column("varchar", { name: "name", nullable: true, length: 255 })
-  name: string | null;
+  @Column("varchar", { name: "name", length: 255 })
+  name: string;
 
   @Column("char", { name: "code", unique: true, length: 12 })
   code: string;
 
-  @Column("decimal", { name: "price", nullable: true, precision: 9, scale: 2 })
-  price: string | null;
+  @Column("decimal", { name: "price", precision: 12, scale: 2 })
+  price: string;
 
-  @Column("decimal", {
-    name: "sale_price",
-    nullable: true,
-    precision: 9,
-    scale: 2,
-  })
-  salePrice: string | null;
+  @Column("decimal", { name: "sale_price", precision: 12, scale: 2 })
+  salePrice: string;
 
-  @Column("mediumblob", { name: "photo", nullable: true })
-  photo: Buffer | null;
+  @Column("mediumblob", { name: "photo" })
+  photo: Buffer;
 
-  @Column("int", { name: "pieces", nullable: true })
-  pieces: number | null;
+  @Column("int", { name: "pieces" })
+  pieces: number;
 
-  @Column("int", { name: "rop", nullable: true })
-  rop: number | null;
+  @Column("int", { name: "rop" })
+  rop: number;
 
-  @Column("decimal", { name: "weight", nullable: true, precision: 7, scale: 3 })
-  weight: string | null;
+  @Column("decimal", { name: "weight", precision: 7, scale: 3 })
+  weight: string;
 
-  @Column("date", { name: "added_date", nullable: true })
-  addedDate: string | null;
+  @Column("date", { name: "added_date" })
+  addedDate: string;
 
   @Column("int", { name: "product_package_status_id" })
   productPackageStatusId: number;
