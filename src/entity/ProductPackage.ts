@@ -14,6 +14,7 @@ import { ProductPackageStatus } from "./ProductPackageStatus";
 import { ProductPackageType } from "./ProductPackageType";
 import { UnitType } from "./UnitType";
 import { ProductionInventory } from "./ProductionInventory";
+import { ProductionInventoryUpdate } from "./ProductionInventoryUpdate";
 import { ProductionOrderProductPackage } from "./ProductionOrderProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
@@ -123,6 +124,12 @@ export class ProductPackage {
     (productionInventory) => productionInventory.productPackage
   )
   productionInventories: ProductionInventory[];
+
+  @OneToMany(
+    () => ProductionInventoryUpdate,
+    (productionInventoryUpdate) => productionInventoryUpdate.productPackage
+  )
+  productionInventoryUpdates: ProductionInventoryUpdate[];
 
   @OneToMany(
     () => ProductionOrderProductPackage,

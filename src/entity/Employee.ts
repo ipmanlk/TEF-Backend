@@ -19,6 +19,7 @@ import { Grn } from "./Grn";
 import { Material } from "./Material";
 import { OperationLog } from "./OperationLog";
 import { Product } from "./Product";
+import { ProductionInventoryUpdate } from "./ProductionInventoryUpdate";
 import { ProductionOrder } from "./ProductionOrder";
 import { PurchaseOrder } from "./PurchaseOrder";
 import { Quotation } from "./Quotation";
@@ -137,6 +138,12 @@ export class Employee {
 
   @OneToMany(() => Product, (product) => product.employee)
   products: Product[];
+
+  @OneToMany(
+    () => ProductionInventoryUpdate,
+    (productionInventoryUpdate) => productionInventoryUpdate.employee
+  )
+  productionInventoryUpdates: ProductionInventoryUpdate[];
 
   @OneToMany(
     () => ProductionOrder,
