@@ -4,6 +4,8 @@ import { ProductionInventory } from "../entity/ProductionInventory";
 import { ProductionInventoryDao } from "../dao/ProductionInventoryDao";
 import { getRepository } from "typeorm";
 import { ProductionInventoryStatus } from "../entity/ProductionInventoryStatus";
+import { ProductionInventoryUpdate } from "../entity/ProductionInventoryUpdate";
+import * as moment from "moment";
 
 export class ProductionInventoryController {
 
@@ -37,6 +39,9 @@ export class ProductionInventoryController {
           msg: "Server Error!. Please check logs."
         };
       });
+
+      // create entry for user update
+      await this.addProductionInventoryUpdate(inventoryProductPackage.productPackageId, qty, session);
 
       return {
         status: true,
@@ -76,11 +81,33 @@ export class ProductionInventoryController {
         };
       });
 
+      // create entry for user update
+      await this.addProductionInventoryUpdate(inventoryProductPackage.productPackageId, qty, session);
+
       return {
         status: true,
         msg: "Product packages has been added to the inventory!."
       }
     }
+
+  }
+
+  private static async addProductionInventoryUpdate(productPackageId, qty, session) {
+    // update production inventory updates
+    const productionInventoryUpdate = new ProductionInventoryUpdate();
+    productionInventoryUpdate.employeeId = session.data.employeeId;
+    productionInventoryUpdate.productPackageId = productPackageId;
+    productionInventoryUpdate.qty = qty;
+    productionInventoryUpdate.addedDate = moment().format("YYYY-MM-DD");
+
+    await getRepository(ProductionInventoryUpdate).save(productionInventoryUpdate).catch(e => {
+      console.log(e.code, e);
+      throw {
+        status: false,
+        type: "server",
+        msg: "Server Error!. Please check logs."
+      };
+    });
   }
 
   // search entires in the db
