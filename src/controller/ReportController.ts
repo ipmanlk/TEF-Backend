@@ -7,8 +7,8 @@ export class ReportController {
   static async getSales({ start, end, type }) {
     let query;
 
-    const startDate = moment(start).format("YYYY-MM-DD");
-    const endDate = moment(end).format("YYYY-MM-DD");
+    let startDate = moment(start).format("YYYY-MM-DD");
+    let endDate = moment(end).format("YYYY-MM-DD");
 
     switch (type) {
       case "today":
@@ -48,13 +48,14 @@ export class ReportController {
         `;
         break;
       case "month":
+        endDate = moment(end).add(1, "month").format("YYYY-MM-DD");
         query = `
         SELECT DATE(DATE_FORMAT(added_date, '%Y-%m-01')) AS month_beginning,
          SUM(net_total) AS net_total,
          SUM(payed_amount) AS payed_amount,
          COUNT(*) AS transactions
         FROM customer_invoice
-        WHERE added_date >= "${startDate}" AND added_date <= "${endDate}"
+        WHERE added_date >= "${startDate}" AND added_date < "${endDate}"
         GROUP BY DATE(DATE_FORMAT(added_date, '%Y-%m-01'))
         ORDER BY DATE(DATE_FORMAT(added_date, '%Y-%m-01'))
         `;
@@ -72,6 +73,7 @@ export class ReportController {
       //     `;
       //   break;
       case "year":
+        endDate = moment(end).add(1, "year").format("YYYY-MM-DD");
         query = `
         SELECT YEAR(added_date) as year,
 	        SUM(net_total) AS net_total,
