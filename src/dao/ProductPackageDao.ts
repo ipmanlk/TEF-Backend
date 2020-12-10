@@ -1,5 +1,7 @@
 import { getRepository } from "typeorm";
 import { ProductPackage } from "../entity/ProductPackage";
+import { ProductionInventory } from "../entity/ProductionInventory";
+import { ProductionInventoryStatus } from "../entity/ProductionInventoryStatus";
 
 export class ProductPackageDao {
 	static search({ keyword = "", skip = 0, limit = 15 }) {
@@ -35,5 +37,23 @@ export class ProductPackageDao {
 				.getMany()
 		}
 
+	}
+
+	static async updateInventoryStatuses() {
+		// get all product packages
+		const productPkgs = await getRepository(ProductPackage).find();
+		const lowStatus = await getRepository(ProductionInventoryStatus).findOne({ where: { name: "Low" } });
+
+		// update inventory statuses based on rop
+		for (let pkg of productPkgs) {
+			const inventoryProductPkg = await getRepository(ProductionInventory).findOne({ where: { productPackageId: pkg.id } });
+
+			if (inventoryProductPkg.availableQty < pkg.rop) {
+
+				// update status to low
+				inventoryProductPkg.productionInventoryStatus = lowStatus;
+				await getRepository(ProductionInventory).save(inventoryProductPkg);
+			}
+		}
 	}
 }

@@ -1,5 +1,7 @@
 import { getRepository } from "typeorm";
 import { MaterialInventory } from "../entity/MaterialInventory";
+import { MaterialInventoryStatus } from "../entity/MaterialInventoryStatus";
+import { Material } from "../entity/Material";
 
 export class MaterialInventoryDao {
   static search({ keyword = "", skip = 0, limit = 15 }) {
@@ -25,6 +27,23 @@ export class MaterialInventoryDao {
         .addSelect(["m.id", "m.code", "m.name"])
         .leftJoinAndSelect("m.unitType", "ut")
         .getMany()
+    }
+  }
+
+  static async updateInventoryStatuses() {
+    // get all materials
+    const materials = await getRepository(Material).find();
+    const lowStatus = await getRepository(MaterialInventoryStatus).findOne({ where: { name: "Low" } });
+
+    // update inventory based on rop
+    for (let material of materials) {
+      const inventoryMaterial = await getRepository(MaterialInventory).findOne({ where: { materialId: material.id } });
+
+      if (parseFloat(inventoryMaterial.availableQty) < material.rop) {
+        // update status to low
+        inventoryMaterial.materialInventoryStatus = lowStatus;
+        await getRepository(MaterialInventory).save(inventoryMaterial);
+      }
     }
   }
 }
