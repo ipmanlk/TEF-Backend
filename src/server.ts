@@ -50,7 +50,8 @@ import {
    CustomerInvoiceController,
    ProductionOrderController,
    ProductionInventoryController,
-   ReportController
+   ReportController,
+   SummeryController
 } from "./controller";
 
 /* 
@@ -914,23 +915,19 @@ app.route("/api/production_inventory")
 
 // Routes: Reports
 app.route("/api/reports/sales")
-   // .all((req, res, next) => {
-   //    isAuthorized(req, false, "PRODUCTION_INVENTORY").then(() => {
-   //       next();
-   //    }).catch(e => sendErrors(res, e));
-   // })
-
    .get((req, res) => {
       ReportController.getSales(req.query.data)
          .then(r => res.json(r))
          .catch(e => sendErrors(res, e));
    })
 
-// .post((req, res) => {
-//    ProductionInventoryController.save(req.body.data, req.session)
-//       .then(r => res.json(r))
-//       .catch(e => sendErrors(res, e));
-// });
+// Routes: Summery
+app.route("/api/summery/dashboard")
+   .get((req, res) => {
+      SummeryController.getDashboardSummery()
+         .then(r => res.json(r))
+         .catch(e => sendErrors(res, e));
+   })
 
 
 // Routes: Misc Routes
