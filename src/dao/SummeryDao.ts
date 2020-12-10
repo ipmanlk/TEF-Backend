@@ -8,6 +8,7 @@ import { MaterialInventoryDao } from "../dao/MaterialInventoryDao";
 import { ProductPackageDao } from "../dao/ProductPackageDao";
 
 export class SummeryDao {
+  private static readonly today = moment().format("YYYY-MM-DD");
   private static readonly prevYearStart = moment().subtract(1, "years").startOf("year").format("YYYY-MM-DD");
   private static readonly nextYearEnd = moment().add(1, "years").endOf("year").format("YYYY-MM-DD");
 
@@ -37,8 +38,21 @@ export class SummeryDao {
     return getRepository(CustomerOrder)
       .createQueryBuilder("co")
       .leftJoin("co.customer", "c")
-      .select(["co.id", "co.cocode", "co.requiredDate", "co.addedDate", "c.id", "c.number"])
-      .where("co.addedDate >= :start AND co.addedDate <= :end", { start: this.prevYearStart, end: this.nextYearEnd })
+      .leftJoin("co.customerOrderStatus", "cos")
+      .select(["co.id", "co.cocode", "co.requiredDate", "co.addedDate", "c.id", "c.number", "c.customerName"])
+      .where("co.requiredDate >= :start AND co.requiredDate <= :end", { start: this.prevYearStart, end: this.nextYearEnd })
+      .andWhere("cos.name = :status", { status: "Active" })
+      .getMany()
+  }
+
+  static async getUpcomingCustomerOrders() {
+    return getRepository(CustomerOrder)
+      .createQueryBuilder("co")
+      .leftJoin("co.customer", "c")
+      .leftJoin("co.customerOrderStatus", "cos")
+      .select(["co.id", "co.cocode", "co.requiredDate", "co.addedDate", "c.id", "c.number", "c.customerName"])
+      .where("co.requiredDate >= :start AND co.requiredDate <= :end", { start: this.today, end: this.nextYearEnd })
+      .andWhere("cos.name = :status", { status: "Active" })
       .getMany()
   }
 
@@ -46,8 +60,8 @@ export class SummeryDao {
     return getRepository(CustomerInvoice)
       .createQueryBuilder("ci")
       .leftJoin("ci.customerPaymentMethod", "pm")
-      .select(["ci.id", "ci.chequeNo", "ci.chequeDate", "ci.addedDate"])
-      .where("ci.addedDate >= :start AND ci.addedDate <= :end", { start: this.prevYearStart, end: this.nextYearEnd })
+      .select(["ci.id", "ci.code", "ci.chequeNo", "ci.chequeDate", "ci.addedDate"])
+      .where("ci.chequeDate >= :start AND ci.chequeDate <= :end", { start: this.prevYearStart, end: this.nextYearEnd })
       .andWhere("pm.name = :method", { method: "Cheque" })
       .getMany()
   }

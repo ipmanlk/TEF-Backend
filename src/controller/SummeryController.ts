@@ -7,10 +7,13 @@ export class SummeryController {
     try {
       return {
         status: true,
-        lowMaterials: await SummeryDao.getLowMaterials(),
-        lowProductPackages: await SummeryDao.getLowProductPkgs(),
-        cheques: await SummeryDao.getCheques(),
-        customerOrders: await SummeryDao.getCustomerOrders()
+        data: {
+          lowMaterials: await SummeryDao.getLowMaterials(),
+          lowProductPackages: await SummeryDao.getLowProductPkgs(),
+          cheques: await SummeryDao.getCheques(),
+          upcomingCustomerOrders: await SummeryDao.getUpcomingCustomerOrders(),
+          customerOrders: await SummeryDao.getCustomerOrders()
+        }
       }
 
     } catch (e) {
