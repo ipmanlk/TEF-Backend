@@ -7,7 +7,12 @@ export class SupplierPaymentDao {
 			.createQueryBuilder("sp")
 			.leftJoinAndSelect("sp.grn", "grn")
 			.select([
-				"sp.id", "sp.pnumber", "sp.payAmount", "grn.id", "grn.grncode", "sp.addedDate"
+				"sp.id",
+				"sp.pnumber",
+				"sp.payAmount",
+				"grn.id",
+				"grn.grncode",
+				"sp.addedDate",
 			])
 			.leftJoinAndSelect("sp.supplierPaymentMethod", "spm")
 			.leftJoinAndSelect("sp.supplierPaymentStatus", "sps")
@@ -16,11 +21,11 @@ export class SupplierPaymentDao {
 			.orWhere("grn.grncode LIKE :keyword", { keyword: `%${keyword}%` })
 			.orWhere("spm.name LIKE :keyword", { keyword: `%${keyword}%` })
 			.orWhere("sps.name LIKE :keyword", { keyword: `%${keyword}%` })
+			.orderBy("sp.pnumber", "DESC")
 			.skip(skip)
 			.take(15)
-			.getMany()
+			.getMany();
 	}
-
 
 	static getOne(id) {
 		return getRepository(SupplierPayment)
@@ -35,6 +40,6 @@ export class SupplierPaymentDao {
 			.leftJoinAndSelect("sp.supplierPaymentStatus", "sps")
 			.addSelect(["emp.id", "emp.number", "emp.callingName"])
 			.where("sp.id = :keyword", { keyword: id })
-			.getOne()
+			.getOne();
 	}
 }
