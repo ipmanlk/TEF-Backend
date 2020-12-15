@@ -11,9 +11,9 @@
         "base64": true
     },
     {
-        "regex": "^PRO[\\d]{9}$",
-        "attribute": "productCode",
-        "error": "Please provide a valid product code!."
+        "regex": "^[\\d]+$",
+        "attribute": "productId",
+        "error": "Please provide a valid product id!."
     },
     {
         "regex": "^[\\d]{1,9}\\.[\\d]{2}$",

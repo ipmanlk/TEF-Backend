@@ -8,316 +8,288 @@ import { ValidationUtil } from "../util/ValidationUtil";
 import { MiscUtil } from "../util/MiscUtil";
 
 export class ProductPackageController {
+	static async get(data) {
+		if (data !== undefined && data.id) {
+			return this.getOne(data);
+		} else {
+			return this.search(data);
+		}
+	}
 
-    static async get(data) {
-        if (data !== undefined && data.id) {
-            return this.getOne(data);
-        } else {
-            return this.search(data);
-        }
-    }
+	private static async getOne({ id }) {
+		try {
+			// search for an entry with given id
+			const entry = await getRepository(ProductPackage).findOne({
+				where: { id: id },
+				relations: ["product"],
+			});
 
-    private static async getOne({ id }) {
+			// get production inventory pkg info
+			const productionInventoryEntry = await getRepository(
+				ProductionInventory
+			).findOne({ where: { productPackageId: entry.id } });
 
-        try {
-            // search for an entry with given id
-            const entry = await getRepository(ProductPackage).findOne({
-                where: { id: id },
-                relations: ["product"]
-            });
+			// add available qty to entry
+			entry["availableQty"] = productionInventoryEntry
+				? productionInventoryEntry.availableQty
+				: 0;
 
-            // get production inventory pkg info
-            const productionInventoryEntry = await getRepository(ProductionInventory).findOne({ where: { productPackageId: entry.id } })
+			// remove useless attributes
+			entry["productCode"] = entry.product.code;
+			delete entry.product;
 
-            // add available qty to entry
-            entry["availableQty"] = productionInventoryEntry ? productionInventoryEntry.availableQty : 0;
+			return {
+				status: true,
+				data: entry,
+			};
+		} catch (e) {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		}
+	}
 
-            // remove useless attributes
-            entry["productCode"] = entry.product.code;
-            delete entry.product;
+	private static async search(data = {}) {
+		const entries = await ProductPackageDao.search(data).catch((e) => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		});
 
-            return {
-                status: true,
-                data: entry
-            };
-        } catch (e) {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            };
-        }
+		return {
+			status: true,
+			data: entries,
+		};
+	}
 
-    }
+	static async save(data) {
+		// check if valid data is given
+		await ValidationUtil.validate("PRODUCT_PACKAGE", data);
 
-    private static async search(data = {}) {
-        const entries = await ProductPackageDao.search(data).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
+		// extract photo
+		const { photo } = data;
 
-        return {
-            status: true,
-            data: entries
-        };
-    }
+		// parse data
+		const productPkg = data as ProductPackage;
 
-    static async save(data) {
-        // check if valid data is given
-        await ValidationUtil.validate("PRODUCT_PACKAGE", data);
+		// calculate photo size in kb
+		if (photo.length > 689339) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Your photo should be smaller than 500KB.",
+			};
+		}
 
-        // check if product exists with given product code
-        const product = await getRepository(Product).findOne({ code: data.productCode }).catch(e => {
-            console.log(e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        })
+		// read photo as buffer
+		const decodedBase64 = MiscUtil.decodeBase64Image(photo);
+		productPkg.photo = decodedBase64.data;
 
-        if (!product) throw {
-            status: false,
-            type: "input",
-            msg: "Product doesn't exist for the given product code."
-        }
+		// generate product pkg code
+		const lastEntry = await getRepository(ProductPackage).findOne({
+			select: ["id", "code"],
+			order: { id: "DESC" },
+		});
 
-        // extract photo
-        const { photo } = data;
+		// set code for new product pkg
+		if (lastEntry) {
+			productPkg.code = MiscUtil.getNextNumber("PKG", lastEntry.code, 5);
+		} else {
+			productPkg.code = MiscUtil.getNextNumber("PKG", undefined, 5);
+		}
 
-        // parse data
-        const productPkg = data as ProductPackage;
+		// save to db
+		try {
+			const newProductPkg = await getRepository(ProductPackage).save(
+				productPkg
+			);
+			return {
+				status: true,
+				data: { code: newProductPkg.code },
+				msg: "That product has been added!",
+			};
+		} catch (e) {
+			console.log(e);
 
-        // calculate photo size in kb
-        if (photo.length > 689339) {
-            throw {
-                status: false,
-                type: "input",
-                msg: "Your photo should be smaller than 500KB."
-            }
-        }
+			if (e.code == "ER_DUP_ENTRY") {
+				const msg = await this.getDuplicateErrorMsg(e, productPkg);
+				throw {
+					status: false,
+					type: "input",
+					msg: msg,
+				};
+			}
 
-        // read photo as buffer
-        const decodedBase64 = MiscUtil.decodeBase64Image(photo);
-        productPkg.photo = decodedBase64.data;
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		}
+	}
 
-        // set product id
-        productPkg.product = product;
+	static async update(data) {
+		// check if product pkg is present with the given id
+		const selectedProductPkg = await getRepository(ProductPackage)
+			.findOne(data.id)
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-        // generate product pkg code
-        const lastEntry = await getRepository(ProductPackage).findOne({
-            select: ["id", "code"],
-            order: { id: "DESC" }
-        });
+		if (!selectedProductPkg) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Product package with that id doesn't exist!.",
+			};
+		}
 
-        // set code for new product pkg
-        if (lastEntry) {
-            productPkg.code = MiscUtil.getNextNumber("PKG", lastEntry.code, 5);
-        } else {
-            productPkg.code = MiscUtil.getNextNumber("PKG", undefined, 5);
-        }
+		// create product pkg object
+		const editedProductPkg = data as ProductPackage;
 
-        // save to db
-        try {
-            const newProductPkg = await getRepository(ProductPackage).save(productPkg);
-            return {
-                status: true,
-                data: { code: newProductPkg.code },
-                msg: "That product has been added!"
-            }
-        } catch (e) {
-            console.log(e);
+		// check if photo has changed
+		if (data.photo == false) {
+			editedProductPkg.photo = selectedProductPkg.photo;
+		} else {
+			// calculate photo size in kb
+			if (data.photo.length > 689339) {
+				throw {
+					status: false,
+					type: "input",
+					msg: "Your photo should be smaller than 500KB.",
+				};
+			}
 
-            if (e.code == "ER_DUP_ENTRY") {
-                const msg = await this.getDuplicateErrorMsg(e, productPkg)
-                throw {
-                    status: false,
-                    type: "input",
-                    msg: msg
-                }
-            }
+			// read photo as buffer
+			const decodedBase64 = MiscUtil.decodeBase64Image(data.photo);
+			editedProductPkg.photo = decodedBase64.data;
+		}
 
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        }
-    }
+		// check if valid data is given
+		await ValidationUtil.validate("PRODUCT_PACKAGE", editedProductPkg);
 
-    static async update(data) {
+		try {
+			await getRepository(ProductPackage).save(editedProductPkg);
 
-        // check if product pkg is present with the given id
-        const selectedProductPkg = await getRepository(ProductPackage).findOne(data.id).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
+			return {
+				status: true,
+				msg: "That product package has been updated!",
+			};
+		} catch (e) {
+			if (e.code == "ER_DUP_ENTRY") {
+				const msg = await this.getDuplicateErrorMsg(e, editedProductPkg);
+				throw {
+					status: false,
+					type: "input",
+					msg: msg,
+				};
+			}
 
-        if (!selectedProductPkg) {
-            throw {
-                status: false,
-                type: "input",
-                msg: "Product package with that id doesn't exist!."
-            }
-        }
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		}
+	}
 
-        // check if product is present with the given code
-        const product = await getRepository(Product).findOne({ code: data.productCode }).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
+	static async delete({ id }) {
+		// find entry with the given id
+		const entry = await getRepository(ProductPackage)
+			.findOne({ id: id })
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-        if (!product) {
-            throw {
-                status: false,
-                type: "input",
-                msg: "Product with that code doesn't exist!."
-            }
-        }
+		if (!entry) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "That entry doesn't exist in our database!.",
+			};
+		}
 
-        // create product pkg object
-        const editedProductPkg = data as ProductPackage;
+		// find deleted status
+		const deletedStatus = await getRepository(ProductPackageStatus)
+			.findOne({ name: "Deleted" })
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-        // check if photo has changed
-        if (data.photo == false) {
-            editedProductPkg.photo = selectedProductPkg.photo;
+		// if there is no status called deleted
+		if (!deletedStatus) {
+			throw {
+				status: false,
+				type: "server",
+				msg: "Deleted status doesn't exist in the database!.",
+			};
+		}
 
-        } else {
-            // calculate photo size in kb
-            if (data.photo.length > 689339) {
-                throw {
-                    status: false,
-                    type: "input",
-                    msg: "Your photo should be smaller than 500KB."
-                }
-            }
+		// set status to delete
+		entry.productPackageStatus = deletedStatus;
 
-            // read photo as buffer
-            const decodedBase64 = MiscUtil.decodeBase64Image(data.photo);
-            editedProductPkg.photo = decodedBase64.data;
-        }
+		await getRepository(ProductPackage)
+			.save(entry)
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-        // check if valid data is given
-        await ValidationUtil.validate("PRODUCT_PACKAGE", editedProductPkg);
+		return {
+			status: true,
+			msg: "That product package has been deleted!",
+		};
+	}
 
+	private static async getDuplicateErrorMsg(error, productPkg: ProductPackage) {
+		// check if which unique field is violated
+		let msg, field, duplicateEntry;
 
-        try {
-            await getRepository(ProductPackage).save(editedProductPkg);
+		if (error.sqlMessage.includes("code_UNIQUE")) {
+			field = "code";
+			msg = "Product package code already exists!";
+		}
 
-            return {
-                status: true,
-                msg: "That product package has been updated!"
-            }
+		// get duplicated entry
+		duplicateEntry = await getRepository(ProductPackage)
+			.findOne({
+				select: ["id", "code"],
+				where: { field: productPkg[field] },
+			})
+			.catch((e) => {
+				console.log(e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-        } catch (e) {
-            if (e.code == "ER_DUP_ENTRY") {
-                const msg = await this.getDuplicateErrorMsg(e, editedProductPkg)
-                throw {
-                    status: false,
-                    type: "input",
-                    msg: msg
-                }
-            }
-
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        }
-    }
-
-    static async delete({ id }) {
-        // find entry with the given id
-        const entry = await getRepository(ProductPackage).findOne({ id: id }).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
-
-        if (!entry) {
-            throw {
-                status: false,
-                type: "input",
-                msg: "That entry doesn't exist in our database!."
-            }
-        }
-
-        // find deleted status
-        const deletedStatus = await getRepository(ProductPackageStatus).findOne({ name: "Deleted" }).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
-
-        // if there is no status called deleted
-        if (!deletedStatus) {
-            throw {
-                status: false,
-                type: "server",
-                msg: "Deleted status doesn't exist in the database!."
-            }
-        }
-
-        // set status to delete
-        entry.productPackageStatus = deletedStatus;
-
-        await getRepository(ProductPackage).save(entry).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
-
-        return {
-            status: true,
-            msg: "That product package has been deleted!"
-        };
-    }
-
-    private static async getDuplicateErrorMsg(error, productPkg: ProductPackage) {
-        // check if which unique field is violated
-        let msg, field, duplicateEntry;
-
-        if (error.sqlMessage.includes("code_UNIQUE")) {
-            field = "code";
-            msg = "Product package code already exists!"
-        }
-
-        // get duplicated entry
-        duplicateEntry = await getRepository(ProductPackage).findOne({
-            select: ["id", "code"],
-            where: { field: productPkg[field] }
-        }).catch(e => {
-            console.log(e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            }
-        });
-
-        return `Product package (code: ${duplicateEntry.code}) with the same ${msg}`;
-    }
+		return `Product package (code: ${duplicateEntry.code}) with the same ${msg}`;
+	}
 }
