@@ -8,102 +8,158 @@ export class ReportController {
 	 */
 
 	static async getSalesReport({ start, end, type }) {
-		let query;
-
 		let startDate = moment(start).format("YYYY-MM-DD");
-		let endDate = moment(end).format("YYYY-MM-DD");
+		let endDate;
+
+		// change end to get data inclusively (with end)
+		if (type == "month") {
+			endDate = moment(end)
+				.add(1, "months")
+				.subtract(1, "days")
+				.format("YYYY-MM-DD");
+		} else if (type == "year") {
+			endDate = moment(end)
+				.add(1, "years")
+				.subtract(1, "days")
+				.format("YYYY-MM-DD");
+		} else {
+			endDate = moment(end).format("YYYY-MM-DD");
+		}
+
+		// get invoices between given time frame
+		const invoices = await getRepository(CustomerInvoice)
+			.createQueryBuilder("ci")
+			.where("ci.addedDate >= :start AND ci.addedDate <= :end", {
+				start: startDate,
+				end: endDate,
+			})
+			.getMany();
+
+		// used within switch case for startDate and endDate
+		let stDate, edDate;
+
+		let responseData;
 
 		switch (type) {
 			case "today":
-				query = `
-        SELECT DATE(added_date) AS sales_date,
-         SUM(net_total) AS net_total,
-         SUM(payed_amount) AS payed_amount,
-         COUNT(*) AS transactions
-        FROM customer_invoice
-        WHERE added_date = "${startDate}"
-        GROUP BY DATE(added_date)
-        ORDER BY DATE(added_date)
-        `;
+				const todayGroup = {};
+
+				invoices.forEach((i) => {
+					const date = i.addedDate;
+					if (todayGroup[date]) {
+						todayGroup[date].transactions++;
+						todayGroup[date].payedAmount += parseFloat(i.payedAmount);
+						todayGroup[date].netTotal += parseFloat(i.netTotal);
+					} else {
+						todayGroup[date] = {
+							transactions: 1,
+							payedAmount: parseFloat(i.payedAmount),
+							netTotal: parseFloat(i.netTotal),
+						};
+					}
+				});
+
+				responseData = todayGroup;
 				break;
+
 			case "day":
-				query = `
-        SELECT DATE(added_date) AS sales_date,
-         SUM(net_total) AS net_total,
-         SUM(payed_amount) AS payed_amount,
-         COUNT(*) AS transactions
-        FROM customer_invoice
-        WHERE added_date >= "${startDate}" AND added_date <= "${endDate}"
-        GROUP BY DATE(added_date)
-        ORDER BY DATE(added_date)
-        `;
+				const dayGroups = {};
+				// add all days in duration (even no sale days should be present)
+				stDate = startDate;
+				edDate = endDate;
+
+				while (stDate !== edDate) {
+					dayGroups[stDate] = null;
+					stDate = moment(stDate).add("1", "days").format("YYYY-MM-DD");
+				}
+
+				// fill with data
+				invoices.forEach((i) => {
+					const date = i.addedDate;
+					if (dayGroups[date]) {
+						dayGroups[date].transactions++;
+						dayGroups[date].payedAmount += parseFloat(i.payedAmount);
+						dayGroups[date].netTotal += parseFloat(i.netTotal);
+					} else {
+						dayGroups[date] = {
+							transactions: 1,
+							payedAmount: parseFloat(i.payedAmount),
+							netTotal: parseFloat(i.netTotal),
+						};
+					}
+				});
+
+				responseData = dayGroups;
 				break;
-			case "week":
-				query = `
-        SELECT FROM_DAYS(TO_DAYS(added_date) -MOD(TO_DAYS(added_date) -1, 7)) AS week_beginning,
-        SUM(net_total) AS net_total,
-         SUM(payed_amount) AS payed_amount,
-         COUNT(*) AS transactions
-        FROM customer_invoice
-        WHERE added_date >= "${startDate}" AND added_date <= "${endDate}"
-        GROUP BY FROM_DAYS(TO_DAYS(added_date) -MOD(TO_DAYS(added_date) -1, 7))
-        ORDER BY FROM_DAYS(TO_DAYS(added_date) -MOD(TO_DAYS(added_date) -1, 7))
-        `;
-				break;
+
 			case "month":
-				endDate = moment(end).add(1, "month").format("YYYY-MM-DD");
-				query = `
-        SELECT DATE(DATE_FORMAT(added_date, '%Y-%m-01')) AS month_beginning,
-         SUM(net_total) AS net_total,
-         SUM(payed_amount) AS payed_amount,
-         COUNT(*) AS transactions
-        FROM customer_invoice
-        WHERE added_date >= "${startDate}" AND added_date < "${endDate}"
-        GROUP BY DATE(DATE_FORMAT(added_date, '%Y-%m-01'))
-        ORDER BY DATE(DATE_FORMAT(added_date, '%Y-%m-01'))
-        `;
+				const monthGroups = {};
+				// add all months in duration (even no sale days should be present)
+				stDate = moment(startDate).format("YYYY-MM");
+				edDate = moment(endDate).add("1", "months").format("YYYY-MM");
+
+				while (stDate !== edDate) {
+					monthGroups[stDate] = null;
+					stDate = moment(stDate).add("1", "months").format("YYYY-MM");
+				}
+
+				// fill with data
+				invoices.forEach((i) => {
+					const date = moment(i.addedDate).format("YYYY-MM");
+					if (monthGroups[date]) {
+						monthGroups[date].transactions++;
+						monthGroups[date].payedAmount += parseFloat(i.payedAmount);
+						monthGroups[date].netTotal += parseFloat(i.netTotal);
+					} else {
+						monthGroups[date] = {
+							transactions: 1,
+							payedAmount: parseFloat(i.payedAmount),
+							netTotal: parseFloat(i.netTotal),
+						};
+					}
+				});
+
+				responseData = monthGroups;
 				break;
-			// case "quarter":
-			//   query = `
-			//   SELECT DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01')) AS quarter_beginning,
-			//     SUM(net_total) AS net_total,
-			//     SUM(payed_amount) AS payed_amount,
-			//     COUNT(*) AS transactions
-			//   FROM customer_invoice
-			//   WHERE added_date >= "${startDate}" AND added_date <= "${endDate}"
-			//   GROUP BY DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01'))
-			//   ORDER BY DATE(CONCAT(YEAR(added_date),'-', 1 + 3*(QUARTER(added_date)-1),'-01'))
-			//     `;
-			//   break;
+
 			case "year":
-				endDate = moment(end).add(1, "year").format("YYYY-MM-DD");
-				query = `
-        SELECT YEAR(added_date) as year,
-	        SUM(net_total) AS net_total,
-          SUM(payed_amount) AS payed_amount,
-          COUNT(*) AS transactions
-          FROM customer_invoice
-          WHERE added_date >= "${startDate}" AND added_date <= "${endDate}"
-          GROUP BY YEAR(added_date)
-      `;
+				const yearGroups = {};
+				// add all years in duration (even no sale days should be present)
+				stDate = moment(startDate).format("YYYY");
+				edDate = moment(endDate).format("YYYY");
+
+				while (stDate !== edDate) {
+					yearGroups[stDate] = null;
+					stDate = moment(stDate).add(1, "years").format("YYYY");
+				}
+
+				// fill with data
+				invoices.forEach((i) => {
+					const year = moment(i.addedDate).format("YYYY");
+					if (yearGroups[year]) {
+						yearGroups[year].transactions++;
+						yearGroups[year].payedAmount += parseFloat(i.payedAmount);
+						yearGroups[year].netTotal += parseFloat(i.netTotal);
+					} else {
+						yearGroups[year] = {
+							transactions: 1,
+							payedAmount: parseFloat(i.payedAmount),
+							netTotal: parseFloat(i.netTotal),
+						};
+					}
+				});
+
+				responseData = yearGroups;
+				break;
+
 			default:
+				responseData = {};
 				break;
 		}
 
-		const rawResults = await getRepository(CustomerInvoice)
-			.query(query)
-			.catch((e) => {
-				console.log(e.code, e);
-				throw {
-					status: false,
-					type: "server",
-					msg: "Server Error!. Please check logs.",
-				};
-			});
-
 		return {
 			status: true,
-			data: rawResults,
+			data: responseData,
 		};
 	}
 
@@ -216,7 +272,7 @@ export class ReportController {
 				break;
 
 			default:
-				responseData = [];
+				responseData = {};
 				break;
 		}
 
