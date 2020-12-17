@@ -33,6 +33,7 @@ export class ReportController {
 				start: startDate,
 				end: endDate,
 			})
+			.orderBy("ci.addedDate", "ASC")
 			.getMany();
 
 		// used within switch case for startDate and endDate
@@ -167,6 +168,21 @@ export class ReportController {
 		let startDate = moment(start).format("YYYY-MM-DD");
 		let endDate = moment(end).format("YYYY-MM-DD");
 
+		// change end to get data inclusively (with end)
+		if (type == "month") {
+			endDate = moment(end)
+				.add(1, "months")
+				.subtract(1, "days")
+				.format("YYYY-MM-DD");
+		} else if (type == "year") {
+			endDate = moment(end)
+				.add(1, "years")
+				.subtract(1, "days")
+				.format("YYYY-MM-DD");
+		} else {
+			endDate = moment(end).format("YYYY-MM-DD");
+		}
+
 		// get invoices with product pkgs between given time frame
 		const invoices = await getRepository(CustomerInvoice)
 			.createQueryBuilder("ci")
@@ -178,6 +194,7 @@ export class ReportController {
 				start: startDate,
 				end: endDate,
 			})
+			.orderBy("ci.addedDate", "ASC")
 			.getMany();
 
 		// store requested product pkg amounts
