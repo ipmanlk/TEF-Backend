@@ -97,6 +97,9 @@ export class ProductionInventoryController {
 				session
 			);
 
+			// update production inventory status
+			await ProductionInventoryDao.updateInventoryStatuses();
+
 			return {
 				status: true,
 				msg: "Product packages has been added to the inventory!.",

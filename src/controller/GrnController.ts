@@ -10,308 +10,337 @@ import { QuotationRequestMaterial } from "../entity/QuotationRequestMaterial";
 import { Supplier } from "../entity/Supplier";
 import { MiscUtil } from "../util/MiscUtil";
 import { Quotation } from "../entity/Quotation";
+import { MaterialInventoryDao } from "../dao/MaterialInventoryDao";
 
 export class GrnController {
+	static async get(data) {
+		if (data !== undefined && data.id) {
+			return this.getOne(data);
+		} else {
+			return this.search(data);
+		}
+	}
 
-  static async get(data) {
-    if (data !== undefined && data.id) {
-      return this.getOne(data);
-    } else {
-      return this.search(data);
-    }
-  }
+	private static async getOne({ id }) {
+		// search for an entry with given id
+		const entry = await GrnDao.getOne(id).catch((e) => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		});
 
-  private static async getOne({ id }) {
-    // search for an entry with given id
-    const entry = await GrnDao.getOne(id).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      };
-    });
+		// check if entry exists
+		if (entry !== undefined) {
+			// remove useless elements
+			entry[
+				"createdEmployee"
+			] = `${entry.employee.callingName} (${entry.employee.number})`;
+			delete entry.employee;
 
-    // check if entry exists
-    if (entry !== undefined) {
-      // remove useless elements
-      entry["createdEmployee"] = `${entry.employee.callingName} (${entry.employee.number})`;
-      delete entry.employee;
+			return {
+				status: true,
+				data: entry,
+			};
+		} else {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Unable to find an entry with that id.",
+			};
+		}
+	}
 
-      return {
-        status: true,
-        data: entry
-      };
-    } else {
-      throw {
-        status: false,
-        type: "input",
-        msg: "Unable to find an entry with that id."
-      };
-    }
-  }
+	private static async search(data = {}) {
+		const entries = await GrnDao.search(data).catch((e) => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		});
 
-  private static async search(data = {}) {
-    const entries = await GrnDao.search(data).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
+		return {
+			status: true,
+			data: entries,
+		};
+	}
 
-    return {
-      status: true,
-      data: entries
-    };
-  }
+	static async save(data, session) {
+		// create grn code
+		const lastEntry = await getRepository(Grn).findOne({
+			select: ["id", "grncode"],
+			order: { id: "DESC" },
+		});
 
-  static async save(data, session) {
+		if (lastEntry) {
+			data.grncode = MiscUtil.getNextNumber("GRN", lastEntry.grncode, 5);
+		} else {
+			data.grncode = MiscUtil.getNextNumber("GRN", undefined, 5);
+		}
 
-    // create grn code
-    const lastEntry = await getRepository(Grn).findOne({
-      select: ["id", "grncode"],
-      order: { id: "DESC" }
-    });
+		// create a grn object
+		const grn = data as Grn;
 
-    if (lastEntry) {
-      data.grncode = MiscUtil.getNextNumber("GRN", lastEntry.grncode, 5);
-    } else {
-      data.grncode = MiscUtil.getNextNumber("GRN", undefined, 5);
-    }
+		// set created employee
+		grn.employeeId = session.data.employeeId;
 
-    // create a grn object
-    const grn = data as Grn;
+		try {
+			// save entry
+			const entry = await getRepository(Grn).save(grn);
 
-    // set created employee
-    grn.employeeId = session.data.employeeId;
+			// set empty array for grn materials
+			const grnMaterials = [];
 
+			for (let gm of data.grnMaterials) {
+				const grnMaterial = new GrnMaterial();
+				grnMaterial.grnId = entry.id;
+				grnMaterial.materialId = gm.materialId;
+				grnMaterial.purchasePrice = gm.purchasePrice;
+				grnMaterial.receivedQty = gm.receivedQty;
+				grnMaterial.lineTotal = gm.lineTotal;
+				grnMaterial.unitTypeId = gm.unitTypeId;
+				grnMaterials.push(grnMaterial);
 
-    try {
-      // save entry
-      const entry = await getRepository(Grn).save(grn);
+				// update material inventory
+				const miMaterial = await getRepository(MaterialInventory).findOne({
+					where: { materialId: gm.materialId },
+				});
 
-      // set empty array for grn materials
-      const grnMaterials = [];
+				if (miMaterial) {
+					miMaterial.qty = (
+						parseFloat(miMaterial.qty) + parseFloat(grnMaterial.receivedQty)
+					).toString();
+					miMaterial.availableQty = (
+						parseFloat(miMaterial.availableQty) +
+						parseFloat(grnMaterial.receivedQty)
+					).toString();
 
-      for (let gm of data.grnMaterials) {
-        const grnMaterial = new GrnMaterial();
-        grnMaterial.grnId = entry.id;
-        grnMaterial.materialId = gm.materialId;
-        grnMaterial.purchasePrice = gm.purchasePrice;
-        grnMaterial.receivedQty = gm.receivedQty;
-        grnMaterial.lineTotal = gm.lineTotal;
-        grnMaterial.unitTypeId = gm.unitTypeId;
-        grnMaterials.push(grnMaterial);
+					await getRepository(MaterialInventory).save(miMaterial);
+				} else {
+					const newMiMaterail = new MaterialInventory();
+					newMiMaterail.materialId = grnMaterial.materialId;
+					newMiMaterail.availableQty = grnMaterial.receivedQty;
+					newMiMaterail.qty = grnMaterial.receivedQty;
+					newMiMaterail.materialInventoryStatusId = 1;
 
-        // update material inventory
-        const miMaterial = await getRepository(MaterialInventory).findOne({ where: { materialId: gm.materialId } });
+					await getRepository(MaterialInventory).save(newMiMaterail);
+				}
+			}
 
-        if (miMaterial) {
-          miMaterial.qty = (parseFloat(miMaterial.qty) + parseFloat(grnMaterial.receivedQty)).toString();
-          miMaterial.availableQty = (parseFloat(miMaterial.availableQty) + parseFloat(grnMaterial.receivedQty)).toString();
+			// save grn materials
+			await getRepository(GrnMaterial).save(grnMaterials);
 
-          await getRepository(MaterialInventory).save(miMaterial);
+			// mark purchase order as completed
+			const purchaseOrderCompletedStatus = await getRepository(
+				PurchaseOrderStatus
+			).findOne({ where: { name: "Completed" } });
 
-        } else {
-          const newMiMaterail = new MaterialInventory();
-          newMiMaterail.materialId = grnMaterial.materialId;
-          newMiMaterail.availableQty = grnMaterial.receivedQty;
-          newMiMaterail.qty = grnMaterial.receivedQty;
-          newMiMaterail.materialInventoryStatusId = 1;
+			const purchaseOrder = await getRepository(PurchaseOrder).findOne(
+				entry.purchaseOrderId
+			);
+			purchaseOrder.purchaseOrderStatus = purchaseOrderCompletedStatus;
 
-          await getRepository(MaterialInventory).save(newMiMaterail);
-        }
-      }
+			await getRepository(PurchaseOrder).save(purchaseOrder);
 
-      // save grn materials
-      await getRepository(GrnMaterial).save(grnMaterials);
+			// add to supplier arreas
+			const supplier = await getRepository(Supplier).findOne(data.supplierId);
+			supplier.arrears = (
+				parseFloat(supplier.arrears) + parseFloat(grn.netTotal)
+			).toString();
+			await getRepository(Supplier).save(supplier);
 
-      // mark purchase order as completed
-      const purchaseOrderCompletedStatus = await getRepository(PurchaseOrderStatus).findOne({ where: { name: "Completed" } });
+			// Mark materials in quotation request as received
+			const quotation = await getRepository(Quotation).findOne({
+				where: { id: purchaseOrder.quotationId },
+			});
 
-      const purchaseOrder = await getRepository(PurchaseOrder).findOne(entry.purchaseOrderId);
-      purchaseOrder.purchaseOrderStatus = purchaseOrderCompletedStatus;
+			for (let grnMaterial of grnMaterials) {
+				let quotationRequestMaterial = await getRepository(
+					QuotationRequestMaterial
+				).findOne({
+					where: {
+						quotationRequestId: quotation.quotationRequestId,
+						materialId: grnMaterial.materialId,
+					},
+				});
 
-      await getRepository(PurchaseOrder).save(purchaseOrder);
+				quotationRequestMaterial.received = true;
+				await getRepository(QuotationRequestMaterial).save(
+					quotationRequestMaterial
+				);
+			}
 
-      // add to supplier arreas
-      const supplier = await getRepository(Supplier).findOne(data.supplierId);
-      supplier.arrears = (parseFloat(supplier.arrears) + parseFloat(grn.netTotal)).toString();
-      await getRepository(Supplier).save(supplier);
+			// update inventory
+			await MaterialInventoryDao.updateInventoryStatuses();
 
+			// send success response
+			return {
+				status: true,
+				data: { grncode: entry.grncode },
+				msg: "GRN has been created!",
+			};
+		} catch (e) {
+			console.log(e.code, e);
 
-      // Mark materials in quotation request as received
-      const quotation = await getRepository(Quotation).findOne({
-        where: { id: purchaseOrder.quotationId },
-      })
+			if (e.code == "ER_DUP_ENTRY") {
+				throw {
+					status: false,
+					type: "input",
+					msg: "GRN already exists for the given purchase order!.",
+				};
+			}
 
-      for (let grnMaterial of grnMaterials) {
-        let quotationRequestMaterial = await getRepository(QuotationRequestMaterial).findOne({
-          where: { quotationRequestId: quotation.quotationRequestId, materialId: grnMaterial.materialId }
-        });
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		}
+	}
 
-        quotationRequestMaterial.received = true;
-        await getRepository(QuotationRequestMaterial).save(quotationRequestMaterial);
-      }
+	static async update(data) {
+		// check if an entry is present with given id
+		const selectedEntry = await getRepository(Grn)
+			.findOne(data.id)
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-      // send success response
-      return {
-        status: true,
-        data: { grncode: entry.grncode },
-        msg: "GRN has been created!"
-      };
+		if (!selectedEntry) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "That entry doesn't exist in our database!.",
+			};
+		}
 
-    } catch (e) {
-      console.log(e.code, e);
+		const editedEntry = data as Grn;
 
-      if (e.code == "ER_DUP_ENTRY") {
-        throw {
-          status: false,
-          type: "input",
-          msg: "GRN already exists for the given purchase order!."
-        }
-      }
+		try {
+			// remove existing grn materials
+			await getRepository(GrnMaterial)
+				.createQueryBuilder()
+				.delete()
+				.where("grnId = :id", { id: editedEntry.id })
+				.execute();
 
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    }
-  }
+			// update grn
+			await getRepository(Grn).save(editedEntry);
 
-  static async update(data) {
-    // check if an entry is present with given id
-    const selectedEntry = await getRepository(Grn).findOne(data.id).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
+			// set empty array for grn materials
+			const grnMaterials = [];
 
-    if (!selectedEntry) {
-      throw {
-        status: false,
-        type: "input",
-        msg: "That entry doesn't exist in our database!."
-      }
-    }
+			data.grnMaterials.forEach((gm) => {
+				const grnMaterial = new GrnMaterial();
+				grnMaterial.grnId = editedEntry.id;
+				grnMaterial.materialId = gm.materialId;
+				grnMaterial.purchasePrice = gm.purchasePrice;
+				grnMaterial.receivedQty = gm.receivedQty;
+				grnMaterial.lineTotal = gm.lineTotal;
+				grnMaterial.unitTypeId = gm.unitTypeId;
+				grnMaterials.push(grnMaterial);
+			});
 
-    const editedEntry = data as Grn;
+			// save grn materials
+			await getRepository(GrnMaterial).save(grnMaterials);
+		} catch (e) {
+			console.log(e.code, e);
+			throw e;
+		}
 
-    try {
-      // remove existing grn materials
-      await getRepository(GrnMaterial).createQueryBuilder()
-        .delete()
-        .where("grnId = :id", { id: editedEntry.id })
-        .execute();
+		return {
+			status: true,
+			msg: "GRN has been updated!.",
+		};
+	}
 
-      // update grn
-      await getRepository(Grn).save(editedEntry);
+	static async delete({ id }) {
+		// find entry with the given id
+		const entry = await getRepository(Grn)
+			.findOne({ id: id })
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-      // set empty array for grn materials
-      const grnMaterials = [];
+		if (!entry) {
+			throw {
+				status: false,
+				type: "input",
+				msg: "That entry doesn't exist in our database!.",
+			};
+		}
 
-      data.grnMaterials.forEach(gm => {
-        const grnMaterial = new GrnMaterial();
-        grnMaterial.grnId = editedEntry.id;
-        grnMaterial.materialId = gm.materialId;
-        grnMaterial.purchasePrice = gm.purchasePrice;
-        grnMaterial.receivedQty = gm.receivedQty;
-        grnMaterial.lineTotal = gm.lineTotal;
-        grnMaterial.unitTypeId = gm.unitTypeId;
-        grnMaterials.push(grnMaterial);
-      });
+		// find deleted status
+		const deletedStatus = await getRepository(GrnStatus)
+			.findOne({ name: "Deleted" })
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-      // save grn materials
-      await getRepository(GrnMaterial).save(grnMaterials);
+		// if there is no status called deleted
+		if (!deletedStatus) {
+			throw {
+				status: false,
+				type: "server",
+				msg: "Deleted status doesn't exist in the database!.",
+			};
+		}
 
-    } catch (e) {
-      console.log(e.code, e);
-      throw e;
-    }
+		// set status to delete
+		entry.grnStatus = deletedStatus;
 
-    return {
-      status: true,
-      msg: "GRN has been updated!."
-    }
-  }
+		await getRepository(Grn)
+			.save(entry)
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
-  static async delete({ id }) {
-    // find entry with the given id
-    const entry = await getRepository(Grn).findOne({ id: id }).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
+		return {
+			status: true,
+			msg: "That GRN has been deleted!",
+		};
+	}
 
-    if (!entry) {
-      throw {
-        status: false,
-        type: "input",
-        msg: "That entry doesn't exist in our database!."
-      }
-    }
+	// find grns belong to single supplier
+	static async getSupplierGrns({ supplierId, grnStatusName }) {
+		let entires = await GrnDao.getSupplierGrns(supplierId, grnStatusName).catch(
+			(e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			}
+		);
 
-    // find deleted status
-    const deletedStatus = await getRepository(GrnStatus).findOne({ name: "Deleted" }).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
-
-    // if there is no status called deleted
-    if (!deletedStatus) {
-      throw {
-        status: false,
-        type: "server",
-        msg: "Deleted status doesn't exist in the database!."
-      }
-    }
-
-    // set status to delete
-    entry.grnStatus = deletedStatus;
-
-    await getRepository(Grn).save(entry).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
-
-    return {
-      status: true,
-      msg: "That GRN has been deleted!"
-    };
-  }
-
-  // find grns belong to single supplier
-  static async getSupplierGrns({ supplierId, grnStatusName }) {
-    let entires = await GrnDao.getSupplierGrns(supplierId, grnStatusName).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
-
-    return {
-      data: entires,
-      status: true
-    };
-  }
-
+		return {
+			data: entires,
+			status: true,
+		};
+	}
 }
