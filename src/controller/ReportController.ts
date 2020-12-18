@@ -327,10 +327,7 @@ export class ReportController {
 			endDate = moment(end).format("YYYY-MM-DD");
 		}
 
-		// get how many product pkgs were made during given time period
-		// and what are corresponding products (single items)
-		const productPkgs = {};
-
+		// get production updates happened during given time period
 		const productionUpdates = await getRepository(ProductionInventoryUpdate)
 			.createQueryBuilder("piu")
 			.leftJoin("piu.productPackage", "pkg")
@@ -342,23 +339,10 @@ export class ReportController {
 			.orderBy("piu.addedDate", "ASC")
 			.getMany();
 
-		productionUpdates.forEach((i) => {
-			if (productPkgs[i.productPackageId]) {
-				productPkgs[i.productPackageId]["qty"] += i.qty;
-			} else {
-				productPkgs[i.productPackageId] = {
-					productPackage: i.productPackage,
-					qty: i.qty,
-				};
-			}
-		});
+		// store material analysis data for later use. productId: [] format
+		const materialAnalysisData = {};
 
-		// get how much material cost spent on those product pkgs
-		const materialCosts = {};
-
-		let i: any;
-		for (i of Object.values(productPkgs)) {
-			// get material analysis data for a single product (multiple materials)
+		for (let i of productionUpdates) {
 			const materialAnalysis = await getRepository(MaterialAnalysis)
 				.createQueryBuilder("ma")
 				.leftJoin("ma.material", "mat")
@@ -367,8 +351,50 @@ export class ReportController {
 					productId: i.productPackage.productId,
 				})
 				.getMany();
+			materialAnalysisData[i.productPackage.productId] = materialAnalysis;
+		}
 
-			// add material costs to materialCosts obj
+		/**
+		 * Part 1: Get overall material cost
+		 */
+
+		const materialCosts = {};
+
+		// calculate cost per each material based production inv updates
+		productionUpdates.forEach((i) => {
+			const productId = i.productPackage.productId;
+			const productQty = i.productPackage.pieces;
+
+			const materials = materialAnalysisData[productId];
+
+			materials.forEach((ma) => {
+				const materialId = ma.material.id;
+				const unitPrice = parseFloat(ma.material.unitPrice);
+				const amount = parseFloat(ma.amount);
+
+				if (materialCosts[materialId]) {
+					materialCosts[materialId]["cost"] += unitPrice * amount * productQty;
+				} else {
+					materialCosts[materialId] = {
+						material: ma.material,
+						cost: unitPrice * amount * productQty,
+					};
+				}
+			});
+		});
+
+		/**
+		 * Part 2: Cost based on each time period
+		 */
+
+		// add cost to each production inventory update
+		for (let i of productionUpdates) {
+			// add production cost attribute to production update
+			i["productionCost"] = 0;
+
+			// get materials needed for a single product
+			const materialAnalysis = materialAnalysisData[i.productPackage.productId];
+
 			materialAnalysis.forEach((matData) => {
 				// how many products are in current product pkg
 				const productQty = i.productPackage.pieces;
@@ -378,20 +404,115 @@ export class ReportController {
 					parseFloat(matData.amount) *
 					productQty;
 				// add to material costs
-				if (materialCosts[matData.materialId]) {
-					materialCosts[matData.materialId]["cost"] += matCost;
-				} else {
-					materialCosts[matData.materialId] = {
-						material: matData.material,
-						cost: matCost,
-					};
-				}
+				i["productionCost"] += matCost;
 			});
+		}
+
+		/**
+		 * Format data for each time period
+		 */
+
+		let timePeriodData, stDate, edDate;
+
+		switch (type) {
+			case "today":
+				const todayGroup = {};
+
+				productionUpdates.forEach((i) => {
+					const date = i.addedDate;
+					if (todayGroup[date]) {
+						todayGroup[date] += parseFloat(i["productionCost"]);
+					} else {
+						todayGroup[date] = parseFloat(i["productionCost"]);
+					}
+				});
+
+				timePeriodData = todayGroup;
+				break;
+
+			case "day":
+				const dayGroups = {};
+				// add all days in duration (even no sale days should be present)
+				stDate = startDate;
+				edDate = endDate;
+
+				while (stDate !== edDate) {
+					dayGroups[stDate] = null;
+					stDate = moment(stDate).add("1", "days").format("YYYY-MM-DD");
+				}
+
+				// fill with data
+				productionUpdates.forEach((i) => {
+					const date = i.addedDate;
+					if (dayGroups[date]) {
+						dayGroups[date] += parseFloat(i["productionCost"]);
+					} else {
+						dayGroups[date] = parseFloat(i["productionCost"]);
+					}
+				});
+
+				timePeriodData = dayGroups;
+				break;
+
+			case "month":
+				const monthGroups = {};
+				// add all months in duration (even no sale days should be present)
+				stDate = moment(startDate).format("YYYY-MM");
+				edDate = moment(endDate).add("1", "months").format("YYYY-MM");
+
+				while (stDate !== edDate) {
+					monthGroups[stDate] = null;
+					stDate = moment(stDate).add("1", "months").format("YYYY-MM");
+				}
+
+				// fill with data
+				productionUpdates.forEach((i) => {
+					const date = moment(i.addedDate).format("YYYY-MM");
+					if (monthGroups[date]) {
+						monthGroups[date] += parseFloat(i["productionCost"]);
+					} else {
+						monthGroups[date] = parseFloat(i["productionCost"]);
+					}
+				});
+
+				timePeriodData = monthGroups;
+				break;
+
+			case "year":
+				const yearGroups = {};
+				// add all years in duration (even no sale days should be present)
+				stDate = moment(startDate).format("YYYY");
+				edDate = moment(endDate).format("YYYY");
+
+				while (stDate !== edDate) {
+					yearGroups[stDate] = null;
+					stDate = moment(stDate).add(1, "years").format("YYYY");
+				}
+
+				// fill with data
+				productionUpdates.forEach((i) => {
+					const date = moment(i.addedDate).format("YYYY");
+					if (yearGroups[date]) {
+						yearGroups[date] += parseFloat(i["productionCost"]);
+					} else {
+						yearGroups[date] = parseFloat(i["productionCost"]);
+					}
+				});
+
+				timePeriodData = yearGroups;
+				break;
+
+			default:
+				timePeriodData = {};
+				break;
 		}
 
 		return {
 			status: true,
-			data: Object.values(materialCosts),
+			data: {
+				timePeriodData: timePeriodData,
+				materialCosts: Object.values(materialCosts),
+			},
 		};
 	}
 
