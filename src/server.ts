@@ -1014,6 +1014,12 @@ app.route("/api/reports/production_cost").get((req, res) => {
 		.catch((e) => sendErrors(res, e));
 });
 
+app.route("/api/reports/revenue").get((req, res) => {
+	ReportController.getRevenueReport(req.query.data)
+		.then((r) => res.json(r))
+		.catch((e) => sendErrors(res, e));
+});
+
 // Routes: Summery
 app.route("/api/summery/dashboard").get((req, res) => {
 	SummeryController.getDashboardSummery()
