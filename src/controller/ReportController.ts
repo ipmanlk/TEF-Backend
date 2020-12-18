@@ -1,6 +1,8 @@
 import { getRepository } from "typeorm";
 import { CustomerInvoice } from "../entity/CustomerInvoice";
 import * as moment from "moment";
+import { ProductionInventoryUpdate } from "../entity/ProductionInventoryUpdate";
+import { MaterialAnalysis } from "../entity/MaterialAnalysis";
 
 export class ReportController {
 	/**
@@ -296,6 +298,93 @@ export class ReportController {
 		return {
 			status: true,
 			data: responseData,
+		};
+	}
+
+	static async getProductionCostReport({ start, end, type }) {
+		let startDate = moment(start).format("YYYY-MM-DD");
+		let endDate = moment(end).format("YYYY-MM-DD");
+
+		// change end to get data inclusively (with end)
+		if (type == "month") {
+			endDate = moment(end)
+				.add(1, "months")
+				.subtract(1, "days")
+				.format("YYYY-MM-DD");
+		} else if (type == "year") {
+			endDate = moment(end)
+				.add(1, "years")
+				.subtract(1, "days")
+				.format("YYYY-MM-DD");
+		} else {
+			endDate = moment(end).format("YYYY-MM-DD");
+		}
+
+		// get how many product pkgs were made during given time period
+		// and what are corresponding products (single items)
+		const productPkgs = {};
+
+		const productionUpdates = await getRepository(ProductionInventoryUpdate)
+			.createQueryBuilder("piu")
+			.leftJoin("piu.productPackage", "pkg")
+			.addSelect(["pkg.id", "pkg.productId", "pkg.pieces"])
+			.where("piu.addedDate >= :start AND piu.addedDate <= :end", {
+				start: startDate,
+				end: endDate,
+			})
+			.orderBy("piu.addedDate", "ASC")
+			.getMany();
+
+		productionUpdates.forEach((i) => {
+			if (productPkgs[i.productPackageId]) {
+				productPkgs[i.productPackageId]["qty"] += i.qty;
+			} else {
+				productPkgs[i.productPackageId] = {
+					productPackage: i.productPackage,
+					qty: i.qty,
+				};
+			}
+		});
+
+		// get how much material cost spent on those product pkgs
+		const materialCosts = {};
+
+		let i: any;
+		for (i of Object.values(productPkgs)) {
+			// get material analysis data for a single product (multiple materials)
+			const materialAnalysis = await getRepository(MaterialAnalysis)
+				.createQueryBuilder("ma")
+				.leftJoin("ma.material", "mat")
+				.addSelect(["mat.id", "mat.name", "mat.code", "mat.unitPrice"])
+				.where("ma.productId = :productId", {
+					productId: i.productPackage.productId,
+				})
+				.getMany();
+
+			// add material costs to materialCosts obj
+			materialAnalysis.forEach((matData) => {
+				// how many products are in current product pkg
+				const productQty = i.productPackage.pieces;
+				// required materials cost
+				const matCost =
+					parseFloat(matData.material.unitPrice) *
+					parseFloat(matData.amount) *
+					productQty;
+				// add to material costs
+				if (materialCosts[matData.materialId]) {
+					materialCosts[matData.materialId]["cost"] += matCost;
+				} else {
+					materialCosts[matData.materialId] = {
+						material: matData.material,
+						cost: matCost,
+					};
+				}
+			});
+		}
+
+		return {
+			status: true,
+			data: Object.values(materialCosts),
 		};
 	}
 }
