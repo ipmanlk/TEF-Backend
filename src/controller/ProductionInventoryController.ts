@@ -1,5 +1,3 @@
-import { ProductPackage } from "../entity/ProductPackage";
-import { ProductPackageStatus } from "../entity/ProductPackageStatus";
 import { ProductionInventory } from "../entity/ProductionInventory";
 import { ProductionInventoryDao } from "../dao/ProductionInventoryDao";
 import { getRepository } from "typeorm";
@@ -8,123 +6,142 @@ import { ProductionInventoryUpdate } from "../entity/ProductionInventoryUpdate";
 import * as moment from "moment";
 
 export class ProductionInventoryController {
+	static async get(data) {
+		await ProductionInventoryDao.updateInventoryStatuses();
+		return this.search(data);
+	}
 
-  static async get(data) {
-    return this.search(data);
-  }
+	static async save(data, session) {
+		// get data
+		const productPackageId = data.productPackageId;
+		const qty = parseInt(data.qty);
 
-  static async save(data, session) {
-    // get data
-    const productPackageId = data.productPackageId;
-    const qty = parseInt(data.qty);
+		// check if this product package is present in the inventory
+		const inventoryProductPackage = await getRepository(
+			ProductionInventory
+		).findOne({
+			where: {
+				productPackageId: productPackageId,
+			},
+		});
 
-    // check if this product package is present in the inventory
-    const inventoryProductPackage = await getRepository(ProductionInventory).findOne({
-      where: {
-        productPackageId: productPackageId
-      }
-    });
+		// if exists in inventory
+		if (inventoryProductPackage) {
+			inventoryProductPackage.availableQty += qty;
+			inventoryProductPackage.qty += qty;
 
-    // if exists in inventory
-    if (inventoryProductPackage) {
-      inventoryProductPackage.availableQty += qty;
-      inventoryProductPackage.qty += qty;
+			// update it
+			await getRepository(ProductionInventory)
+				.save(inventoryProductPackage)
+				.catch((e) => {
+					console.log(e.code, e);
+					throw {
+						status: false,
+						type: "server",
+						msg: "Server Error!. Please check logs.",
+					};
+				});
 
-      // update it
-      await getRepository(ProductionInventory).save(inventoryProductPackage).catch(e => {
-        console.log(e.code, e);
-        throw {
-          status: false,
-          type: "server",
-          msg: "Server Error!. Please check logs."
-        };
-      });
+			// create entry for user update
+			await this.addProductionInventoryUpdate(
+				inventoryProductPackage.productPackageId,
+				qty,
+				session
+			);
 
-      // create entry for user update
-      await this.addProductionInventoryUpdate(inventoryProductPackage.productPackageId, qty, session);
+			return {
+				status: true,
+				msg: "Product packages has been added to the inventory!.",
+			};
+		} else {
+			// create new inventory product package
+			const inventoryProductPackage = new ProductionInventory();
+			inventoryProductPackage.productPackageId = productPackageId;
+			inventoryProductPackage.availableQty = qty;
+			inventoryProductPackage.qty = qty;
 
-      return {
-        status: true,
-        msg: "Product packages has been added to the inventory!."
-      }
-    } else {
+			const normalStatus = await getRepository(
+				ProductionInventoryStatus
+			).findOne({
+				where: {
+					name: "Normal",
+				},
+			});
 
-      // create new inventory product package
-      const inventoryProductPackage = new ProductionInventory();
-      inventoryProductPackage.productPackageId = productPackageId;
-      inventoryProductPackage.availableQty = qty;
-      inventoryProductPackage.qty = qty;
+			if (!normalStatus) {
+				throw {
+					status: false,
+					type: "server",
+					msg: "Unable to find the 'Normal' status",
+				};
+			}
 
-      const normalStatus = await getRepository(ProductionInventoryStatus).findOne({
-        where: {
-          name: "Normal"
-        }
-      });
+			inventoryProductPackage.productionInventoryStatus = normalStatus;
 
-      if (!normalStatus) {
-        throw {
-          status: false,
-          type: "server",
-          msg: "Unable to find the 'Normal' status"
-        }
-      }
+			// save it
+			await getRepository(ProductionInventory)
+				.save(inventoryProductPackage)
+				.catch((e) => {
+					console.log(e.code, e);
+					throw {
+						status: false,
+						type: "server",
+						msg: "Server Error!. Please check logs.",
+					};
+				});
 
-      inventoryProductPackage.productionInventoryStatus = normalStatus;
+			// create entry for user update
+			await this.addProductionInventoryUpdate(
+				inventoryProductPackage.productPackageId,
+				qty,
+				session
+			);
 
-      // save it
-      await getRepository(ProductionInventory).save(inventoryProductPackage).catch(e => {
-        console.log(e.code, e);
-        throw {
-          status: false,
-          type: "server",
-          msg: "Server Error!. Please check logs."
-        };
-      });
+			return {
+				status: true,
+				msg: "Product packages has been added to the inventory!.",
+			};
+		}
+	}
 
-      // create entry for user update
-      await this.addProductionInventoryUpdate(inventoryProductPackage.productPackageId, qty, session);
+	private static async addProductionInventoryUpdate(
+		productPackageId,
+		qty,
+		session
+	) {
+		// update production inventory updates
+		const productionInventoryUpdate = new ProductionInventoryUpdate();
+		productionInventoryUpdate.employeeId = session.data.employeeId;
+		productionInventoryUpdate.productPackageId = productPackageId;
+		productionInventoryUpdate.qty = qty;
+		productionInventoryUpdate.addedDate = moment().format("YYYY-MM-DD");
 
-      return {
-        status: true,
-        msg: "Product packages has been added to the inventory!."
-      }
-    }
+		await getRepository(ProductionInventoryUpdate)
+			.save(productionInventoryUpdate)
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
+	}
 
-  }
+	// search entires in the db
+	private static async search(data = {}) {
+		const entries = await ProductionInventoryDao.search(data).catch((e) => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		});
 
-  private static async addProductionInventoryUpdate(productPackageId, qty, session) {
-    // update production inventory updates
-    const productionInventoryUpdate = new ProductionInventoryUpdate();
-    productionInventoryUpdate.employeeId = session.data.employeeId;
-    productionInventoryUpdate.productPackageId = productPackageId;
-    productionInventoryUpdate.qty = qty;
-    productionInventoryUpdate.addedDate = moment().format("YYYY-MM-DD");
-
-    await getRepository(ProductionInventoryUpdate).save(productionInventoryUpdate).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      };
-    });
-  }
-
-  // search entires in the db
-  private static async search(data = {}) {
-    const entries = await ProductionInventoryDao.search(data).catch(e => {
-      console.log(e.code, e);
-      throw {
-        status: false,
-        type: "server",
-        msg: "Server Error!. Please check logs."
-      }
-    });
-
-    return {
-      status: true,
-      data: entries
-    };
-  }
-
+		return {
+			status: true,
+			data: entries,
+		};
+	}
 }

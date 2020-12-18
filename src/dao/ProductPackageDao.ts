@@ -1,7 +1,5 @@
 import { getRepository } from "typeorm";
 import { ProductPackage } from "../entity/ProductPackage";
-import { ProductionInventory } from "../entity/ProductionInventory";
-import { ProductionInventoryStatus } from "../entity/ProductionInventoryStatus";
 
 export class ProductPackageDao {
 	static search({ keyword = "", skip = 0, limit = 15 }) {
@@ -10,7 +8,12 @@ export class ProductPackageDao {
 				.createQueryBuilder("pkg")
 				.leftJoinAndSelect("pkg.product", "p")
 				.select([
-					"pkg.id", "pkg.code", "pkg.name", "pkg.price", "pkg.salePrice", "pkg.pieces"
+					"pkg.id",
+					"pkg.code",
+					"pkg.name",
+					"pkg.price",
+					"pkg.salePrice",
+					"pkg.pieces",
 				])
 				.leftJoinAndSelect("pkg.productPackageStatus", "pkgst")
 				.leftJoinAndSelect("pkg.productPackageType", "pkgty")
@@ -25,35 +28,14 @@ export class ProductPackageDao {
 				.orWhere("pkgty.name LIKE :keyword", { keyword: `%${keyword}%` })
 				.skip(skip)
 				.take(limit)
-				.getMany()
+				.getMany();
 		} else {
 			return getRepository(ProductPackage)
 				.createQueryBuilder("pkg")
 				.leftJoin("pkg.productPackageStatus", "pkgst")
-				.select([
-					"pkg.id", "pkg.code", "pkg.name"
-				])
+				.select(["pkg.id", "pkg.code", "pkg.name"])
 				.where("pkgst.name = :name", { name: "Available" })
-				.getMany()
-		}
-
-	}
-
-	static async updateInventoryStatuses() {
-		// get all product packages
-		const productPkgs = await getRepository(ProductPackage).find();
-		const lowStatus = await getRepository(ProductionInventoryStatus).findOne({ where: { name: "Low" } });
-
-		// update inventory statuses based on rop
-		for (let pkg of productPkgs) {
-			const inventoryProductPkg = await getRepository(ProductionInventory).findOne({ where: { productPackageId: pkg.id } });
-
-			if (inventoryProductPkg.availableQty < pkg.rop) {
-
-				// update status to low
-				inventoryProductPkg.productionInventoryStatus = lowStatus;
-				await getRepository(ProductionInventory).save(inventoryProductPkg);
-			}
+				.getMany();
 		}
 	}
 }
