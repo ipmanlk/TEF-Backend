@@ -7,6 +7,7 @@ import { CustomerInvoice } from "../entity/CustomerInvoice";
 import { MaterialInventoryDao } from "../dao/MaterialInventoryDao";
 import { ProductPackageDao } from "../dao/ProductPackageDao";
 import { ProductionOrder } from "../entity/ProductionOrder";
+import { ProductionInventoryDao } from "./ProductionInventoryDao";
 
 export class SummeryDao {
 	private static readonly today = moment().format("YYYY-MM-DD");
@@ -31,7 +32,7 @@ export class SummeryDao {
 	}
 
 	static async getLowProductPkgs() {
-		await ProductPackageDao.updateInventoryStatuses();
+		await ProductionInventoryDao.updateInventoryStatuses();
 		return getRepository(ProductionInventory)
 			.createQueryBuilder("pi")
 			.leftJoin("pi.productPackage", "p")
