@@ -205,7 +205,7 @@ export class ReportController {
 		invoices.forEach((i) => {
 			// loop through each product pkg in invoice
 			i.customerInvoiceProductPackages.forEach((ciPkg) => {
-				// relevant product pkg
+				// get relevant product pkg
 				const pkg = ciPkg.productPackage;
 
 				requestedProductPkgs.push({
@@ -295,9 +295,16 @@ export class ReportController {
 				break;
 		}
 
+		// convert response data to ui friendly format
+		const formattedResponseData = {};
+
+		Object.keys(responseData).forEach((i) => {
+			formattedResponseData[i] = Object.values(responseData[i]);
+		});
+
 		return {
 			status: true,
-			data: responseData,
+			data: formattedResponseData,
 		};
 	}
 
