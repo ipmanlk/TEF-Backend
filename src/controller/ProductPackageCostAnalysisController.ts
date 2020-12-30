@@ -31,8 +31,6 @@ export class ProductPackageCostAnalysisController {
 
 	static async update(data, session) {
 		try {
-			console.log(data);
-
 			// remove existing records
 			getRepository(ProductPackageCostAnalysis)
 				.createQueryBuilder()

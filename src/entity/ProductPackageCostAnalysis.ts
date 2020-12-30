@@ -11,12 +11,12 @@ import { Employee } from "./Employee";
 import { ProductPackage } from "./ProductPackage";
 import { ProductPackageCostAnalysisMaterial } from "./ProductPackageCostAnalysisMaterial";
 
-@Index("fk_production_package_cost_analysis_employee1_idx", ["employeeId"], {})
 @Index(
   "fk_production_package_cost_analysis_product_package1_idx",
   ["productPackageId"],
   {}
 )
+@Index("fk_production_package_cost_analysis_employee1_idx", ["employeeId"], {})
 @Entity("product_package_cost_analysis", { schema: "twoelephantsfireworks" })
 export class ProductPackageCostAnalysis {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

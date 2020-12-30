@@ -14,14 +14,14 @@ import { SupplierStatus } from "./SupplierStatus";
 import { SupplierType } from "./SupplierType";
 import { Material } from "./Material";
 
+@Index("person_mobile_UNIQUE", ["personMobile"], { unique: true })
+@Index("nic_UNIQUE", ["nic"], { unique: true })
 @Index("code_UNIQUE", ["code"], { unique: true })
 @Index("company_mobile_UNIQUE", ["companyMobile"], { unique: true })
-@Index("fk_supplier_employee1_idx", ["employeeId"], {})
-@Index("fk_supplier_supplier_status1_idx", ["supplierStatusId"], {})
-@Index("fk_supplier_supplier_type1_idx", ["supplierTypeId"], {})
-@Index("nic_UNIQUE", ["nic"], { unique: true })
-@Index("person_mobile_UNIQUE", ["personMobile"], { unique: true })
 @Index("reg_number_UNIQUE", ["companyRegNumber"], { unique: true })
+@Index("fk_supplier_supplier_status1_idx", ["supplierStatusId"], {})
+@Index("fk_supplier_employee1_idx", ["employeeId"], {})
+@Index("fk_supplier_supplier_type1_idx", ["supplierTypeId"], {})
 @Entity("supplier", { schema: "twoelephantsfireworks" })
 export class Supplier {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
