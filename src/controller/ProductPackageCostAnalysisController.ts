@@ -7,10 +7,32 @@ import { MiscUtil } from "../util/MiscUtil";
 import { ProductPackageCostAnalysis } from "../entity/ProductPackageCostAnalysis";
 
 export class ProductPackageCostAnalysisController {
-	static async getOne({ id }) {}
+	static async getOne({ productPackageId }) {
+		try {
+			const data = await getRepository(ProductPackageCostAnalysis).find({
+				where: {
+					productPackageId: productPackageId,
+				},
+			});
+
+			return {
+				status: true,
+				data: data,
+			};
+		} catch (e) {
+			console.log(e);
+			return {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		}
+	}
 
 	static async update(data, session) {
 		try {
+			console.log(data);
+
 			// remove existing records
 			getRepository(ProductPackageCostAnalysis)
 				.createQueryBuilder()
@@ -21,7 +43,7 @@ export class ProductPackageCostAnalysisController {
 			// insert new records
 			for (let pd of data.salePriceData) {
 				const record = {
-					productPackageId: pd.productPackageId.id,
+					productPackageId: pd.productPackageId,
 					validFrom: pd.validFrom,
 					validTo: pd.validTo,
 					materialCost: pd.materialCost,
@@ -39,7 +61,8 @@ export class ProductPackageCostAnalysisController {
 				status: true,
 				msg: "Product package sale prices have been updated!.",
 			};
-		} catch (error) {
+		} catch (e) {
+			console.log(e);
 			return {
 				status: false,
 				type: "server",
