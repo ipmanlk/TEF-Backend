@@ -4,6 +4,7 @@ import { Material } from "./Material";
 import { MaterialAnalysis } from "./MaterialAnalysis";
 import { Product } from "./Product";
 import { ProductPackage } from "./ProductPackage";
+import { ProductPackageCostAnalysisMaterial } from "./ProductPackageCostAnalysisMaterial";
 import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { QuotationMaterial } from "./QuotationMaterial";
 
@@ -32,6 +33,13 @@ export class UnitType {
 
   @OneToMany(() => ProductPackage, (productPackage) => productPackage.unitType)
   productPackages: ProductPackage[];
+
+  @OneToMany(
+    () => ProductPackageCostAnalysisMaterial,
+    (productPackageCostAnalysisMaterial) =>
+      productPackageCostAnalysisMaterial.unitType
+  )
+  productPackageCostAnalysisMaterials: ProductPackageCostAnalysisMaterial[];
 
   @OneToMany(
     () => PurchaseOrderMaterial,

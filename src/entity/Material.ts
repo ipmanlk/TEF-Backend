@@ -17,16 +17,17 @@ import { RiskCategory } from "./RiskCategory";
 import { UnitType } from "./UnitType";
 import { MaterialAnalysis } from "./MaterialAnalysis";
 import { MaterialInventory } from "./MaterialInventory";
+import { ProductPackageCostAnalysisMaterial } from "./ProductPackageCostAnalysisMaterial";
 import { PurchaseOrderMaterial } from "./PurchaseOrderMaterial";
 import { QuotationMaterial } from "./QuotationMaterial";
 import { QuotationRequestMaterial } from "./QuotationRequestMaterial";
 import { Supplier } from "./Supplier";
 
-@Index("fk_material_material_type1_idx", ["materialTypeId"], {})
-@Index("fk_material_unit_type1_idx", ["unitTypeId"], {})
-@Index("fk_material_material_status1_idx", ["materialStatusId"], {})
-@Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
 @Index("fk_material_employee1_idx", ["employeeId"], {})
+@Index("fk_material_material_status1_idx", ["materialStatusId"], {})
+@Index("fk_material_material_type1_idx", ["materialTypeId"], {})
+@Index("fk_material_risk_category1_idx", ["riskCategoryId"], {})
+@Index("fk_material_unit_type1_idx", ["unitTypeId"], {})
 @Entity("material", { schema: "twoelephantsfireworks" })
 export class Material {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -123,6 +124,13 @@ export class Material {
     (materialInventory) => materialInventory.material
   )
   materialInventories: MaterialInventory[];
+
+  @OneToMany(
+    () => ProductPackageCostAnalysisMaterial,
+    (productPackageCostAnalysisMaterial) =>
+      productPackageCostAnalysisMaterial.material
+  )
+  productPackageCostAnalysisMaterials: ProductPackageCostAnalysisMaterial[];
 
   @OneToMany(
     () => PurchaseOrderMaterial,

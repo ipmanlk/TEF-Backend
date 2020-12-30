@@ -11,16 +11,16 @@ export class ProductPackageDao {
 					"pkg.id",
 					"pkg.code",
 					"pkg.name",
-					"pkg.price",
-					"pkg.salePrice",
+					"pkg.productionCost",
 					"pkg.pieces",
 				])
 				.leftJoinAndSelect("pkg.productPackageStatus", "pkgst")
 				.leftJoinAndSelect("pkg.productPackageType", "pkgty")
 				.where("pkg.code LIKE :keyword", { keyword: `%${keyword}%` })
 				.orWhere("pkg.name LIKE :keyword", { keyword: `%${keyword}%` })
-				.orWhere("pkg.price LIKE :keyword", { keyword: `%${keyword}%` })
-				.orWhere("pkg.salePrice LIKE :keyword", { keyword: `%${keyword}%` })
+				.orWhere("pkg.productionCost LIKE :keyword", {
+					keyword: `%${keyword}%`,
+				})
 				.orWhere("pkg.pieces LIKE :keyword", { keyword: `%${keyword}%` })
 				.orWhere("p.code LIKE :keyword", { keyword: `%${keyword}%` })
 				.orWhere("p.name LIKE :keyword", { keyword: `%${keyword}%` })

@@ -19,6 +19,7 @@ import { Grn } from "./Grn";
 import { Material } from "./Material";
 import { OperationLog } from "./OperationLog";
 import { Product } from "./Product";
+import { ProductPackageCostAnalysis } from "./ProductPackageCostAnalysis";
 import { ProductionInventoryUpdate } from "./ProductionInventoryUpdate";
 import { ProductionOrder } from "./ProductionOrder";
 import { PurchaseOrder } from "./PurchaseOrder";
@@ -28,14 +29,14 @@ import { Supplier } from "./Supplier";
 import { SupplierPayment } from "./SupplierPayment";
 import { User } from "./User";
 
+@Index("fk_employee_civilstatus1_idx", ["civilStatusId"], {})
+@Index("fk_employee_designation1_idx", ["designationId"], {})
+@Index("fk_employee_employeestatus1_idx", ["employeeStatusId"], {})
+@Index("fk_employee_gender_idx", ["genderId"], {})
+@Index("land_UNIQUE", ["land"], { unique: true })
 @Index("mobile_UNIQUE", ["mobile"], { unique: true })
 @Index("nic_UNIQUE", ["nic"], { unique: true })
-@Index("land_UNIQUE", ["land"], { unique: true })
 @Index("number_UNIQUE", ["number"], { unique: true })
-@Index("fk_employee_gender_idx", ["genderId"], {})
-@Index("fk_employee_designation1_idx", ["designationId"], {})
-@Index("fk_employee_civilstatus1_idx", ["civilStatusId"], {})
-@Index("fk_employee_employeestatus1_idx", ["employeeStatusId"], {})
 @Entity("employee", { schema: "twoelephantsfireworks" })
 export class Employee {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -138,6 +139,12 @@ export class Employee {
 
   @OneToMany(() => Product, (product) => product.employee)
   products: Product[];
+
+  @OneToMany(
+    () => ProductPackageCostAnalysis,
+    (productPackageCostAnalysis) => productPackageCostAnalysis.employee
+  )
+  productPackageCostAnalyses: ProductPackageCostAnalysis[];
 
   @OneToMany(
     () => ProductionInventoryUpdate,

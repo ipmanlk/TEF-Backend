@@ -13,6 +13,7 @@ import { Product } from "./Product";
 import { ProductPackageStatus } from "./ProductPackageStatus";
 import { ProductPackageType } from "./ProductPackageType";
 import { UnitType } from "./UnitType";
+import { ProductPackageCostAnalysis } from "./ProductPackageCostAnalysis";
 import { ProductionInventory } from "./ProductionInventory";
 import { ProductionInventoryUpdate } from "./ProductionInventoryUpdate";
 import { ProductionOrderProductPackage } from "./ProductionOrderProductPackage";
@@ -44,11 +45,8 @@ export class ProductPackage {
   @Column("char", { name: "code", unique: true, length: 12 })
   code: string;
 
-  @Column("decimal", { name: "price", precision: 12, scale: 2 })
-  price: string;
-
-  @Column("decimal", { name: "sale_price", precision: 12, scale: 2 })
-  salePrice: string;
+  @Column("decimal", { name: "production_cost", precision: 10, scale: 2 })
+  productionCost: string;
 
   @Column("mediumblob", { name: "photo" })
   photo: Buffer;
@@ -118,6 +116,12 @@ export class ProductPackage {
   })
   @JoinColumn([{ name: "unit_type_id", referencedColumnName: "id" }])
   unitType: UnitType;
+
+  @OneToMany(
+    () => ProductPackageCostAnalysis,
+    (productPackageCostAnalysis) => productPackageCostAnalysis.productPackage
+  )
+  productPackageCostAnalyses: ProductPackageCostAnalysis[];
 
   @OneToMany(
     () => ProductionInventory,
