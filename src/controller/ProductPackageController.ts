@@ -6,6 +6,8 @@ import { ProductPackageStatus } from "../entity/ProductPackageStatus";
 import { ProductPackageDao } from "../dao/ProductPackageDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 import { MiscUtil } from "../util/MiscUtil";
+import { ProductPackageCostAnalysis } from "../entity/ProductPackageCostAnalysis";
+import moment = require("moment");
 
 export class ProductPackageController {
 	static async get(data) {
@@ -33,6 +35,21 @@ export class ProductPackageController {
 			entry["availableQty"] = productionInventoryEntry
 				? productionInventoryEntry.availableQty
 				: 0;
+
+			// get current sale price using product package cost analysis
+			const productPkgCostAnalysis = await getRepository(
+				ProductPackageCostAnalysis
+			)
+				.createQueryBuilder("p")
+				.where("p.productPackageId = :id", { id: entry.id })
+				.andWhere("p.validFrom <= :today AND p.validTo >= :today", {
+					today: moment().format("YYYY-MM-DD"),
+				})
+				.getOne();
+
+			if (productPkgCostAnalysis && productPkgCostAnalysis.salePrice) {
+				entry.salePrice = productPkgCostAnalysis.salePrice;
+			}
 
 			// remove useless attributes
 			entry["productCode"] = entry.product.code;
