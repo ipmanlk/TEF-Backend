@@ -11,6 +11,7 @@ import { Supplier } from "../entity/Supplier";
 import { MiscUtil } from "../util/MiscUtil";
 import { Quotation } from "../entity/Quotation";
 import { MaterialInventoryDao } from "../dao/MaterialInventoryDao";
+import { Material } from "../entity/Material";
 
 export class GrnController {
 	static async get(data) {
@@ -153,12 +154,14 @@ export class GrnController {
 			).toString();
 			await getRepository(Supplier).save(supplier);
 
-			// Mark materials in quotation request as received
+			// get the quotation relevant to this grn
 			const quotation = await getRepository(Quotation).findOne({
 				where: { id: purchaseOrder.quotationId },
 			});
 
+			// loop through each material in grn
 			for (let grnMaterial of grnMaterials) {
+				// get quotation request material
 				let quotationRequestMaterial = await getRepository(
 					QuotationRequestMaterial
 				).findOne({
@@ -168,10 +171,24 @@ export class GrnController {
 					},
 				});
 
+				// change quotation request material status to received
 				quotationRequestMaterial.received = true;
 				await getRepository(QuotationRequestMaterial).save(
 					quotationRequestMaterial
 				);
+
+				// if grn material unit price is greater than relevant material unit price in
+				// material table, change it to this
+				const material = await getRepository(Material).findOne(
+					grnMaterial.materialId
+				);
+
+				if (
+					parseFloat(material.unitPrice) < parseFloat(grnMaterial.purchasePrice)
+				) {
+					material.unitPrice = grnMaterial.purchasePrice;
+					await getRepository(Material).save(material);
+				}
 			}
 
 			// update inventory
