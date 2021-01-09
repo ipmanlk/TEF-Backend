@@ -3,6 +3,7 @@ import { CustomerInvoice } from "../entity/CustomerInvoice";
 import * as moment from "moment";
 import { ProductionInventoryUpdate } from "../entity/ProductionInventoryUpdate";
 import { MaterialAnalysis } from "../entity/MaterialAnalysis";
+import { ProductPackageCostAnalysis } from "../entity/ProductPackageCostAnalysis";
 
 export class ReportController {
 	/**
@@ -517,144 +518,177 @@ export class ReportController {
 	}
 
 	static async getRevenueReport({ start, end, type }) {
-		// 	let startDate = moment(start).format("YYYY-MM-DD");
-		// 	let endDate;
-		// 	// change end to get data inclusively (with end)
-		// 	if (type == "month") {
-		// 		endDate = moment(end)
-		// 			.add(1, "months")
-		// 			.subtract(1, "days")
-		// 			.format("YYYY-MM-DD");
-		// 	} else if (type == "year") {
-		// 		endDate = moment(end)
-		// 			.add(1, "years")
-		// 			.subtract(1, "days")
-		// 			.format("YYYY-MM-DD");
-		// 	} else {
-		// 		endDate = moment(end).format("YYYY-MM-DD");
-		// 	}
-		// 	// get invoices between given time frame
-		// 	const invoices = await getRepository(CustomerInvoice)
-		// 		.createQueryBuilder("ci")
-		// 		.leftJoinAndSelect("ci.customerInvoiceProductPackages", "cipkg")
-		// 		.leftJoinAndSelect("cipkg.productPackage", "pkg")
-		// 		.where("ci.addedDate >= :start AND ci.addedDate <= :end", {
-		// 			start: startDate,
-		// 			end: endDate,
-		// 		})
-		// 		.orderBy("ci.addedDate", "ASC")
-		// 		.getMany();
-		// 	// add revenue to each invoice
-		// 	invoices.forEach((i) => {
-		// 		let revenue = 0;
-		// 		i.customerInvoiceProductPackages.forEach((ciPkg) => {
-		// 			const rev =
-		// 				(parseFloat(ciPkg.productPackage.salePrice) -
-		// 					parseFloat(ciPkg.productPackage.price)) *
-		// 				ciPkg.deliveredQty;
-		// 			revenue += rev;
-		// 		});
-		// 		i["revenue"] = revenue;
-		// 	});
-		// 	// used within switch case for startDate and endDate
-		// 	let stDate, edDate;
-		// 	let responseData;
-		// 	switch (type) {
-		// 		case "today":
-		// 			const todayGroup = {};
-		// 			invoices.forEach((i) => {
-		// 				const date = i.addedDate;
-		// 				if (todayGroup[date]) {
-		// 					todayGroup[date].transactions++;
-		// 					todayGroup[date].revenue += parseFloat(i["revenue"]);
-		// 				} else {
-		// 					todayGroup[date] = {
-		// 						transactions: 1,
-		// 						revenue: parseFloat(i["revenue"]),
-		// 					};
-		// 				}
-		// 			});
-		// 			responseData = todayGroup;
-		// 			break;
-		// 		case "day":
-		// 			const dayGroups = {};
-		// 			// add all days in duration (even no sale days should be present)
-		// 			stDate = startDate;
-		// 			edDate = endDate;
-		// 			while (stDate !== edDate) {
-		// 				dayGroups[stDate] = null;
-		// 				stDate = moment(stDate).add("1", "days").format("YYYY-MM-DD");
-		// 			}
-		// 			// fill with data
-		// 			invoices.forEach((i) => {
-		// 				const date = i.addedDate;
-		// 				if (dayGroups[date]) {
-		// 					dayGroups[date].transactions++;
-		// 					dayGroups[date].revenue += parseFloat(i["revenue"]);
-		// 				} else {
-		// 					dayGroups[date] = {
-		// 						transactions: 1,
-		// 						revenue: parseFloat(i["revenue"]),
-		// 					};
-		// 				}
-		// 			});
-		// 			responseData = dayGroups;
-		// 			break;
-		// 		case "month":
-		// 			const monthGroups = {};
-		// 			// add all months in duration (even no sale days should be present)
-		// 			stDate = moment(startDate).format("YYYY-MM");
-		// 			edDate = moment(endDate).add("1", "months").format("YYYY-MM");
-		// 			while (stDate !== edDate) {
-		// 				monthGroups[stDate] = null;
-		// 				stDate = moment(stDate).add("1", "months").format("YYYY-MM");
-		// 			}
-		// 			// fill with data
-		// 			invoices.forEach((i) => {
-		// 				const date = moment(i.addedDate).format("YYYY-MM");
-		// 				if (monthGroups[date]) {
-		// 					monthGroups[date].transactions++;
-		// 					monthGroups[date].revenue += parseFloat(i["revenue"]);
-		// 				} else {
-		// 					monthGroups[date] = {
-		// 						transactions: 1,
-		// 						revenue: parseFloat(i["revenue"]),
-		// 					};
-		// 				}
-		// 			});
-		// 			responseData = monthGroups;
-		// 			break;
-		// 		case "year":
-		// 			const yearGroups = {};
-		// 			// add all years in duration (even no sale days should be present)
-		// 			stDate = moment(startDate).format("YYYY");
-		// 			edDate = moment(endDate).format("YYYY");
-		// 			while (stDate !== edDate) {
-		// 				yearGroups[stDate] = null;
-		// 				stDate = moment(stDate).add(1, "years").format("YYYY");
-		// 			}
-		// 			// fill with data
-		// 			invoices.forEach((i) => {
-		// 				const year = moment(i.addedDate).format("YYYY");
-		// 				if (yearGroups[year]) {
-		// 					yearGroups[year].transactions++;
-		// 					yearGroups[year].revenue += parseFloat(i["revenue"]);
-		// 				} else {
-		// 					yearGroups[year] = {
-		// 						transactions: 1,
-		// 						revenue: parseFloat(i["revenue"]),
-		// 					};
-		// 				}
-		// 			});
-		// 			responseData = yearGroups;
-		// 			break;
-		// 		default:
-		// 			responseData = {};
-		// 			break;
-		// 	}
-		// 	return {
-		// 		status: true,
-		// 		data: responseData,
-		// 	};
+		let startDate = moment(start).format("YYYY-MM-DD");
+		let endDate;
+		// change end to get data inclusively (with end)
+		if (type == "month") {
+			endDate = moment(end)
+				.add(1, "months")
+				.subtract(1, "days")
+				.format("YYYY-MM-DD");
+		} else if (type == "year") {
+			endDate = moment(end)
+				.add(1, "years")
+				.subtract(1, "days")
+				.format("YYYY-MM-DD");
+		} else {
+			endDate = moment(end).format("YYYY-MM-DD");
+		}
+		// get invoices between given time frame
+		const invoices = await getRepository(CustomerInvoice)
+			.createQueryBuilder("ci")
+			.leftJoinAndSelect("ci.customerInvoiceProductPackages", "cipkg")
+			.leftJoinAndSelect("cipkg.productPackage", "pkg")
+			.where("ci.addedDate >= :start AND ci.addedDate <= :end", {
+				start: startDate,
+				end: endDate,
+			})
+			.orderBy("ci.addedDate", "ASC")
+			.getMany();
+
+		// add revenue to each invoice
+		for (let i of invoices) {
+			let revenue = 0;
+			// loop through each product package in the invoice
+			for (let ciPkg of i.customerInvoiceProductPackages) {
+				// get sale price based on invoice added date
+				const productPkgCostAnalysis = await getRepository(
+					ProductPackageCostAnalysis
+				)
+					.createQueryBuilder("p")
+					.where("p.productPackageId = :id", { id: ciPkg.productPackageId })
+					.andWhere("p.validFrom <= :today AND p.validTo >= :today", {
+						today: moment().format("YYYY-MM-DD"),
+					})
+					.getOne();
+
+				// get required props from analysis
+				let totalCost = 0,
+					salePrice = 0;
+
+				if (productPkgCostAnalysis) {
+					totalCost = parseFloat(productPkgCostAnalysis.totalCost);
+					salePrice = parseFloat(productPkgCostAnalysis.salePrice);
+				}
+
+				const rev = (salePrice - totalCost) * ciPkg.deliveredQty;
+				revenue += rev;
+			}
+			// add tot revenue to the invoice
+			i["revenue"] = revenue.toFixed(2);
+		}
+
+		// used within switch case for startDate and endDate
+		let stDate, edDate;
+		let responseData;
+		switch (type) {
+			case "today":
+				const todayGroup = {};
+				invoices.forEach((i) => {
+					const date = i.addedDate;
+					if (todayGroup[date]) {
+						todayGroup[date].transactions++;
+						todayGroup[date].revenue += parseFloat(i["revenue"]);
+						todayGroup[date].revenue = parseFloat(
+							parseFloat(todayGroup[date].revenue).toFixed(2)
+						);
+					} else {
+						todayGroup[date] = {
+							transactions: 1,
+							revenue: parseFloat(i["revenue"]),
+						};
+					}
+				});
+				responseData = todayGroup;
+				break;
+			case "day":
+				const dayGroups = {};
+				// add all days in duration (even no sale days should be present)
+				stDate = startDate;
+				edDate = endDate;
+				while (stDate !== edDate) {
+					dayGroups[stDate] = null;
+					stDate = moment(stDate).add("1", "days").format("YYYY-MM-DD");
+				}
+				// fill with data
+				invoices.forEach((i) => {
+					const date = i.addedDate;
+					if (dayGroups[date]) {
+						dayGroups[date].transactions++;
+						dayGroups[date].revenue += parseFloat(i["revenue"]);
+						dayGroups[date].revenue = parseFloat(
+							parseFloat(dayGroups[date].revenue).toFixed(2)
+						);
+					} else {
+						dayGroups[date] = {
+							transactions: 1,
+							revenue: parseFloat(i["revenue"]),
+						};
+					}
+				});
+				responseData = dayGroups;
+				break;
+			case "month":
+				const monthGroups = {};
+				// add all months in duration (even no sale days should be present)
+				stDate = moment(startDate).format("YYYY-MM");
+				edDate = moment(endDate).add("1", "months").format("YYYY-MM");
+				while (stDate !== edDate) {
+					monthGroups[stDate] = null;
+					stDate = moment(stDate).add("1", "months").format("YYYY-MM");
+				}
+				// fill with data
+				invoices.forEach((i) => {
+					const date = moment(i.addedDate).format("YYYY-MM");
+					if (monthGroups[date]) {
+						monthGroups[date].transactions++;
+						monthGroups[date].revenue += parseFloat(i["revenue"]);
+						monthGroups[date].revenue = parseFloat(
+							parseFloat(monthGroups[date].revenue).toFixed(2)
+						);
+					} else {
+						monthGroups[date] = {
+							transactions: 1,
+							revenue: parseFloat(i["revenue"]),
+						};
+					}
+				});
+				responseData = monthGroups;
+				break;
+			case "year":
+				const yearGroups = {};
+				// add all years in duration (even no sale days should be present)
+				stDate = moment(startDate).format("YYYY");
+				edDate = moment(endDate).format("YYYY");
+				while (stDate !== edDate) {
+					yearGroups[stDate] = null;
+					stDate = moment(stDate).add(1, "years").format("YYYY");
+				}
+				// fill with data
+				invoices.forEach((i) => {
+					const year = moment(i.addedDate).format("YYYY");
+					if (yearGroups[year]) {
+						yearGroups[year].transactions++;
+						yearGroups[year].revenue += parseFloat(i["revenue"]);
+						yearGroups[year].revenue = parseFloat(
+							parseFloat(yearGroups[year].revenue).toFixed(2)
+						);
+					} else {
+						yearGroups[year] = {
+							transactions: 1,
+							revenue: parseFloat(i["revenue"]),
+						};
+					}
+				});
+				responseData = yearGroups;
+				break;
+			default:
+				responseData = {};
+				break;
+		}
+		return {
+			status: true,
+			data: responseData,
+		};
 	}
 }
