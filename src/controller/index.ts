@@ -27,3 +27,4 @@ export { ProductionInventoryController } from "./ProductionInventoryController";
 export { ReportController } from "./ReportController";
 export { SummeryController } from "./SummeryController";
 export { ProductPackageCostAnalysisController } from "./ProductPackageCostAnalysisController";
+export { EmailController } from "./EmailController";
