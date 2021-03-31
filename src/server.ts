@@ -54,6 +54,7 @@ import {
 	SummeryController,
 	ProductPackageCostAnalysisController,
 	EmailController,
+	SMSController,
 } from "./controller";
 
 /* 
@@ -1102,6 +1103,22 @@ app
 			req.body.text,
 			req.body.html
 		)
+			.then((r) => res.json(r))
+			.catch((e) => sendErrors(res, e));
+	});
+
+app
+	.route("/api/sms")
+	.all((req, res, next) => {
+		isAuthorized(req)
+			.then(() => {
+				next();
+			})
+			.catch((e) => sendErrors(res, e));
+	})
+
+	.post((req, res) => {
+		SMSController.sendSMS(req.body.receiver, req.body.message)
 			.then((r) => res.json(r))
 			.catch((e) => sendErrors(res, e));
 	});

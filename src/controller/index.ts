@@ -28,3 +28,4 @@ export { ReportController } from "./ReportController";
 export { SummeryController } from "./SummeryController";
 export { ProductPackageCostAnalysisController } from "./ProductPackageCostAnalysisController";
 export { EmailController } from "./EmailController";
+export { SMSController } from "./SMSController";
