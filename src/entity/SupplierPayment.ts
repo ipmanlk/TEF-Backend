@@ -11,19 +11,19 @@ import { Grn } from "./Grn";
 import { SupplierPaymentMethod } from "./SupplierPaymentMethod";
 import { SupplierPaymentStatus } from "./SupplierPaymentStatus";
 
-@Index("pnumber_UNIQUE", ["pnumber"], { unique: true })
-@Index("fk_supplier_payment_grn1_idx", ["grnId"], {})
-@Index(
-  "fk_supplier_payment_supplier_payment_status1_idx",
-  ["supplierPaymentStatusId"],
-  {}
-)
 @Index("fk_supplier_payment_employee1_idx", ["employeeId"], {})
+@Index("fk_supplier_payment_grn1_idx", ["grnId"], {})
 @Index(
   "fk_supplier_payment_supplier_payment_method1_idx",
   ["supplierPaymentMethodId"],
   {}
 )
+@Index(
+  "fk_supplier_payment_supplier_payment_status1_idx",
+  ["supplierPaymentStatusId"],
+  {}
+)
+@Index("pnumber_UNIQUE", ["pnumber"], { unique: true })
 @Entity("supplier_payment", { schema: "twoelephantsfireworks" })
 export class SupplierPayment {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

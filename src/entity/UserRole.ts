@@ -9,8 +9,8 @@ import {
 import { Role } from "./Role";
 import { User } from "./User";
 
-@Index("fk_role_has_user_user1_idx", ["userId"], {})
 @Index("fk_role_has_user_role1_idx", ["roleId"], {})
+@Index("fk_role_has_user_user1_idx", ["userId"], {})
 @Entity("user_role", { schema: "twoelephantsfireworks" })
 export class UserRole {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

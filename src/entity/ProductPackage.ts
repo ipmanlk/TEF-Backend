@@ -72,6 +72,14 @@ export class ProductPackage {
   @Column("int", { name: "unit_type_id" })
   unitTypeId: number;
 
+  @Column("decimal", {
+    name: "sale_price",
+    nullable: true,
+    precision: 10,
+    scale: 2,
+  })
+  salePrice: string | null;
+
   @OneToMany(
     () => CustomerInvoiceProductPackage,
     (customerInvoiceProductPackage) =>
