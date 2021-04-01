@@ -33,6 +33,7 @@ import { User } from "./User";
 @Index("nic_UNIQUE", ["nic"], { unique: true })
 @Index("land_UNIQUE", ["land"], { unique: true })
 @Index("number_UNIQUE", ["number"], { unique: true })
+@Index("email_UNIQUE", ["email"], { unique: true })
 @Index("fk_employee_gender_idx", ["genderId"], {})
 @Index("fk_employee_designation1_idx", ["designationId"], {})
 @Index("fk_employee_civilstatus1_idx", ["civilStatusId"], {})
@@ -86,6 +87,14 @@ export class Employee {
 
   @Column("int", { name: "employee_status_id" })
   employeeStatusId: number;
+
+  @Column("varchar", {
+    name: "email",
+    nullable: true,
+    unique: true,
+    length: 45,
+  })
+  email: string | null;
 
   @OneToMany(() => Customer, (customer) => customer.employee)
   customers: Customer[];

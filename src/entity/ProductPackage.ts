@@ -48,14 +48,6 @@ export class ProductPackage {
   @Column("decimal", { name: "production_cost", precision: 10, scale: 2 })
   productionCost: string;
 
-  @Column("decimal", {
-    name: "sale_price",
-    precision: 10,
-    scale: 2,
-    default: () => "'0.00'",
-  })
-  salePrice: string;
-
   @Column("mediumblob", { name: "photo" })
   photo: Buffer;
 
