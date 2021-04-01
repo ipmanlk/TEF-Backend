@@ -55,6 +55,7 @@ import {
 	ProductPackageCostAnalysisController,
 	EmailController,
 	SMSController,
+	PasswordResetController,
 } from "./controller";
 
 /* 
@@ -152,6 +153,32 @@ app.route("/api/login").post((req, res) => {
 
 app.route("/api/logout").get((req, res) => {
 	AuthController.logOut(req.session)
+		.then((r) => res.json(r))
+		.catch((e) => sendErrors(res, e));
+});
+
+// routes for resetting the password
+app.route("/api/password_reset/start").post((req, res) => {
+	PasswordResetController.startPasswordReset(req.body.username)
+		.then((r) => res.json(r))
+		.catch((e) => sendErrors(res, e));
+});
+
+app.route("/api/password_reset/verify").post((req, res) => {
+	PasswordResetController.verifyPasswordResetCode(
+		req.body.username,
+		parseInt(req.body.verifyCode)
+	)
+		.then((r) => res.json(r))
+		.catch((e) => sendErrors(res, e));
+});
+
+app.route("/api/password_reset/reset").post((req, res) => {
+	PasswordResetController.resetPassword(
+		req.body.username,
+		parseInt(req.body.verifyCode),
+		req.body.password
+	)
 		.then((r) => res.json(r))
 		.catch((e) => sendErrors(res, e));
 });
