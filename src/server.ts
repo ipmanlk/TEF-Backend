@@ -16,7 +16,7 @@ Libraries
 import { createConnection } from "typeorm";
 import * as express from "express";
 import * as session from "express-session";
-
+import * as ejs from "ejs";
 /* 
 =====================================================================================
 Controllers
@@ -1128,7 +1128,8 @@ app
 			req.body.receivers,
 			req.body.subject,
 			req.body.text,
-			req.body.html
+			req.body.html,
+			[]
 		)
 			.then((r) => res.json(r))
 			.catch((e) => sendErrors(res, e));
@@ -1149,6 +1150,22 @@ app
 			.then((r) => res.json(r))
 			.catch((e) => sendErrors(res, e));
 	});
+
+// Routes: template based pdf generation
+app.post("/generate_printout", (req, res) => {
+	ejs.renderFile(
+		`${__dirname}/template/${req.body.templateName}.ejs`,
+		{ data: req.body.data },
+		(err, data) => {
+			if (err) {
+				console.log(err);
+				res.send(err);
+			} else {
+				res.send(data);
+			}
+		}
+	);
+});
 
 // send errors to the client
 const sendErrors = (res, e) => {
