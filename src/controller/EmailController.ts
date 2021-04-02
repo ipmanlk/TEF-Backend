@@ -4,7 +4,8 @@ export class EmailController {
 		receivers: Array<String> = [],
 		subject: string = "",
 		text: string = "",
-		html: string = ""
+		html: string = "",
+		attachments: Array<any>
 	) {
 		try {
 			const transporter = nodemailer.createTransport({
@@ -25,6 +26,7 @@ export class EmailController {
 					subject: subject,
 					text: text,
 					html: html,
+					attachments: attachments,
 				});
 
 				console.log("Message sent: %s", info.messageId);
