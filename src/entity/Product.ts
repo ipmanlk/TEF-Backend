@@ -16,11 +16,11 @@ import { UnitType } from "./UnitType";
 import { ProductPackage } from "./ProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
-@Index("fk_product_category1_idx", ["categoryId"], {})
-@Index("fk_product_employee1_idx", ["employeeId"], {})
-@Index("fk_product_product_status1_idx", ["productStatusId"], {})
 @Index("fk_product_risk_category1_idx", ["riskCategoryId"], {})
+@Index("fk_product_product_status1_idx", ["productStatusId"], {})
+@Index("fk_product_category1_idx", ["categoryId"], {})
 @Index("fk_product_unit_type1_idx", ["unitTypeId"], {})
+@Index("fk_product_employee1_idx", ["employeeId"], {})
 @Entity("product", { schema: "twoelephantsfireworks" })
 export class Product {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -31,12 +31,6 @@ export class Product {
 
   @Column("varchar", { name: "name", length: 255 })
   name: string;
-
-  @Column("decimal", { name: "price", precision: 12, scale: 2 })
-  price: string;
-
-  @Column("decimal", { name: "cost", precision: 12, scale: 2 })
-  cost: string;
 
   @Column("mediumblob", { name: "photo" })
   photo: Buffer;

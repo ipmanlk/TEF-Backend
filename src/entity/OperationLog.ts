@@ -10,9 +10,9 @@ import { Employee } from "./Employee";
 import { Module } from "./Module";
 import { Operation } from "./Operation";
 
-@Index("fk_operation_log_operation1_idx", ["operationId"], {})
 @Index("fk_operationlog_employee1_idx", ["employeeId"], {})
 @Index("fk_operationlog_module1_idx", ["moduleId"], {})
+@Index("fk_operation_log_operation1_idx", ["operationId"], {})
 @Entity("operation_log", { schema: "twoelephantsfireworks" })
 export class OperationLog {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })

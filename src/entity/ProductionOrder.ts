@@ -12,13 +12,13 @@ import { ProductionOrderStatus } from "./ProductionOrderStatus";
 import { ProductionOrderProductPackage } from "./ProductionOrderProductPackage";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
-@Index("fk_production_order_employee1_idx", ["employeeId"], {})
-@Index("fk_production_order_employee2_idx", ["confirmedEmployee"], {})
 @Index(
   "fk_production_order_production_order_status1_idx",
   ["productionOrderStatusId"],
   {}
 )
+@Index("fk_production_order_employee1_idx", ["employeeId"], {})
+@Index("fk_production_order_employee2_idx", ["confirmedEmployee"], {})
 @Entity("production_order", { schema: "twoelephantsfireworks" })
 export class ProductionOrder {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
