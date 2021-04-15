@@ -11,16 +11,6 @@
         "base64": true
     },
     {
-        "regex": "^[\\d]{1,5}\\.[\\d]{2}$",
-        "attribute": "cost",
-        "error": "Please provide a valid cost!."
-    },
-    {
-        "regex": "^[\\d]{1,5}\\.[\\d]{2}$",
-        "attribute": "price",
-        "error": "Please provide a valid price!."
-    },
-    {
         "regex": "^[\\d]{1,7}\\.[\\d]{2,3}$",
         "attribute": "weightFiring",
         "error": "Please provide a valid firing weight!."
