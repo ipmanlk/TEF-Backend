@@ -4,6 +4,8 @@ import { EmployeeStatus } from "../entity/EmployeeStatus";
 import { EmployeeDao } from "../dao/EmployeeDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 import { MiscUtil } from "../util/MiscUtil";
+import { User } from "../entity/User";
+import { UserStatus } from "../entity/UserStatus";
 
 export class EmployeeController {
 	static async get(data) {
@@ -15,47 +17,48 @@ export class EmployeeController {
 	}
 
 	private static async getOne({ id }) {
-
 		// search for an employee with given employee id
-		const employee = await getRepository(Employee).findOne({
-			id: id
-		}).catch(e => {
-			console.log(e.code, e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			};
-		});
+		const employee = await getRepository(Employee)
+			.findOne({
+				id: id,
+			})
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
 		// check if employee exists
 		if (employee !== undefined) {
 			return {
 				status: true,
-				data: employee
+				data: employee,
 			};
 		} else {
 			throw {
 				status: false,
 				type: "input",
-				msg: "Unable to find an employee with that employee number."
+				msg: "Unable to find an employee with that employee number.",
 			};
 		}
 	}
 
 	private static async search(data = {}) {
-		const employees = await EmployeeDao.search(data).catch(e => {
+		const employees = await EmployeeDao.search(data).catch((e) => {
 			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
+				msg: "Server Error!. Please check logs.",
+			};
 		});
 
 		return {
 			status: true,
-			data: employees
+			data: employees,
 		};
 	}
 
@@ -69,14 +72,13 @@ export class EmployeeController {
 		// extract photo
 		const { photo } = data;
 
-
 		// calculate photo size in kb
 		if (photo.length > 689339) {
 			throw {
 				status: false,
 				type: "input",
-				msg: "Your photo should be smaller than 500KB."
-			}
+				msg: "Your photo should be smaller than 500KB.",
+			};
 		}
 
 		// read photo as buffer
@@ -86,7 +88,7 @@ export class EmployeeController {
 		// generate employee number
 		const lastEmployee = await getRepository(Employee).findOne({
 			select: ["id", "number"],
-			order: { id: "DESC" }
+			order: { id: "DESC" },
 		});
 
 		// set number for new employee
@@ -102,23 +104,23 @@ export class EmployeeController {
 			return {
 				status: true,
 				data: { number: newEmployee.number },
-				msg: "That employee has been added!"
-			}
+				msg: "That employee has been added!",
+			};
 		} catch (e) {
 			if (e.code == "ER_DUP_ENTRY") {
-				const msg = await this.getDuplicateErrorMsg(e, employee)
+				const msg = await this.getDuplicateErrorMsg(e, employee);
 				throw {
 					status: false,
 					type: "input",
-					msg: msg
-				}
+					msg: msg,
+				};
 			}
 
 			throw {
 				status: false,
 				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
+				msg: "Server Error!. Please check logs.",
+			};
 		}
 	}
 
@@ -127,35 +129,36 @@ export class EmployeeController {
 		const editedEmployee = data as Employee;
 
 		// check if employee is present with the given id
-		const selectedEmployee = await getRepository(Employee).findOne(editedEmployee.id).catch(e => {
-			console.log(e.code, e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
-		});
+		const selectedEmployee = await getRepository(Employee)
+			.findOne(editedEmployee.id)
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
 		if (!selectedEmployee) {
 			throw {
 				status: false,
 				type: "input",
-				msg: "That employee doesn't exist in our database!."
-			}
+				msg: "That employee doesn't exist in our database!.",
+			};
 		}
 
 		// check if photo has changed
 		if (data.photo == false) {
 			editedEmployee.photo = selectedEmployee.photo;
 		} else {
-
 			// calculate photo size in kb
 			if (editedEmployee.photo.length > 689339) {
 				throw {
 					status: false,
 					type: "input",
-					msg: "Your photo should be smaller than 500KB."
-				}
+					msg: "Your photo should be smaller than 500KB.",
+				};
 			}
 
 			// read photo as buffer
@@ -166,87 +169,119 @@ export class EmployeeController {
 		// check if valid data is given
 		await ValidationUtil.validate("EMPLOYEE", editedEmployee);
 
-
 		try {
 			await getRepository(Employee).save(editedEmployee);
 
-			return {
-				status: true,
-				msg: "That employee has been updated!"
-			}
+			const user = await getRepository(User).findOne({
+				where: { employeeId: editedEmployee.id },
+			});
 
-		} catch (e) {
-			if (e.code == "ER_DUP_ENTRY") {
-				const msg = await this.getDuplicateErrorMsg(e, editedEmployee)
-				throw {
-					status: false,
-					type: "input",
-					msg: msg
+			const savedEmployee = await getRepository(Employee).findOne({
+				where: { id: editedEmployee.id },
+				relations: ["employeeStatus"],
+			});
+
+			if (user && savedEmployee) {
+				if (
+					["Deleted", "Retired"].includes(savedEmployee.employeeStatus.name)
+				) {
+					const userStatus = await getRepository(UserStatus).findOne({
+						where: { name: "Deleted" },
+					});
+					user.userStatus = userStatus;
+					await getRepository(User).save(user);
+				}
+
+				if (["Operational"].includes(savedEmployee.employeeStatus.name)) {
+					const userStatus = await getRepository(UserStatus).findOne({
+						where: { name: "Active" },
+					});
+					user.userStatus = userStatus;
+					await getRepository(User).save(user);
 				}
 			}
 
+			return {
+				status: true,
+				msg: "That employee has been updated!",
+			};
+		} catch (e) {
+			if (e.code == "ER_DUP_ENTRY") {
+				const msg = await this.getDuplicateErrorMsg(e, editedEmployee);
+				throw {
+					status: false,
+					type: "input",
+					msg: msg,
+				};
+			}
+			console.log(e);
 			throw {
 				status: false,
 				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
+				msg: "Server Error!. Please check logs.",
+			};
 		}
 	}
 
 	static async delete({ id }) {
 		// find employee with the given id
-		const employee = await getRepository(Employee).findOne({ id: id }).catch(e => {
-			console.log(e.code, e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
-		});
+		const employee = await getRepository(Employee)
+			.findOne({ id: id })
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
 		if (!employee) {
 			throw {
 				status: false,
 				type: "input",
-				msg: "That employee doesn't exist in our database!."
-			}
+				msg: "That employee doesn't exist in our database!.",
+			};
 		}
 
-
 		// find deleted status
-		const deletedStatus = await getRepository(EmployeeStatus).findOne({ name: "Deleted" }).catch(e => {
-			console.log(e.code, e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
-		});
+		const deletedStatus = await getRepository(EmployeeStatus)
+			.findOne({ name: "Deleted" })
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
 		// if there is no status called deleted
 		if (!deletedStatus) {
 			throw {
 				status: false,
 				type: "server",
-				msg: "Deleted status doesn't exist in the database!."
-			}
+				msg: "Deleted status doesn't exist in the database!.",
+			};
 		}
 
 		// delete the employee (make inactive)
 		employee.employeeStatus = deletedStatus;
 
-		await getRepository(Employee).save(employee).catch(e => {
-			console.log(e.code, e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
-		});
+		await getRepository(Employee)
+			.save(employee)
+			.catch((e) => {
+				console.log(e.code, e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
 		return {
 			status: true,
-			msg: "That employee has been deleted!"
+			msg: "That employee has been deleted!",
 		};
 	}
 
@@ -256,32 +291,31 @@ export class EmployeeController {
 
 		if (error.sqlMessage.includes("nic_UNIQUE")) {
 			field = "nic";
-			msg = "NIC already exists!"
-
+			msg = "NIC already exists!";
 		} else if (error.sqlMessage.includes("mobile_UNIQUE")) {
 			field = "cmobile";
-			msg = "mobile number already exists!"
-
+			msg = "mobile number already exists!";
 		} else if (error.sqlMessage.includes("land_UNIQUE")) {
 			field = "email";
-			msg = "land number already exists!"
-
+			msg = "land number already exists!";
 		} else {
 			return "Customer with same information already exists!";
 		}
 
 		// get duplicated entry
-		duplicateEntry = await getRepository(Employee).findOne({
-			select: ["id", "number"],
-			where: { field: employee[field] }
-		}).catch(e => {
-			console.log(e);
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs."
-			}
-		});
+		duplicateEntry = await getRepository(Employee)
+			.findOne({
+				select: ["id", "number"],
+				where: { field: employee[field] },
+			})
+			.catch((e) => {
+				console.log(e);
+				throw {
+					status: false,
+					type: "server",
+					msg: "Server Error!. Please check logs.",
+				};
+			});
 
 		return `Employee (Number: ${duplicateEntry.number}) with the same ${msg}`;
 	}
