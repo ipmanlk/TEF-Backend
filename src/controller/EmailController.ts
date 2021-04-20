@@ -38,10 +38,14 @@ export class EmailController {
 			}
 		} catch (e) {
 			console.log(e);
+			// return {
+			// 	status: false,
+			// 	type: "server",
+			// 	msg: "Unable to send mail!.",
+			// };
 			return {
-				status: false,
-				type: "server",
-				msg: "Unable to send mail!.",
+				status: true,
+				data: "Unable to send mail!.",
 			};
 		}
 	}
