@@ -60,6 +60,14 @@ export class AuthController {
 			};
 		}
 
+		if (user.userStatus.name == "Suspended") {
+			throw {
+				status: false,
+				type: "input",
+				msg: "Your user account has been suspended!",
+			};
+		}
+
 		// check password
 		if (user.password !== hashedPass) {
 			throw {
