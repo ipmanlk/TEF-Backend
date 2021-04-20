@@ -26,6 +26,7 @@ export class ProductPackageDao {
 				.orWhere("p.name LIKE :keyword", { keyword: `%${keyword}%` })
 				.orWhere("pkgst.name LIKE :keyword", { keyword: `%${keyword}%` })
 				.orWhere("pkgty.name LIKE :keyword", { keyword: `%${keyword}%` })
+				.orderBy("pkg.code", "DESC")
 				.skip(skip)
 				.take(limit)
 				.getMany();

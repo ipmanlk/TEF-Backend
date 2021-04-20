@@ -13,6 +13,7 @@ export class ProductDao {
 				.orWhere("p.name LIKE :keyword", { keyword: `%${keyword}%` })
 				.orWhere("ps.name LIKE :keyword", { keyword: `%${keyword}%` })
 				.orWhere("ca.name LIKE :keyword", { keyword: `%${keyword}%` })
+				.orderBy("p.code", "DESC")
 				.skip(skip)
 				.take(limit)
 				.getMany();
