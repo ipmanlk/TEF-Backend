@@ -43,6 +43,11 @@ export class EmailController {
 			// 	type: "server",
 			// 	msg: "Unable to send mail!.",
 			// };
+			// retry
+			setTimeout(() => {
+				console.log(`Retrying to send mail to ${receivers.join(",")}...`);
+				this.sendMail(receivers, subject, text, html, attachments);
+			}, 30000);
 			return {
 				status: true,
 				data: "Unable to send mail!.",
