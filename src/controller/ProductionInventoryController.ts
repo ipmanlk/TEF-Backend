@@ -4,6 +4,8 @@ import { getRepository } from "typeorm";
 import { ProductionInventoryStatus } from "../entity/ProductionInventoryStatus";
 import { ProductionInventoryUpdate } from "../entity/ProductionInventoryUpdate";
 import * as moment from "moment";
+import { ProductionOrder } from "../entity/ProductionOrder";
+import { ProductionOrderStatus } from "../entity/ProductionOrderStatus";
 
 export class ProductionInventoryController {
 	static async get(data) {
@@ -12,99 +14,119 @@ export class ProductionInventoryController {
 	}
 
 	static async save(data, session) {
-		// get data
-		const productPackageId = data.productPackageId;
-		const qty = parseInt(data.qty);
+		for (let pkg of data.productPackages) {
+			// get data
+			const productPackageId = pkg.productPackageId;
+			const qty = parseInt(pkg.qty);
 
-		// check if this product package is present in the inventory
-		const inventoryProductPackage = await getRepository(
-			ProductionInventory
-		).findOne({
-			where: {
-				productPackageId: productPackageId,
-			},
-		});
-
-		// if exists in inventory
-		if (inventoryProductPackage) {
-			inventoryProductPackage.availableQty += qty;
-			inventoryProductPackage.qty += qty;
-
-			// update it
-			await getRepository(ProductionInventory)
-				.save(inventoryProductPackage)
-				.catch((e) => {
-					console.log(e.code, e);
-					throw {
-						status: false,
-						type: "server",
-						msg: "Server Error!. Please check logs.",
-					};
-				});
-
-			// create entry for user update
-			await this.addProductionInventoryUpdate(
-				inventoryProductPackage.productPackageId,
-				qty,
-				session
-			);
-
-			return {
-				status: true,
-				msg: "Product packages has been added to the inventory!.",
-			};
-		} else {
-			// create new inventory product package
-			const inventoryProductPackage = new ProductionInventory();
-			inventoryProductPackage.productPackageId = productPackageId;
-			inventoryProductPackage.availableQty = qty;
-			inventoryProductPackage.qty = qty;
-
-			const normalStatus = await getRepository(
-				ProductionInventoryStatus
+			// check if this product package is present in the inventory
+			const inventoryProductPackage = await getRepository(
+				ProductionInventory
 			).findOne({
 				where: {
-					name: "Normal",
+					productPackageId: productPackageId,
 				},
 			});
 
-			if (!normalStatus) {
-				throw {
-					status: false,
-					type: "server",
-					msg: "Unable to find the 'Normal' status",
-				};
-			}
+			// if exists in inventory
+			if (inventoryProductPackage) {
+				inventoryProductPackage.availableQty += qty;
+				inventoryProductPackage.qty += qty;
 
-			inventoryProductPackage.productionInventoryStatus = normalStatus;
+				// update it
+				await getRepository(ProductionInventory)
+					.save(inventoryProductPackage)
+					.catch((e) => {
+						console.log(e.code, e);
+						throw {
+							status: false,
+							type: "server",
+							msg: "Server Error!. Please check logs.",
+						};
+					});
 
-			// save it
-			await getRepository(ProductionInventory)
-				.save(inventoryProductPackage)
-				.catch((e) => {
-					console.log(e.code, e);
+				// create entry for user update
+				await this.addProductionInventoryUpdate(
+					inventoryProductPackage.productPackageId,
+					qty,
+					session
+				);
+			} else {
+				// create new inventory product package
+				const inventoryProductPackage = new ProductionInventory();
+				inventoryProductPackage.productPackageId = productPackageId;
+				inventoryProductPackage.availableQty = qty;
+				inventoryProductPackage.qty = qty;
+
+				const normalStatus = await getRepository(
+					ProductionInventoryStatus
+				).findOne({
+					where: {
+						name: "Normal",
+					},
+				});
+
+				if (!normalStatus) {
 					throw {
 						status: false,
 						type: "server",
-						msg: "Server Error!. Please check logs.",
+						msg: "Unable to find the 'Normal' status",
 					};
-				});
+				}
 
-			// create entry for user update
-			await this.addProductionInventoryUpdate(
-				inventoryProductPackage.productPackageId,
-				qty,
-				session
+				inventoryProductPackage.productionInventoryStatus = normalStatus;
+
+				// save it
+				await getRepository(ProductionInventory)
+					.save(inventoryProductPackage)
+					.catch((e) => {
+						console.log(e.code, e);
+						throw {
+							status: false,
+							type: "server",
+							msg: "Server Error!. Please check logs.",
+						};
+					});
+
+				// create entry for user update
+				await this.addProductionInventoryUpdate(
+					inventoryProductPackage.productPackageId,
+					qty,
+					session
+				);
+
+				// update production inventory status
+				await ProductionInventoryDao.updateInventoryStatuses();
+			}
+		}
+
+		// change production order status to completed
+		try {
+			const productionOrder = await getRepository(ProductionOrder).findOne(
+				data.productionOrderId
 			);
 
-			// update production inventory status
-			await ProductionInventoryDao.updateInventoryStatuses();
+			const productionOrderStatus = await getRepository(
+				ProductionOrderStatus
+			).findOne({ where: { name: "Completed" } });
 
-			return {
-				status: true,
-				msg: "Product packages has been added to the inventory!.",
+			if (productionOrder && productionOrderStatus) {
+				productionOrder.productionOrderStatus = productionOrderStatus;
+				await getRepository(ProductionOrder).save(productionOrder);
+			}
+		} catch (e) {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
 			};
 		}
+
+		return {
+			status: true,
+			msg: "Product packages has been added to the inventory!.",
+		};
 	}
 
 	private static async addProductionInventoryUpdate(

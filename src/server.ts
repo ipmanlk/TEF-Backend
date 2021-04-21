@@ -987,6 +987,22 @@ app
 	});
 
 app
+	.route("/api/production_orders_by_status")
+	.all((req, res, next) => {
+		isAuthorized(req, false, "PRODUCTION_ORDER")
+			.then(() => {
+				next();
+			})
+			.catch((e) => sendErrors(res, e));
+	})
+
+	.get((req, res) => {
+		ProductionOrderController.getProductionOrdersByStatus(req.query.data)
+			.then((r) => res.json(r))
+			.catch((e) => sendErrors(res, e));
+	});
+
+app
 	.route("/api/production_orders_confirm")
 	.all((req, res, next) => {
 		isAuthorized(req, false, "PRODUCTION_ORDER")

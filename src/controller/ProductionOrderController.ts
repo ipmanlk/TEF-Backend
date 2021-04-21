@@ -337,4 +337,22 @@ export class ProductionOrderController {
 			msg: `Production order has been ${confirmedStatus.name.toLowerCase()}`,
 		};
 	}
+
+	static async getProductionOrdersByStatus(data) {
+		const productionOrders = await ProductionOrderDao.getProductionOrdersByStatus(
+			data.productionOrderStatusName
+		).catch((e) => {
+			console.log(e.code, e);
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs.",
+			};
+		});
+
+		return {
+			data: productionOrders,
+			status: true,
+		};
+	}
 }

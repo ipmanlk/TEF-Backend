@@ -35,4 +35,16 @@ export class ProductionOrderDao {
 			.where("po.id = :productionOrderId", { productionOrderId: id })
 			.getOne();
 	}
+
+	// get all production orders under a given status
+	static getProductionOrdersByStatus(productionOrderStatusName = "") {
+		return getRepository(ProductionOrder)
+			.createQueryBuilder("po")
+			.leftJoin("po.productionOrderStatus", "pos")
+			.select(["po.id", "po.code"])
+			.where("pos.name LIKE :statusName", {
+				statusName: `%${productionOrderStatusName}%`,
+			})
+			.getMany();
+	}
 }
