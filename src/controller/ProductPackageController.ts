@@ -70,19 +70,38 @@ export class ProductPackageController {
 	}
 
 	private static async search(data = {}) {
-		const entries = await ProductPackageDao.search(data).catch((e) => {
+		try {
+			const entries = await ProductPackageDao.search(data);
+
+			for (let entry of entries) {
+				// get current sale price using product package cost analysis
+				const productPkgCostAnalysis = await getRepository(
+					ProductPackageCostAnalysis
+				)
+					.createQueryBuilder("p")
+					.where("p.productPackageId = :id", { id: entry.id })
+					.andWhere("p.validFrom <= :today AND p.validTo >= :today", {
+						today: moment().format("YYYY-MM-DD"),
+					})
+					.getOne();
+
+				if (productPkgCostAnalysis && productPkgCostAnalysis.salePrice) {
+					entry.salePrice = productPkgCostAnalysis.salePrice;
+				}
+			}
+
+			return {
+				status: true,
+				data: entries,
+			};
+		} catch (e) {
 			console.log(e.code, e);
 			throw {
 				status: false,
 				type: "server",
 				msg: "Server Error!. Please check logs.",
 			};
-		});
-
-		return {
-			status: true,
-			data: entries,
-		};
+		}
 	}
 
 	static async save(data) {
