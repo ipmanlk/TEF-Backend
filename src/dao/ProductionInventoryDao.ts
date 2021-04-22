@@ -45,6 +45,8 @@ export class ProductionInventoryDao {
 				ProductionInventory
 			).findOne({ where: { productPackageId: pkg.id } });
 
+			if (!inventoryProductPkg) continue;
+
 			if (inventoryProductPkg.availableQty < pkg.rop) {
 				// update status to low
 				inventoryProductPkg.productionInventoryStatus = lowStatus;
