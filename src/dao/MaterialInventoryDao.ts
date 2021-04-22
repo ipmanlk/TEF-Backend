@@ -46,6 +46,8 @@ export class MaterialInventoryDao {
 				where: { materialId: material.id },
 			});
 
+			if (!inventoryMaterial) continue;
+
 			if (parseFloat(inventoryMaterial.availableQty) < material.rop) {
 				// update status to low
 				inventoryMaterial.materialInventoryStatus = lowStatus;
