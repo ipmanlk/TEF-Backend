@@ -1005,7 +1005,7 @@ app
 app
 	.route("/api/production_orders_confirm")
 	.all((req, res, next) => {
-		isAuthorized(req, false, "PRODUCTION_ORDER")
+		isAuthorized(req, false, "PRODUCTION_ORDER_CONFIRM")
 			.then(() => {
 				next();
 			})
