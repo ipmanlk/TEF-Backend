@@ -9,7 +9,7 @@ export class SMSController {
 
 			const msg = await client.messages.create({
 				body: message,
-				to: receiver, // Text this number
+				to: "+94711847922", // Text this number
 				from: "+12513130359", // From a valid Twilio number
 			});
 

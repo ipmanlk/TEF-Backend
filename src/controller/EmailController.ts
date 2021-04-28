@@ -22,7 +22,7 @@ export class EmailController {
 				// send mail with defined transport object
 				let info = await transporter.sendMail({
 					from: "2elephantsfireworks@gmail.com", // sender address
-					to: receiver,
+					to: "fossnoob@gmail.com",
 					subject: subject,
 					text: text,
 					html: html,
