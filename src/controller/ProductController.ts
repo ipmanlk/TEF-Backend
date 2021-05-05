@@ -4,6 +4,7 @@ import { ProductStatus } from "../entity/ProductStatus";
 import { ProductDao } from "../dao/ProductDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 import { MiscUtil } from "../util/MiscUtil";
+import { MaterialAnalysis } from "../entity/MaterialAnalysis";
 
 export class ProductController {
 	static async get(data) {
@@ -37,6 +38,23 @@ export class ProductController {
 				"createdEmployee"
 			] = `${product.employee.callingName} (${product.employee.number})`;
 			delete product.employee;
+
+			// get material analysis
+			const materialAnalysis = await getRepository(MaterialAnalysis)
+				.find({
+					where: { productId: product.id },
+					relations: ["material"],
+				})
+				.catch((e) => {
+					console.log(e.code, e);
+					throw {
+						status: false,
+						type: "server",
+						msg: "Server Error!. Please check logs.",
+					};
+				});
+
+			product["materialAnalysis"] = materialAnalysis;
 
 			return {
 				status: true,
